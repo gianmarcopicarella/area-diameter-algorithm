@@ -27,6 +27,8 @@ create_exec(main)
 create_exec(bench)
 create_exec(test)
 
+set_target_properties(raylib gtest gtest_main benchmark benchmark_main uninstall PROPERTIES FOLDER HiddenTargets)
+
 target_link_to_exec(main PRIVATE "raylib")
 target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark")
 target_link_to_exec(test PRIVATE "raylib;gtest_main")
