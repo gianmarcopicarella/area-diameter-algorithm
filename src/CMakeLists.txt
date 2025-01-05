@@ -1,4 +1,6 @@
-file(   GLOB_RECURSE 
+find_package(CGAL REQUIRED)
+
+file(   GLOB_RECURSE
         COMMON_ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/common/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/common/*.cpp)
@@ -29,6 +31,13 @@ create_exec(test)
 
 set_target_properties(raylib gtest gtest_main benchmark benchmark_main uninstall PROPERTIES FOLDER HiddenTargets)
 
-target_link_to_exec(main PRIVATE "raylib")
-target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark")
-target_link_to_exec(test PRIVATE "raylib;gtest_main")
+
+if ( CGAL_AUTO_LINK_ENABLED )
+    target_link_to_exec(main PRIVATE "raylib;")
+    target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark;")
+    target_link_to_exec(test PRIVATE "raylib;gtest_main;")
+else()
+    target_link_to_exec(main PRIVATE "raylib;CGAL::CGAL;CGAL::Data")
+    target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark;CGAL::CGAL;CGAL::Data")
+    target_link_to_exec(test PRIVATE "raylib;gtest_main;CGAL::CGAL;CGAL::Data")
+endif()

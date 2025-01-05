@@ -1,1 +1,7 @@
 build/
+cmake-build-release/
+cmake-build-debug/
+.idea/
+data/.DS_Store
+src/.DS_Store
+.DS_Store
