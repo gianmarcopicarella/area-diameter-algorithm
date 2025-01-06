@@ -9,22 +9,16 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <cassert>
+#include <optional>
 
 #define MOD(x, n) ((x) % (n))
+#define IDX(m, i, j, l, count) ((m) * ((count) * (count) * (count)) + (i) * ((count) * (count)) + (j) * (count) + (l))
+#define IDX_STRUCT(idx, count) ((idx->m) * ((count) * (count) * (count)) + (idx->i) * ((count) * (count)) + (idx->j) * ((count)) + (idx->l))
 
 namespace MT
 {
     namespace
     {
-        constexpr size_t locIndex(
-                const size_t i1, const size_t i2,
-                const size_t i3, const size_t i4,
-                const std::array<size_t, 4>& axis)
-        {
-            return i1 * axis[0] + i2 * axis[1] + i3 * axis[2] + i4 * axis[3];
-        }
-
         constexpr int locPointsWithinTriangleCount(
                 const std::vector<std::vector<int>>& somePointsBelowCounts,
                 const std::vector<std::vector<int>>& somePointsCollinearCounts,
@@ -120,7 +114,6 @@ namespace MT
 
             {
                 int startIndex = -1;
-
                 for(int i = 0; i < filteredPoints.size(); ++i)
                 {
                     const auto orientation = std::get<1>(filteredPoints[i]);
@@ -143,6 +136,7 @@ namespace MT
 
                             const auto otherPointIndex = std::get<0>(filteredPoints[startIndex]);
                             auto otherAngle = std::get<2>(filteredPoints[startIndex]);
+
                             if(somePoints[otherPointIndex].y > anEndPoint.y)
                             {
                                 otherAngle += 2.f * M_PI;
@@ -171,12 +165,10 @@ namespace MT
                 }
             }
 
-            std::vector<size_t> test;
-            test.reserve(filteredPoints.size());
-
+            someOutSortedIndicesBySlope.reserve(filteredPoints.size());
             std::merge(sortedLeft.begin(), sortedLeft.end(),
                        sortedRight.begin(), sortedRight.end(),
-                       std::back_inserter(test), [&](const auto& aRightPointIndex, const auto& aLeftPointIndex){
+                       std::back_inserter(someOutSortedIndicesBySlope), [&](const auto& aRightPointIndex, const auto& aLeftPointIndex){
                 const auto& oppositePoint = CM::Point2 {
                         2.f * anEndPoint.x - somePoints[aRightPointIndex].x,
                         2.f * anEndPoint.y - somePoints[aRightPointIndex].y,
@@ -184,53 +176,13 @@ namespace MT
                 };
                 return ArePointsClockwise(anEndPoint, oppositePoint, somePoints[aLeftPointIndex]);
             });
-
-            // Merge left and right
-            size_t i = 0, j = 0;
-            while(i < sortedLeft.size() && j < sortedRight.size())
-            {
-                const auto& oppositePoint = CM::Point2 {
-                        2.f * anEndPoint.x - somePoints[sortedRight[j]].x,
-                        2.f * anEndPoint.y - somePoints[sortedRight[j]].y,
-                        somePoints[sortedRight[j]].index
-                };
-                if(ArePointsClockwise(anEndPoint, somePoints[sortedLeft[i]], oppositePoint))
-                {
-                    someOutSortedIndicesBySlope.emplace_back(sortedLeft[i++]);
-                }
-                else
-                {
-                    someOutSortedIndicesBySlope.emplace_back(sortedRight[j++]);
-                }
-            }
-
-            if(i >= sortedLeft.size())
-            {
-                while(j < sortedRight.size())
-                {
-                    someOutSortedIndicesBySlope.emplace_back(sortedRight[j++]);
-                }
-            }
-            else
-            {
-                while(i < sortedLeft.size())
-                {
-                    someOutSortedIndicesBySlope.emplace_back(sortedLeft[i++]);
-                }
-            }
-
-            assert(test.size() == someOutSortedIndicesBySlope.size());
-            for(auto i = 0; i < test.size(); ++i)
-            {
-                assert(test[i] == someOutSortedIndicesBySlope[i]);
-            }
         }
     }
 
     EppsteinResult EppsteinAlgorithm(
             const std::vector<CM::Point2>& somePoints,
-            const int aMaxPointsCount,
-            const float aMaxArea,
+            const size_t aMaxPointsCount,
+            const long double aMaxArea,
             const bool aShouldReconstructHull)
     {
         // Create a 2-dimensional array containing for each point the sequence of clockwise sorted points around it
@@ -259,6 +211,9 @@ namespace MT
                                         std::numeric_limits<long double>::infinity());
         std::array<size_t, 4> axis{pointsCount * pointsCount * pointsCount, pointsCount * pointsCount, pointsCount, 1};
 
+        struct Index4D { size_t m, i, j, l; };
+        std::optional<Index4D> bestIndex;
+
 #ifdef DEBUG_EPPSTEIN
         std::vector<long double> results(aMaxPointsCount + 1, std::numeric_limits<long double>::infinity());
         std::string txt;
@@ -266,8 +221,8 @@ namespace MT
 
         for (const auto& pi : sortedPoints)
         {
-            std::fill_n(&minimumAreas[0] + locIndex(2, pi.index, 0, 0, axis), axis[1], 0);
-            for (int m = 3; m < aMaxPointsCount + 1; ++m)
+            std::fill_n(&minimumAreas[0] + IDX(2, pi.index, 0, 0, pointsCount), axis[1], 0);
+            for (size_t m = 3; m < aMaxPointsCount + 1; ++m)
             {
                 const auto& clockWisePoints = clockwiseSortedPoints[pi.index];
                 const auto startIndex = locGetFirstClockWiseUpIndex(clockWisePoints, pi);
@@ -308,23 +263,32 @@ namespace MT
                         if(pointsInTriangleCount <= m && CM::Orientation(pi, pj, pl) >= CM::ORIENTATION::COLLINEAR)
                         {
                             const auto currentArea =
-                                    minimumAreas[locIndex(m - pointsInTriangleCount, pi.index, pl.index, pj.index, axis)] +
+                                    minimumAreas[IDX(m - pointsInTriangleCount, pi.index, pl.index, pj.index, pointsCount)] +
                                     std::fabs(CM::SignedArea(pi, pj, pl));
                             if(currentArea < minArea && currentArea <= aMaxArea)
                             {
                                 minArea = currentArea;
+                                if( !bestIndex || m > bestIndex->m ||
+                                    (m == bestIndex->m && minArea < minimumAreas[IDX_STRUCT(bestIndex, pointsCount)]))
+                                {
+                                    bestIndex->m = m;
+                                    bestIndex->i = pi.index;
+                                    bestIndex->j = pj.index;
+                                    bestIndex->l = pl.index;
+                                }
                             }
                         }
 #ifdef DEBUG_EPPSTEIN
                         results[m - 3] = std::min(results[m - 3], minArea);
 #endif
-                        minimumAreas[locIndex(m, pi.index, pj.index, pl.index, axis)] = minArea;
+                        minimumAreas[IDX(m, pi.index, pj.index, pl.index, pointsCount)] = minArea;
                     }
                 }
             }
         }
 
         EppsteinResult result;
+        result.myHasFoundSolution = bestIndex.has_value();
 
 #ifdef DEBUG_EPPSTEIN
         std::ofstream myfile;
@@ -340,6 +304,39 @@ namespace MT
         result.results = results;
 #endif
 
+        if(bestIndex.has_value())
+        {
+            result.myHullArea = minimumAreas[IDX_STRUCT(bestIndex, pointsCount)];
+            result.myPointsCount = bestIndex->m;
+            if(aShouldReconstructHull)
+            {
+                size_t m = bestIndex->m, i = bestIndex->i, j = bestIndex->j;
+                while (m > 2)
+                {
+                    size_t l;
+                    const auto& clockWisePointsAbove = clockwiseSortedPoints[j];
+                    std::vector<size_t> sortedIndicesBySlope;
+                    locGetFirstLeftAndRight(clockWisePointsAbove, somePoints[i], somePoints[j], sortedIndicesBySlope);
+                    for (int k = sortedIndicesBySlope.size() - 1; k > -1 ; --k)
+                    {
+                        const auto& current = clockWisePointsAbove[sortedIndicesBySlope[k]];
+                        const auto& previous = clockWisePointsAbove[sortedIndicesBySlope[k - 1]];
+                        if( k == 0 ||
+                            minimumAreas[IDX(m, i, j, current.index, pointsCount)] !=
+                            minimumAreas[IDX(m, i, j, previous.index, pointsCount)])
+                        {
+                            l = clockWisePointsAbove[sortedIndicesBySlope[k]].index;
+                            break;
+                        }
+                    }
+                    m -= 1 + locPointsWithinTriangleCount(pointsBelowCounts, collinearPointsCounts, m, somePoints[i], somePoints[j], somePoints[l]);
+                    result.myHullIndices.emplace_back(j);
+                    j = l;
+                }
+                result.myHullIndices.emplace_back(j);
+                result.myHullIndices.emplace_back(i);
+            }
+        }
         return result;
     }
 }

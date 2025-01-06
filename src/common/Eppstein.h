@@ -15,9 +15,9 @@ namespace MT
     struct EppsteinResult
     {
         bool myHasFoundSolution = false;
-        float myHullArea = 0;
-        int myPointsCount = 0;
-        std::vector<int> myHullIndices;
+        long double myHullArea = 0;
+        size_t myPointsCount = 0;
+        std::vector<size_t> myHullIndices;
 #ifdef DEBUG_EPPSTEIN
         std::vector<long double> results;
 #endif
@@ -25,8 +25,8 @@ namespace MT
 
     EppsteinResult EppsteinAlgorithm(
             const std::vector<CM::Point2>& somePoints,
-            int aMaxPointsCount,
-            float aMaxArea = std::numeric_limits<float>::max(),
+            size_t aMaxPointsCount,
+            long double aMaxArea = std::numeric_limits<long double>::max(),
             bool aShouldReconstructHull = false);
 }
 
