@@ -10,6 +10,8 @@
 #include <fstream>
 #include <iomanip>
 #include <optional>
+#include <cassert>
+#include <functional>
 
 #define MOD(x, n) ((x) % (n))
 #define IDX(m, i, j, l, count) ((m) * ((count) * (count) * (count)) + (i) * ((count) * (count)) + (j) * (count) + (l))
@@ -50,15 +52,31 @@ namespace MT
             return 0;
         }
 
+        using Wrapper = std::tuple<long double, long double, size_t>;
+        void locCollectSortedPoints(
+                const std::vector<Wrapper>& somePoints,
+                const std::function<bool(const Wrapper&, const Wrapper&)>& aComparator,
+                std::vector<size_t>& someOutSortedPoints)
+        {
+            if(!somePoints.empty())
+            {
+                const auto iter = std::max_element(somePoints.begin(), somePoints.end(), aComparator);
+                const auto iterIndex = static_cast<size_t>(std::distance(somePoints.begin(), iter));
+                someOutSortedPoints.emplace_back(std::get<2>(somePoints[iterIndex]));
+                for(int j = MOD(iterIndex + 1, somePoints.size()); j != iterIndex; j = MOD(j + 1, somePoints.size()))
+                {
+                    someOutSortedPoints.emplace_back(std::get<2>(somePoints[j]));
+                }
+            }
+        }
+
         void locGetFirstLeftAndRight(
                 const std::vector<CM::Point2>& somePoints,
                 const CM::Point2& aStartPoint,
                 const CM::Point2& anEndPoint,
                 std::vector<size_t>& someOutSortedIndicesBySlope)
         {
-            using PointWrapper = std::tuple<size_t, CM::ORIENTATION, long double, long double>;
-            std::vector<PointWrapper> filteredPoints;
-            filteredPoints.reserve(somePoints.size());
+            std::vector<Wrapper> filteredLeft, filteredRight;
             for (size_t i = 0; i < somePoints.size(); ++i)
             {
                 if (somePoints[i].y >= aStartPoint.y)
@@ -70,102 +88,30 @@ namespace MT
                     {
                         if (somePoints[i].y > anEndPoint.y)
                         {
-                            filteredPoints.emplace_back(i, CM::ORIENTATION::LEFT_TURN, angle, dist);
+                            filteredLeft.emplace_back(angle, dist, i);
                         }
+                    }
+                    else if(orientation == CM::ORIENTATION::RIGHT_TURN)
+                    {
+                        filteredRight.emplace_back(angle, dist, i);
                     }
                     else
                     {
-                        filteredPoints.emplace_back(i, orientation, angle, dist);
+                        filteredLeft.emplace_back(angle, dist, i);
                     }
                 }
             }
 
             // Find sorted sequence of left and right points
             std::vector<size_t> sortedLeft, sortedRight;
+            locCollectSortedPoints(filteredLeft, std::less<>(), sortedLeft);
+            locCollectSortedPoints(filteredRight, [&](const auto& a, const auto& b){
+                const auto angle = std::get<0>(a) + (somePoints[std::get<2>(a)].y > anEndPoint.y ? (2.f * M_PI) : 0);
+                const auto otherAngle = std::get<0>(b) + (somePoints[std::get<2>(b)].y > anEndPoint.y ? (2.f * M_PI) : 0);
+                return angle < otherAngle || (angle == otherAngle && std::get<1>(a) < std::get<1>(b));
+            }, sortedRight);
 
-            {
-                int startIndex = -1;
-                for(int i = 0; i < filteredPoints.size(); ++i)
-                {
-                    const auto orientation = std::get<1>(filteredPoints[i]);
-                    const auto angle = std::get<2>(filteredPoints[i]);
-                    const auto distance = std::get<3>(filteredPoints[i]);
-                    if(orientation == CM::ORIENTATION::LEFT_TURN &&
-                       (startIndex == -1 || angle > std::get<2>(filteredPoints[startIndex]) ||
-                        (angle == std::get<2>(filteredPoints[startIndex]) && distance > std::get<3>(filteredPoints[startIndex]))))
-                    {
-                        startIndex = i;
-                    }
-                }
-
-                if(startIndex > -1)
-                {
-                    sortedLeft.emplace_back(std::get<0>(filteredPoints[startIndex]));
-                    for(int j = MOD(startIndex + 1, filteredPoints.size()); j != startIndex; j = MOD(j + 1, filteredPoints.size()))
-                    {
-                        const auto orientation = std::get<1>(filteredPoints[j]);
-                        if(orientation == CM::ORIENTATION::LEFT_TURN)
-                        {
-                            sortedLeft.emplace_back(std::get<0>(filteredPoints[j]));
-                        }
-                    }
-                }
-            }
-
-            {
-                int startIndex = -1;
-                for(int i = 0; i < filteredPoints.size(); ++i)
-                {
-                    const auto orientation = std::get<1>(filteredPoints[i]);
-                    if(orientation == CM::ORIENTATION::RIGHT_TURN)
-                    {
-                        if(startIndex == -1)
-                        {
-                            startIndex = i;
-                        }
-                        else
-                        {
-                            const auto pointIndex = std::get<0>(filteredPoints[i]);
-                            const auto distance = std::get<3>(filteredPoints[i]);
-                            auto angle = std::get<2>(filteredPoints[i]);
-
-                            if(somePoints[pointIndex].y > anEndPoint.y)
-                            {
-                                angle += 2.f * M_PI;
-                            }
-
-                            const auto otherPointIndex = std::get<0>(filteredPoints[startIndex]);
-                            auto otherAngle = std::get<2>(filteredPoints[startIndex]);
-
-                            if(somePoints[otherPointIndex].y > anEndPoint.y)
-                            {
-                                otherAngle += 2.f * M_PI;
-                            }
-
-                            if( angle > otherAngle ||
-                                (angle == otherAngle && distance > std::get<3>(filteredPoints[startIndex])))
-                            {
-                                startIndex = i;
-                            }
-                        }
-                    }
-                }
-
-                if(startIndex > -1)
-                {
-                    sortedRight.emplace_back(std::get<0>(filteredPoints[startIndex]));
-                    for(int j = MOD(startIndex + 1, filteredPoints.size()); j != startIndex; j = MOD(j + 1, filteredPoints.size()))
-                    {
-                        const auto orientation = std::get<1>(filteredPoints[j]);
-                        if(orientation == CM::ORIENTATION::RIGHT_TURN)
-                        {
-                            sortedRight.emplace_back(std::get<0>(filteredPoints[j]));
-                        }
-                    }
-                }
-            }
-
-            someOutSortedIndicesBySlope.reserve(filteredPoints.size());
+            someOutSortedIndicesBySlope.reserve(sortedLeft.size() + sortedRight.size());
             std::merge(sortedLeft.begin(), sortedLeft.end(),
                        sortedRight.begin(), sortedRight.end(),
                        std::back_inserter(someOutSortedIndicesBySlope), [&](const auto& aRightPointIndex, const auto& aLeftPointIndex){
