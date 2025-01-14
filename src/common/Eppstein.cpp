@@ -217,10 +217,7 @@ namespace MT
                                 if( !bestIndex || m > bestIndex->m ||
                                     (m == bestIndex->m && minArea < minimumAreas[IDX_STRUCT(bestIndex, pointsCount)]))
                                 {
-                                    bestIndex->m = m;
-                                    bestIndex->i = pi.index;
-                                    bestIndex->j = pj.index;
-                                    bestIndex->l = pl.index;
+                                    bestIndex = {m, pi.index, pj.index, pl.index};
                                 }
                             }
                         }
@@ -257,9 +254,11 @@ namespace MT
             if(aShouldReconstructHull)
             {
                 size_t m = bestIndex->m, i = bestIndex->i, j = bestIndex->j;
+                result.myHullIndices.emplace_back(i);
                 while (m > 2)
                 {
                     size_t l;
+                    const auto& latestHullPoint = result.myHullIndices.back();
                     const auto& clockWisePointsAbove = clockwiseSortedPoints[j];
                     std::vector<size_t> sortedIndicesBySlope;
                     locGetFirstLeftAndRight(clockWisePointsAbove, somePoints[i], somePoints[j], sortedIndicesBySlope);
@@ -267,9 +266,10 @@ namespace MT
                     {
                         const auto& current = clockWisePointsAbove[sortedIndicesBySlope[k]];
                         const auto& previous = clockWisePointsAbove[sortedIndicesBySlope[k - 1]];
-                        if( k == 0 ||
+                        if( (k == 0 ||
                             minimumAreas[IDX(m, i, j, current.index, pointsCount)] !=
-                            minimumAreas[IDX(m, i, j, previous.index, pointsCount)])
+                            minimumAreas[IDX(m, i, j, previous.index, pointsCount)]) &&
+                            CM::Orientation(somePoints[latestHullPoint], somePoints[j], current) >= CM::ORIENTATION::COLLINEAR)
                         {
                             l = clockWisePointsAbove[sortedIndicesBySlope[k]].index;
                             break;
@@ -280,7 +280,6 @@ namespace MT
                     j = l;
                 }
                 result.myHullIndices.emplace_back(j);
-                result.myHullIndices.emplace_back(i);
             }
         }
         return result;

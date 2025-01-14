@@ -8,7 +8,7 @@
 #include <vector>
 #include "CustomMath.h"
 
-#define DEBUG_EPPSTEIN
+//#define DEBUG_EPPSTEIN
 
 namespace MT
 {

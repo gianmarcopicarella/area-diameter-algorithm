@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -45,6 +46,11 @@ bool AreThereCollinearPoints(const std::vector<CM::Point2>& somePoints)
 
 int main(void)
 {
+    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::seconds;
+
     const std::string samplesPath = "../../data/samples";
     for (const auto & entry : fs::directory_iterator(samplesPath))
     {
@@ -59,20 +65,32 @@ int main(void)
                 std::vector<CM::Point2> points;
                 std::vector<long double> solutionsPY;
                 SZ::ReadPointsFromFile(entry.path() / fs::path{sampleFilename}, points);
-                SZ::ReadSolutionsFromFile(entry.path() / fs::path{resultsFilename}, solutionsPY);
                 const auto areThereCollinearPoints = AreThereCollinearPoints(points);
-                constexpr auto maxAllowedArea = std::numeric_limits<long double>::infinity();
+                constexpr auto maxAllowedArea = 250;//std::numeric_limits<long double>::infinity();
                 constexpr auto shouldReconstructHull = true;
-                const auto res = MT::EppsteinAlgorithm(points, points.size(), maxAllowedArea, shouldReconstructHull);
-                assert(solutionsPY.size() == (res.results.size() - 3));
+
+                auto t1 = high_resolution_clock::now();
+                const auto res = MT::EppsteinAlgorithm(points, 80, maxAllowedArea, shouldReconstructHull);
+                auto t2 = high_resolution_clock::now();
+
                 auto maxSolutionsDistance = 0.l;
-                for(int m = 0; m < solutionsPY.size(); ++m)
+/*
+                if(SZ::ReadSolutionsFromFile(entry.path() / fs::path{resultsFilename}, solutionsPY))
                 {
-                    const auto diff = res.results[m] - solutionsPY[m];
-                    maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
-                    assert(CM::IsCloseToZero(diff, 0.001));
+                    assert(solutionsPY.size() == (res.results.size() - 3));
+                    for(int m = 0; m < solutionsPY.size(); ++m)
+                    {
+                        const auto diff = res.results[m] - solutionsPY[m];
+                        maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
+                        assert(CM::IsCloseToZero(diff, 0.001));
+                    }
                 }
-                std::cout   << std::fixed << std::setprecision(8) << "File " << (1+i) << "/" << (filesCount / 2) << " done. Collinear points="
+*/
+                for(const auto idx : res.myHullIndices) std::cout << idx << ", ";
+                std::cout << std::endl;
+                std::cout << "area=" << res.myHullArea << ", count=" << res.myPointsCount << std::endl;
+
+                std::cout   << std::fixed << std::setprecision(8) << "File " << (1+i) << "/" << (filesCount / 2) << " done in " << duration_cast<seconds>(t2 - t1).count() << " seconds. Collinear points="
                             << (areThereCollinearPoints ? "yes" : "no") << ". Max distance=" << std::to_string(maxSolutionsDistance) << std::endl;
             }
         }
