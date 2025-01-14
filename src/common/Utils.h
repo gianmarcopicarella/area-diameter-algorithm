@@ -25,6 +25,8 @@ namespace MT
     bool ArePointsClockwise(const CM::Point2& aReferencePoint, const CM::Point2& aFirstPoint, const CM::Point2& aSecondPoint);
 
     void SortPointsClockWiseAroundPoint(const CM::Point2& aReferencePoint, std::vector<CM::Point2>& someOutClockWiseSortedPoints);
+
+    long double ComputeDiameter(const std::vector<CM::Point2>& somePoints);
 }
 
 

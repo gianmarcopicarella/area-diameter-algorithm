@@ -2,6 +2,7 @@
 
 #include "../common/Eppstein.h"
 #include "../common/Parser.h"
+#include "../common/Utils.h"
 
 #include <cassert>
 #include <iostream>
@@ -61,7 +62,7 @@ int main(void)
             for(size_t i = 0; i < filesCount / 2; ++i)
             {
                 const auto sampleFilename = std::string("data_") + std::to_string(i) + ".txt";
-                const auto resultsFilename =std::string("results_") + std::to_string(i) + ".txt";
+                const auto resultsFilename = std::string("results_") + std::to_string(i) + ".txt";
                 std::vector<CM::Point2> points;
                 std::vector<long double> solutionsPY;
                 SZ::ReadPointsFromFile(entry.path() / fs::path{sampleFilename}, points);
@@ -70,7 +71,7 @@ int main(void)
                 constexpr auto shouldReconstructHull = true;
 
                 auto t1 = high_resolution_clock::now();
-                const auto res = MT::EppsteinAlgorithm(points, 80, maxAllowedArea, shouldReconstructHull);
+                const auto res = MT::EppsteinAlgorithm(points, points.size(), maxAllowedArea, shouldReconstructHull);
                 auto t2 = high_resolution_clock::now();
 
                 auto maxSolutionsDistance = 0.l;
@@ -86,9 +87,15 @@ int main(void)
                     }
                 }
 */
-                for(const auto idx : res.myHullIndices) std::cout << idx << ", ";
+                std::vector<CM::Point2> hull;
+                for(const auto idx : res.myHullIndices)
+                {
+                    std::cout << idx << ", ";
+                    hull.emplace_back(points[idx]);
+                }
+
                 std::cout << std::endl;
-                std::cout << "area=" << res.myHullArea << ", count=" << res.myPointsCount << std::endl;
+                std::cout << "area=" << res.myHullArea << ", count=" << res.myPointsCount << ", diam=" << ComputeDiameter(hull) << std::endl;
 
                 std::cout   << std::fixed << std::setprecision(8) << "File " << (1+i) << "/" << (filesCount / 2) << " done in " << duration_cast<seconds>(t2 - t1).count() << " seconds. Collinear points="
                             << (areThereCollinearPoints ? "yes" : "no") << ". Max distance=" << std::to_string(maxSolutionsDistance) << std::endl;

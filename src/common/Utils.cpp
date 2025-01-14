@@ -225,4 +225,25 @@ namespace MT
         std::sort(someOutClockWiseSortedPoints.begin(), someOutClockWiseSortedPoints.end(),
                   std::bind(ArePointsClockwise, aReferencePoint, _1, _2));
     }
+
+    long double ComputeDiameter(const std::vector<CM::Point2>& somePoints)
+    {
+        auto result = 0.l;
+        for (const auto& point : somePoints)
+        {
+            for (const auto& anotherPoint : somePoints)
+            {
+                if(point.index != anotherPoint.index)
+                {
+                    const auto distance2 = CM::SquaredDistance(point, anotherPoint);
+                    if(distance2 > result)
+                    {
+                        result = distance2;
+                    }
+                }
+            }
+        }
+        return std::sqrtl(result);
+    }
+
 }
