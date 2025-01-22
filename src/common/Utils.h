@@ -27,6 +27,10 @@ namespace MT
     void SortPointsClockWiseAroundPoint(const CM::Point2& aReferencePoint, std::vector<CM::Point2>& someOutClockWiseSortedPoints);
 
     long double ComputeDiameter(const std::vector<CM::Point2>& somePoints);
+
+    void FindAntipodalPairs(
+            const std::vector<CM::Point2>& somePoints,
+            std::vector<std::pair<size_t, size_t>>& someOutAntipodalIndices);
 }
 
 

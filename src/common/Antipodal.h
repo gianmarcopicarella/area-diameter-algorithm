@@ -6,21 +6,30 @@
 #define MASTER_THESIS_ANTIPODAL_H
 
 #include <vector>
+#include "CustomMath.h"
 
 #define DEBUG_ANTIPODAL
+// #define VERBOSE_ANTIPODAL
 
 namespace MT
 {
     struct AntipodalResult
     {
-        bool myHasFoundSolution = false;
         long double myHullArea = 0;
         size_t myPointsCount = 0;
+        bool myHasFoundSolution = false;
         std::vector<size_t> myHullIndices;
 #ifdef DEBUG_ANTIPODAL
-        std::vector<long double> results;
+        std::vector<std::pair<long double, size_t>> results;
 #endif
     };
+
+    AntipodalResult AntipodalAlgorithm(
+            const std::vector<CM::Point2>& somePoints,
+            size_t aMaxPointsCount,
+            long double aMaxArea = std::numeric_limits<long double>::max(),
+            long double aMaxDiameter = std::numeric_limits<long double>::max(),
+            bool aShouldReconstructHull = false);
 }
 
 

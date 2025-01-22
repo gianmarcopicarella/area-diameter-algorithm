@@ -8,13 +8,35 @@
 #include "CustomMath.h"
 
 #include <string>
+#include <fstream>
+#include <cassert>
+#include <vector>
 
 namespace MT
 {
     namespace SZ
     {
         bool ReadPointsFromFile(const std::string& aFilePath, std::vector<CM::Point2>& someOutPoints);
-        bool ReadSolutionsFromFile(const std::string& aFilePath, std::vector<long double>& someOutSolutions);
+
+        template <typename T>
+        bool ReadSolutionsFromFile(const std::string& aFilePath, std::vector<T>& someOutSolutions)
+        {
+            std::ifstream file(aFilePath);
+            if(file.is_open())
+            {
+                int solutionsCount = 0;
+                file >> solutionsCount;
+                someOutSolutions.reserve(solutionsCount);
+                T entry;
+                while(file >> entry)
+                {
+                    someOutSolutions.emplace_back(entry);
+                }
+                assert(solutionsCount == someOutSolutions.size());
+                return true;
+            }
+            return false;
+        }
     }
 }
 

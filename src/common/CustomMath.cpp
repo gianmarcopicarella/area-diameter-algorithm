@@ -13,8 +13,9 @@ namespace MT
     {
         long double SquaredDistance(const Point2& aFirstPoint, const Point2& aSecondPoint)
         {
-            return  std::powl(aSecondPoint.x - aFirstPoint.x, 2.0f) +
-                    std::powl(aSecondPoint.y - aFirstPoint.y, 2.0f);
+            const long double dx = aSecondPoint.x - aFirstPoint.x;
+            const long double dy = aSecondPoint.y - aFirstPoint.y;
+            return dx * dx + dy * dy;
         }
 
         bool IsCloseToZero(long double aValue, long double anEpsilon)

@@ -10,6 +10,7 @@
 #include <functional>
 
 #define MOD(x, n) ((x) % (n))
+#define NEXT(x, n) ((x + 1) % (n))
 #define NEXT_CW_IDX(idx, seq) (((idx) + 1) % (seq.size()))
 #define PREV_CW_IDX(idx, seq) (((idx) - 1) % (seq.size()))
 
@@ -246,4 +247,56 @@ namespace MT
         return std::sqrtl(result);
     }
 
+    void FindAntipodalPairs(
+            const std::vector<CM::Point2>& somePoints,
+            std::vector<std::pair<size_t, size_t>>& someOutAntipodalIndices)
+    {
+        assert(somePoints.size() > 2);
+        const auto pointsCount = somePoints.size();
+        size_t pi = pointsCount - 1;
+        size_t qi = 0;
+
+        while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+        {
+            qi = NEXT(qi, pointsCount);
+        }
+
+        auto q0 = qi;
+        while (qi != 0)
+        {
+            pi = NEXT(pi, pointsCount);
+            someOutAntipodalIndices.emplace_back(somePoints[pi].index, somePoints[qi].index);
+
+            while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+            {
+                qi = NEXT(qi, pointsCount);
+                if(pi != q0 || qi != 0)
+                {
+                    someOutAntipodalIndices.emplace_back(somePoints[pi].index, somePoints[qi].index);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            const auto signedAreaDifference =
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) -
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]);
+
+            if(CM::IsCloseToZero(signedAreaDifference))
+            {
+                if(pi != q0 || qi != (pointsCount - 1))
+                {
+                    someOutAntipodalIndices.emplace_back(somePoints[pi].index, somePoints[NEXT(qi, pointsCount)].index);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
 }

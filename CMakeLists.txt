@@ -10,6 +10,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(GOOGLETEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest)
 
 # dependencies
+add_subdirectory(external/hopscotch-map)
 add_subdirectory(external/raylib)
 add_subdirectory(external/googletest)
 add_subdirectory(external/benchmark)

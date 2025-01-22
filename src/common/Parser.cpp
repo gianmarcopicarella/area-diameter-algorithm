@@ -3,9 +3,6 @@
 //
 
 #include "Parser.h"
-#include <fstream>
-#include <assert.h>
-#include <vector>
 
 namespace MT
 {
@@ -26,25 +23,6 @@ namespace MT
                     someOutPoints.emplace_back(x, y, index++);
                 }
                 assert(pointsCount == someOutPoints.size());
-                return true;
-            }
-            return false;
-        }
-
-        bool ReadSolutionsFromFile(const std::string& aFilePath, std::vector<long double>& someOutSolutions)
-        {
-            std::ifstream file(aFilePath);
-            if(file.is_open())
-            {
-                int solutionsCount = 0;
-                file >> solutionsCount;
-                someOutSolutions.reserve(solutionsCount);
-                long double minArea;
-                while(file >> minArea)
-                {
-                    someOutSolutions.emplace_back(minArea);
-                }
-                assert(solutionsCount == someOutSolutions.size());
                 return true;
             }
             return false;
