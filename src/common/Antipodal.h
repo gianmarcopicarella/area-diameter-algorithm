@@ -15,10 +15,10 @@ namespace MT
 {
     struct AntipodalResult
     {
-        long double myHullArea = 0;
-        size_t myPointsCount = 0;
-        bool myHasFoundSolution = false;
-        std::vector<size_t> myHullIndices;
+        long double myHullArea { std::numeric_limits<long double>::infinity() };
+        size_t myPointsCount { 0 };
+        bool myHasFoundSolution { false };
+        std::vector<size_t> myHullIndices {};
 #ifdef DEBUG_ANTIPODAL
         std::vector<std::pair<long double, size_t>> results;
 #endif

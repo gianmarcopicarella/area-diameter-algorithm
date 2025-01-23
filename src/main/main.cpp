@@ -20,7 +20,7 @@ int main(void)
     using std::chrono::seconds;
 
     std::vector<CM::Point2> points;
-    SZ::ReadPointsFromFile(fs::path{"../../data/samples/antipodal/60/data_0.txt"}, points);
+    SZ::ReadPointsFromFile(fs::path{"../../data/samples/antipodal/100/data_0.txt"}, points);
 
     constexpr auto maxDiameter = std::numeric_limits<long double>::infinity();
     constexpr auto maxArea = std::numeric_limits<long double>::infinity();
@@ -32,6 +32,8 @@ int main(void)
 
     auto sec_int = duration_cast<seconds>(t2 - t1);
     std::cout << "The program took " << sec_int.count() << " seconds to run" << std::endl;
+    for(auto i : res.myHullIndices) std::cout << i << ", ";
+    std::cout << std::endl;
 
     return 0;
 }
