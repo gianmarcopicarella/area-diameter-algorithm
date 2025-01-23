@@ -5,6 +5,7 @@
 #include "CustomMath.h"
 
 #include <cmath>
+#include <cassert>
 #include <functional>
 
 namespace MT
@@ -42,18 +43,20 @@ namespace MT
         ORIENTATION Orientation(const Point2& aFirstPoint, const Point2& aSecondPoint, const Point2& aThirdPoint)
         {
             const auto signedArea = SignedArea(aFirstPoint, aSecondPoint, aThirdPoint);
-            if(IsCloseToZero(signedArea))
-            {
-                return ORIENTATION::COLLINEAR;
-            }
-            else if(signedArea > 0)
+            if(signedArea > 0)
             {
                 return ORIENTATION::LEFT_TURN;
             }
-            else
+            else if(signedArea < 0)
             {
                 return ORIENTATION::RIGHT_TURN;
             }
+            else
+            {
+                assert(IsCloseToZero(signedArea));
+                return ORIENTATION::COLLINEAR;
+            }
+
         }
 
         long double Angle(const CM::Point2& aReferencePoint, const CM::Point2& aPoint)

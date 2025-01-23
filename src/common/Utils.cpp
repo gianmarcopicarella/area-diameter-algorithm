@@ -299,4 +299,75 @@ namespace MT
             }
         }
     }
+
+    void AreAntipodalPairs( const std::array<CM::Point2, 6>& somePoints,
+                            const size_t pointsCount,
+                            const size_t aFirstIndex, const size_t aSecondIndex,
+                            const size_t aThirdIndex, const size_t aFourthIndex,
+                            bool& anOutIsFirstAntipodal, bool& anOutIsSecondAntipodal)
+    {
+        assert(pointsCount > 2);
+        //const auto pointsCount = somePoints.size();
+        size_t pi = pointsCount - 1;
+        size_t qi = 0;
+
+        while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+        {
+            qi = NEXT(qi, pointsCount);
+        }
+
+        auto q0 = qi;
+        while (qi != 0)
+        {
+            pi = NEXT(pi, pointsCount);
+
+            anOutIsFirstAntipodal |=
+                    (somePoints[qi].index == aFirstIndex && somePoints[pi].index == aSecondIndex) |
+                    (somePoints[qi].index == aSecondIndex && somePoints[pi].index == aFirstIndex);
+            anOutIsSecondAntipodal |=
+                    (somePoints[qi].index == aFourthIndex && somePoints[pi].index == aThirdIndex) |
+                    (somePoints[qi].index == aThirdIndex && somePoints[pi].index == aFourthIndex);
+
+            while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+            {
+                qi = NEXT(qi, pointsCount);
+                if(pi != q0 || qi != 0)
+                {
+                    anOutIsFirstAntipodal |=
+                            (somePoints[qi].index == aFirstIndex && somePoints[pi].index == aSecondIndex) |
+                            (somePoints[qi].index == aSecondIndex && somePoints[pi].index == aFirstIndex);
+                    anOutIsSecondAntipodal |=
+                            (somePoints[qi].index == aFourthIndex && somePoints[pi].index == aThirdIndex) |
+                            (somePoints[qi].index == aThirdIndex && somePoints[pi].index == aFourthIndex);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            const auto signedAreaDifference =
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) -
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]);
+
+            if(CM::IsCloseToZero(signedAreaDifference))
+            {
+                if(pi != q0 || qi != (pointsCount - 1))
+                {
+                    anOutIsFirstAntipodal |=
+                            (somePoints[qi].index == aFirstIndex && somePoints[pi].index == aSecondIndex) |
+                            (somePoints[qi].index == aSecondIndex && somePoints[pi].index == aFirstIndex);
+                    anOutIsSecondAntipodal |=
+                            (somePoints[qi].index == aFourthIndex && somePoints[pi].index == aThirdIndex) |
+                            (somePoints[qi].index == aThirdIndex && somePoints[pi].index == aFourthIndex);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
 }

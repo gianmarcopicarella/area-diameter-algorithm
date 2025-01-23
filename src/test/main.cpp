@@ -129,7 +129,7 @@ TEST(AntipodalWithSolutions, BasicAssertions)
     {
         const auto diff = res.results[m].first - solutionsAreas[m];
         maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
-        // std::cout << m << ", " << res.results[m].first << ", " << solutionsAreas[m] << ", " << res.results[m].second << ", " << solutionsCounts[m] << std::endl;
+        std::cout << m << ", " << res.results[m].first << ", " << solutionsAreas[m] << ", " << res.results[m].second << ", " << solutionsCounts[m] << std::endl;
         EXPECT_TRUE(CM::IsCloseToZero(diff, 0.001) ||
                             (res.results[m].first == std::numeric_limits<long double>::infinity() &&
                              solutionsAreas[m] == std::numeric_limits<long double>::infinity()));
