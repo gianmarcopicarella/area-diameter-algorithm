@@ -31,6 +31,12 @@ namespace MT
     void FindAntipodalPairs(
             const std::vector<CM::Point2>& somePoints,
             std::vector<std::pair<size_t, size_t>>& someOutAntipodalIndices);
+
+    void AreAntipodalPairs( const std::array<CM::Point2, 6>& somePoints,
+                            const size_t aLen,
+                            const size_t aFirstIndex, const size_t aSecondIndex,
+                            const size_t aThirdIndex, const size_t aFourthIndex,
+                            bool& anOutIsFirstAntipodal, bool& anOutIsSecondAntipodal);
 }
 
 

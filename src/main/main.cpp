@@ -20,7 +20,7 @@ int main(void)
     using std::chrono::seconds;
 
     std::vector<CM::Point2> points;
-    SZ::ReadPointsFromFile(fs::path{"../../data/samples/antipodal/60/data_0.txt"}, points);
+    SZ::ReadPointsFromFile(fs::path{"../../data/samples/antipodal/100/data_0.txt"}, points);
 
     constexpr auto maxDiameter = std::numeric_limits<long double>::infinity();
     constexpr auto maxArea = std::numeric_limits<long double>::infinity();

@@ -12,8 +12,8 @@
 #include <tsl/hopscotch_map.h>
 #include <tsl/bhopscotch_map.h>
 
-#define TO_KEY(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
-
+#define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
+// #define MERGE(a, b, c, d) (((uint64_t)a) + (((uint64_t)b) << 16) + (((uint64_t)c) << 32) + (((uint64_t)d) << 48));
 //#define POINT_FILTER_TRI_AREA
 //#define
 
@@ -61,30 +61,31 @@ namespace MT
             const CM::Point2& s, const CM::Point2& t,
             const CM::Point2& l, const CM::Point2& pl,
             const CM::Point2& r, const CM::Point2& pr,
-            std::vector<CM::Point2>& someOutPoints)
+            std::array<CM::Point2, 6>& someOutPoints,
+            size_t& anOutLength)
         {
-            someOutPoints.reserve(6);
-            someOutPoints.emplace_back(t);
-            if(pl.index != someOutPoints.back().index)
+            anOutLength = 0;
+            someOutPoints[anOutLength++] = t;
+            if(pl.index != someOutPoints[anOutLength - 1].index)
             {
-                someOutPoints.emplace_back(pl);
+                someOutPoints[anOutLength++] = pl;
             }
-            if(l.index != someOutPoints.back().index)
+            if(l.index != someOutPoints[anOutLength - 1].index)
             {
-                someOutPoints.emplace_back(l);
+                someOutPoints[anOutLength++] = l;
             }
-            if(s.index != someOutPoints.back().index)
+            if(s.index != someOutPoints[anOutLength - 1].index)
             {
-                someOutPoints.emplace_back(s);
+                someOutPoints[anOutLength++] = s;
             }
-            if(pr.index != someOutPoints.back().index)
+            if(pr.index != someOutPoints[anOutLength - 1].index)
             {
-                someOutPoints.emplace_back(pr);
+                someOutPoints[anOutLength++] = pr;
             }
-            if( r.index != someOutPoints.back().index &&
-                r.index != someOutPoints.front().index)
+            if( r.index != someOutPoints[anOutLength - 1].index &&
+                r.index != someOutPoints[0].index)
             {
-                someOutPoints.emplace_back(r);
+                someOutPoints[anOutLength++] = r;
             }
         }
 
@@ -134,6 +135,7 @@ namespace MT
 
         AntipodalResult locProcessSegment(const CM::Point2& aStartPoint,
                                         const CM::Point2& anEndPoint,
+                                        const std::vector<CM::Point2>& somePoints,
                                         const std::vector<CM::Point2>& someLeftPoints,
                                         const std::vector<CM::Point2>& someRightPoints,
                                         const std::vector<std::vector<int>>& someBelowPointsCounts,
@@ -144,8 +146,12 @@ namespace MT
         {
             const auto maxAllowedPoints = std::min(aMaxPointsCount, someRightPoints.size() + someLeftPoints.size());
             if(maxAllowedPoints == 0) return AntipodalResult{ std::numeric_limits<long double>::infinity(), 0 };
-            tsl::hopscotch_map<size_t, long double> cache;
-            std::vector<std::vector<std::tuple<CM::Point2, CM::Point2, CM::Point2, CM::Point2>>> iterCache {maxAllowedPoints + 1, std::vector<std::tuple<CM::Point2, CM::Point2, CM::Point2, CM::Point2>>{}};
+            // tsl::hopscotch_map<size_t, long double> cache;
+            // std::vector<std::vector<std::tuple<CM::Point2, CM::Point2, CM::Point2, CM::Point2>>> iterCache {maxAllowedPoints + 1, std::vector<std::tuple<CM::Point2, CM::Point2, CM::Point2, CM::Point2>>{}};
+
+            struct Entry { size_t l, pl, r, pr, q; long double a; };
+            std::vector<std::unordered_map<size_t, Entry>> cache {maxAllowedPoints + 1,
+                                                                  std::unordered_map<size_t, Entry>{}};
 
             std::vector<CM::Point2> leftPointsWithStart, leftPointsWithEnd,
                                     rightPointsWithStart, rightPointsWithEnd;
@@ -160,57 +166,76 @@ namespace MT
             {
                 for (const auto& pr: rightPointsWithStart)
                 {
-                    iterCache[0].push_back({aStartPoint, pl, anEndPoint, pr});
-                    cache.insert(std::make_pair(TO_KEY(aStartPoint.index, pl.index, anEndPoint.index, pr.index, 0, aMaxPointsCount), 0));
-                    assert(aStartPoint.index != pl.index);
+                    const auto key = KEY(aStartPoint.index, pl.index, anEndPoint.index, pr.index, aTotalPointsCount);
+                    Entry entry {aStartPoint.index, pl.index, anEndPoint.index, pr.index, 0, 0};
+                    cache[0].insert({key, entry});
                 }
             }
 
             const auto segmentLength2 = CM::SquaredDistance(aStartPoint, anEndPoint);
             AntipodalResult result {std::numeric_limits<long double>::infinity(), 0};
 
+
+            std::array<CM::Point2, 6> poly;
+
             for (size_t k = 0; k < maxAllowedPoints + 1; ++k)
             {
-                for (const auto& entry : iterCache[k])
+                for (const auto& pair : cache[k])
                 {
-                    const auto& l = std::get<0>(entry);
-                    const auto& pl = std::get<1>(entry);
-                    const auto& r = std::get<2>(entry);
-                    const auto& pr = std::get<3>(entry);
-                    if( CM::SquaredDistance(l, r) > segmentLength2)
+                    const auto& entry = pair.second;
+                    const auto& l = somePoints[entry.l];
+                    const auto& r = somePoints[entry.r];
+
+                    if(CM::SquaredDistance(l, r) > segmentLength2)
                     {
                         continue;
                     }
-                    const auto currKey = TO_KEY(l.index, pl.index, r.index, pr.index, k, aMaxPointsCount);
-                    const auto currArea = cache.at(currKey);
+
+                    const auto& pl = somePoints[entry.pl];
+                    const auto& pr = somePoints[entry.pr];
+                    const auto& currentArea = entry.a;
+
                     if(pl.index == anEndPoint.index && pr.index == aStartPoint.index)
                     {
                         if( k > 0 &&
                             (result.myPointsCount < k ||
-                             (result.myPointsCount == k && currArea < result.myHullArea)))
+                             (result.myPointsCount == k && currentArea < result.myHullArea)))
                         {
-                            result.myHullArea = currArea;
+                            result.myHullArea = currentArea;
                             result.myPointsCount = k;
                         }
                         continue;
                     }
-                    std::vector<CM::Point2> currPoly;
-                    locKeepUniquePolyPoints(aStartPoint, anEndPoint, l, pl, r, pr, currPoly);
+
+                    size_t aPolyLength = 0;
+                    locKeepUniquePolyPoints(aStartPoint, anEndPoint, l, pl, r, pr, poly, aPolyLength);
+
+                    /*
+                    Should not be needed because the previous check already filters out all the cases for which currPoly
+                    has less than 3 unique vertices
                     if(currPoly.size() < 3)
                     {
+                        std::cout << "ao" << std::endl;
+                        assert(false);
                         continue;
                     }
+                    */
 
-                    std::vector<std::pair<size_t, size_t>> currAntipodalPairs;
-                    FindAntipodalPairs(currPoly, currAntipodalPairs);
+                    //std::vector<std::pair<size_t, size_t>> currAntipodalPairs;
+                    //FindAntipodalPairs(currPoly, currAntipodalPairs);
 
+                    /*
+                    Should not be needed
                     if(!locAreAntipodal(currAntipodalPairs, l, r))
                     {
+                        throw std::runtime_error("DIOP!");
                         continue;
                     }
+                    */
 
-                    const auto isPrevLeftAPWithRight = locAreAntipodal(currAntipodalPairs, pl, r);
-                    const auto isPrevRightAPWithLeft = locAreAntipodal(currAntipodalPairs, pr, l);
+                    bool isPrevLeftAPWithRight = false, isPrevRightAPWithLeft = false;
+                    AreAntipodalPairs(poly, aPolyLength, pl.index, r.index,
+                                      pr.index, l.index, isPrevLeftAPWithRight, isPrevRightAPWithLeft);
 
                     if(isPrevLeftAPWithRight || (pr.index == aStartPoint.index && isPrevRightAPWithLeft))
                     {
@@ -221,18 +246,20 @@ namespace MT
                         {
                             if (ql.index != l.index && ql.index != pl.index && locIsValidEdge(ql, pl, l, aStartPoint, anEndPoint))
                             {
-                                const auto nextKey = TO_KEY(pl.index, ql.index, r.index, pr.index, k + triangleCount, aTotalPointsCount);
-                                if(currArea + triangleArea <= aMaxArea)
+                                const auto nextKey = KEY(pl.index, ql.index, r.index, pr.index, aTotalPointsCount);
+                                if(currentArea + triangleArea <= aMaxArea)
                                 {
-                                    auto nextAreaIter = cache.find(nextKey);
-                                    if(nextAreaIter == cache.end())
+                                    auto& nextCache = cache[k + triangleCount];
+                                    auto nextAreaPair = nextCache.find(nextKey);
+                                    if(nextAreaPair == nextCache.end())
                                     {
-                                        cache.insert({nextKey, currArea + triangleArea});
-                                        iterCache[k + triangleCount].push_back({pl, ql, r, pr});
+                                        Entry newEntry {pl.index, ql.index, r.index, pr.index, l.index, currentArea + triangleArea};
+                                        nextCache.insert({nextKey, newEntry});
                                     }
-                                    else
+                                    else if(currentArea + triangleArea < nextAreaPair->second.a)
                                     {
-                                        nextAreaIter.value() = std::fminl(nextAreaIter.value(), currArea + triangleArea);
+                                        nextAreaPair->second.a = currentArea + triangleArea;
+                                        nextAreaPair->second.q = l.index;
                                     }
                                 }
                             }
@@ -248,20 +275,22 @@ namespace MT
                         {
                             if (qr.index != r.index && qr.index != pr.index && locIsValidEdge(qr, pr, r, aStartPoint, anEndPoint))
                             {
-                                if(currArea + triangleArea <= aMaxArea)
+                                if(currentArea + triangleArea <= aMaxArea)
                                 {
-                                    const auto nextKey = TO_KEY(l.index, pl.index, pr.index, qr.index, k + triangleCount, aTotalPointsCount);
-                                    if(currArea + triangleArea <= aMaxArea)
+                                    const auto nextKey = KEY(l.index, pl.index, pr.index, qr.index, aTotalPointsCount);
+                                    if(currentArea + triangleArea <= aMaxArea)
                                     {
-                                        auto nextAreaIter = cache.find(nextKey);
-                                        if(nextAreaIter == cache.end())
+                                        auto& nextCache = cache[k + triangleCount];
+                                        auto nextAreaPair = nextCache.find(nextKey);
+                                        if(nextAreaPair == nextCache.end())
                                         {
-                                            cache.insert({nextKey, currArea + triangleArea});
-                                            iterCache[k + triangleCount].push_back({l, pl, pr, qr});
+                                            Entry newEntry {l.index, pl.index, pr.index, qr.index, r.index, currentArea + triangleArea};
+                                            nextCache.insert({nextKey, newEntry});
                                         }
-                                        else
+                                        else if(currentArea + triangleArea < nextAreaPair->second.a)
                                         {
-                                            nextAreaIter.value() = std::fminl(nextAreaIter.value(), currArea + triangleArea);
+                                            nextAreaPair->second.a = currentArea + triangleArea;
+                                            nextAreaPair->second.q = r.index;
                                         }
                                     }
                                 }
@@ -395,7 +424,15 @@ namespace MT
                 {
                     std::vector<CM::Point2> leftPoints, rightPoints;
                     locPartitionLeftAndRightPoints(somePoints,somePoints[i],somePoints[j],leftPoints,rightPoints);
-                    pairResult = locProcessSegment(somePoints[i], somePoints[j], leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, somePoints.size(), aMaxPointsCount, aMaxArea);
+
+                    /*
+                    if(leftPoints.size() + rightPoints.size() < result.myPointsCount)
+                    {
+                        continue;
+                    }
+                    */
+
+                    pairResult = locProcessSegment(somePoints[i], somePoints[j], somePoints, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, somePoints.size(), aMaxPointsCount, aMaxArea);
                     if( pairResult.myPointsCount > result.myPointsCount ||
                         (pairResult.myPointsCount == result.myPointsCount && pairResult.myHullArea < result.myHullArea))
                     {

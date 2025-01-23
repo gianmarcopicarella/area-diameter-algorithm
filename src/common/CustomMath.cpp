@@ -41,18 +41,19 @@ namespace MT
 
         ORIENTATION Orientation(const Point2& aFirstPoint, const Point2& aSecondPoint, const Point2& aThirdPoint)
         {
-            const auto signedArea = SignedArea(aFirstPoint, aSecondPoint, aThirdPoint);
-            if(IsCloseToZero(signedArea))
-            {
-                return ORIENTATION::COLLINEAR;
-            }
-            else if(signedArea > 0)
+            const auto& signedArea = SignedArea(aFirstPoint, aSecondPoint, aThirdPoint);
+            if(signedArea > 0)
             {
                 return ORIENTATION::LEFT_TURN;
             }
-            else
+            else if(signedArea < 0)
             {
                 return ORIENTATION::RIGHT_TURN;
+            }
+            else
+            {
+                // IsCloseToZero(signedArea)
+                return ORIENTATION::COLLINEAR;
             }
         }
 
