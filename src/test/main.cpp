@@ -7,8 +7,6 @@
 //#define VERBOSE
 
 #include <iostream>
-#include <iomanip>
-
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -50,8 +48,9 @@ bool AreThereCollinearPoints(const std::vector<CM::Point2>& somePoints)
 TEST(EppsteinWithSolutions, BasicAssertions)
 {
     const std::vector<std::string> paths = {
-            "../../data/samples/eppstein/30",
-            /*"../../data/samples/eppstein/40",
+            "../../data/samples/eppstein/20",
+            /*"../../data/samples/eppstein/30",
+            "../../data/samples/eppstein/40",
             "../../data/samples/eppstein/40_norm",
             "../../data/samples/eppstein/50",
             "../../data/samples/eppstein/80",
@@ -69,22 +68,28 @@ TEST(EppsteinWithSolutions, BasicAssertions)
         {
             const auto sampleFilename = std::string("data_") + std::to_string(i) + ".txt";
             const auto resultsFilename = std::string("results_") + std::to_string(i) + ".txt";
+
             std::vector<CM::Point2> points;
             std::vector<long double> solutionsPY;
             SZ::ReadPointsFromFile(fs::path{path} / fs::path{sampleFilename}, points);
-            constexpr auto maxAllowedArea = std::numeric_limits<long double>::infinity();
+
+            const auto& metadata = SZ::ReadSolutionsFromFile(fs::path{path} / fs::path{resultsFilename}, solutionsPY);
+
+            EXPECT_TRUE(metadata.has_value());
+            const auto maxAllowedArea = std::get<0>(metadata.value());
+            /* const auto maxAllowedDiameter = std::get<1>(metadata.value()); */
+            const auto maxAllowedPointsCount = std::get<2>(metadata.value());
             constexpr auto shouldReconstructHull = true;
-            const auto res = MT::EppsteinAlgorithm(points, points.size(), maxAllowedArea, shouldReconstructHull);
+
+            const auto res = MT::EppsteinAlgorithm(points, maxAllowedPointsCount, maxAllowedArea, shouldReconstructHull);
+
             auto maxSolutionsDistance = 0.l;
-            if(SZ::ReadSolutionsFromFile(fs::path{path} / fs::path{resultsFilename}, solutionsPY))
+            EXPECT_EQ(solutionsPY.size(), (res.results.size() - 3));
+            for(int m = 0; m < solutionsPY.size(); ++m)
             {
-                EXPECT_EQ(solutionsPY.size(), (res.results.size() - 3));
-                for(int m = 0; m < solutionsPY.size(); ++m)
-                {
-                    const auto diff = res.results[m] - solutionsPY[m];
-                    maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
-                    EXPECT_TRUE(CM::IsCloseToZero(diff, 0.001));
-                }
+                const auto diff = res.results[m] - solutionsPY[m];
+                maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
+                EXPECT_TRUE(CM::IsCloseToZero(diff, 0.001));
             }
 #ifdef VERBOSE
             const auto areThereCollinearPoints = AreThereCollinearPoints(points);
@@ -102,38 +107,51 @@ TEST(AntipodalWithSolutions, BasicAssertions)
             "../../data/samples/antipodal/60"
     };
 
-    const auto sampleFilename = std::string("data_") + std::to_string(0) + ".txt";
-    const auto resultsAreaFilename = std::string("results_areas_") + std::to_string(0) + ".txt";
-    const auto resultsCountsFilename = std::string("results_counts_") + std::to_string(0) + ".txt";
-
-    std::vector<CM::Point2> points;
-    std::vector<long double> solutionsAreas;
-    std::vector<size_t> solutionsCounts;
-
-    SZ::ReadPointsFromFile(fs::path{paths[0]} / fs::path{sampleFilename}, points);
-    SZ::ReadSolutionsFromFile(fs::path{paths[0]} / fs::path{resultsAreaFilename}, solutionsAreas);
-    SZ::ReadSolutionsFromFile(fs::path{paths[0]} / fs::path{resultsCountsFilename}, solutionsCounts);
-
-    constexpr auto maxAllowedArea = std::numeric_limits<long double>::infinity();
-    constexpr auto maxAllowedDiameter = std::numeric_limits<long double>::infinity();
-    const auto maxPointsCount = points.size();
-    constexpr auto shouldReconstructHull = true;
-
-    const auto res = MT::AntipodalAlgorithm(points, maxPointsCount, maxAllowedArea, maxAllowedDiameter, shouldReconstructHull);
-    auto maxSolutionsDistance = 0.l;
-
-    EXPECT_EQ(solutionsAreas.size(), res.results.size());
-    EXPECT_EQ(solutionsCounts.size(), res.results.size());
-
-    for(int m = 0; m < res.results.size(); ++m)
+    for (const auto & path : paths)
     {
-        const auto diff = res.results[m].first - solutionsAreas[m];
-        maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
-        std::cout << m << ", " << res.results[m].first << ", " << solutionsAreas[m] << ", " << res.results[m].second << ", " << solutionsCounts[m] << std::endl;
-        EXPECT_TRUE(CM::IsCloseToZero(diff, 0.001) ||
+        const auto filesCount = CountFilesInDirectory(path);
+#ifdef VERBOSE
+        std::cout << "TESTING SAMPLES IN FOLDER: " << path << std::endl;
+#endif
+        for(size_t i = 0; i < filesCount / 2; ++i)
+        {
+            const auto sampleFilename = std::string("data_") + std::to_string(i) + ".txt";
+            const auto resultsFilename = std::string("results_") + std::to_string(i) + ".txt";
+            std::vector<CM::Point2> points;
+            SZ::ReadPointsFromFile(fs::path{path} / fs::path{sampleFilename}, points);
+
+            std::vector<long double> correctAreas;
+            std::vector<size_t> correctCounts;
+            const auto& metadata = SZ::ReadSolutionsFromFile(fs::path{path} / fs::path{resultsFilename}, correctAreas, correctCounts);
+            EXPECT_TRUE(metadata.has_value());
+
+            const auto maxAllowedArea = std::get<0>(metadata.value());
+            const auto maxAllowedDiameter = std::get<1>(metadata.value());
+            const auto maxAllowedPointsCount = std::get<2>(metadata.value());
+            constexpr auto shouldReconstructHull = true;
+
+            const auto res = MT::AntipodalAlgorithm(points, maxAllowedPointsCount, maxAllowedArea, maxAllowedDiameter, shouldReconstructHull);
+
+            auto maxSolutionsDistance = 0.l;
+            EXPECT_EQ(correctAreas.size(), res.results.size());
+            EXPECT_EQ(correctCounts.size(), res.results.size());
+
+            for(int m = 0; m < res.results.size(); ++m)
+            {
+                const auto diff = res.results[m].first - correctAreas[m];
+                maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
+                // std::cout << m << ", " << res.results[m].first << ", " << correctAreas[m] << ", " << res.results[m].second << ", " << correctCounts[m] << std::endl;
+                EXPECT_TRUE(CM::IsCloseToZero(diff, 0.001) ||
                             (res.results[m].first == std::numeric_limits<long double>::infinity() &&
-                             solutionsAreas[m] == std::numeric_limits<long double>::infinity()));
-        EXPECT_EQ(res.results[m].second, solutionsCounts[m]);
+                                    correctAreas[m] == std::numeric_limits<long double>::infinity()));
+                EXPECT_EQ(res.results[m].second, correctCounts[m]);
+            }
+#ifdef VERBOSE
+            const auto areThereCollinearPoints = AreThereCollinearPoints(points);
+            std::cout   << std::fixed << std::setprecision(8) << "File " << (1+i) << "/" << (filesCount / 2) << ". Collinear points="
+                        << (areThereCollinearPoints ? "yes" : "no") << ". Max distance=" << std::to_string(maxSolutionsDistance) << std::endl;
+#endif
+        }
     }
 }
 

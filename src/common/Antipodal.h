@@ -8,8 +8,10 @@
 #include <vector>
 #include "CustomMath.h"
 
-#define DEBUG_ANTIPODAL
 // #define VERBOSE_ANTIPODAL
+#define DEBUG_ANTIPODAL
+
+// #define OPT_USE_OPTIMAL_SOLUTION
 
 namespace MT
 {
