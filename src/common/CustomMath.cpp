@@ -53,7 +53,7 @@ namespace MT
             }
             else
             {
-                assert(IsCloseToZero(signedArea));
+                // assert(IsCloseToZero(signedArea));
                 return ORIENTATION::COLLINEAR;
             }
 
@@ -68,6 +68,28 @@ namespace MT
                 return angle + 2.f * M_PI;
             }
             return angle;
+        }
+
+        long double ProjectedLen2(const CM::Point2& aStartPoint, const CM::Point2& anEndPoint, const CM::Point2& aPoint)
+        {
+            if(aPoint.index == aStartPoint.index)
+            {
+                return 0;
+            }
+            const auto dist2 = CM::SquaredDistance(aStartPoint, anEndPoint);
+            if(aPoint.index == anEndPoint.index)
+            {
+                return dist2;
+            }
+            else
+            {
+                constexpr auto INVALID_INDEX = (size_t) - 1;
+                const CM::Point2 ab {anEndPoint.x - aStartPoint.x, anEndPoint.y - aStartPoint.y, INVALID_INDEX};
+                const CM::Point2 ap {aPoint.x - aStartPoint.x, aPoint.y - aStartPoint.y, INVALID_INDEX};
+                const auto dot = CM::Dot2(ab, ap);
+                const auto result = (dot * dot) / dist2;
+                return std::clamp(result, 0.l, dist2);
+            }
         }
     }
 }

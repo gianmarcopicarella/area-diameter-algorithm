@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <queue>
 
 #include "Antipodal.h"
 #include "Utils.h"
@@ -12,8 +13,10 @@
 #include <tsl/hopscotch_map.h>
 #include <tsl/bhopscotch_map.h>
 
+
 // #define TO_KEY(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
+#define KEY2(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
 //#define POINT_FILTER_TRI_AREA
 //#define
 
@@ -105,7 +108,7 @@ namespace MT
             someOutPoints.back() = anotherPoint;
         }
 
-        struct Entry { size_t l, pl, r, pr, q = INVALID_INDEX; long double a; bool isLeft {false}; };
+        struct Entry { size_t l, pl, r, pr, q; long double a; bool isLeft {false}; };
 
         template <bool isLeft = false>
         void locInsertOrUpdateMinArea(const size_t a, const size_t b, const size_t c, const size_t d, const size_t e,
@@ -120,7 +123,7 @@ namespace MT
                 auto nextAreaIter = anOutcache.find(key);
                 if(nextAreaIter == anOutcache.end())
                 {
-                    anOutcache.insert({key, Entry {a, b, c, d, e, aCurrentArea, isLeft}});
+                    anOutcache.emplace(key, Entry{a, b, c, d, e, aCurrentArea, isLeft});
                 }
                 else if(aCurrentArea < nextAreaIter->second.a)
                 {
@@ -131,18 +134,39 @@ namespace MT
             }
         }
 
+        template <bool Ascending=true>
+        void locSortPointsByProjectionLength(
+                const CM::Point2& aStartPoint,
+                const CM::Point2& anEndPoint,
+                std::vector<CM::Point2>& someOutSortedPoints)
+        {
+            std::sort(someOutSortedPoints.begin(), someOutSortedPoints.end(), [&](auto& a, auto& b){
+                if constexpr (Ascending)
+                {
+                    return
+                        CM::ProjectedLen2(aStartPoint, anEndPoint, a) <=
+                        CM::ProjectedLen2(aStartPoint, anEndPoint, b);
+                }
+                else
+                {
+                    return
+                        CM::ProjectedLen2(aStartPoint, anEndPoint, a) >=
+                        CM::ProjectedLen2(aStartPoint, anEndPoint, b);
+                }
+            });
+        }
 
-        AntipodalResult locProcessSegment(const CM::Point2& aStartPoint,
-                                        const CM::Point2& anEndPoint,
-                                        const std::vector<CM::Point2>& somePoints,
-                                        const std::vector<CM::Point2>& someLeftPoints,
-                                        const std::vector<CM::Point2>& someRightPoints,
-                                        const std::vector<std::vector<int>>& someBelowPointsCounts,
-                                        const std::vector<std::vector<int>>& someCollinearPointsCounts,
-                                        const size_t aTotalPointsCount,
-                                        const size_t aMaxPointsCount,
-                                        const long double aMaxArea,
-                                          std::vector<std::unordered_map<size_t, Entry>>& cache)
+        AntipodalResult locProcessSegment(  const CM::Point2& aStartPoint,
+                                            const CM::Point2& anEndPoint,
+                                            const std::vector<CM::Point2>& somePoints,
+                                            const std::vector<CM::Point2>& someLeftPoints,
+                                            const std::vector<CM::Point2>& someRightPoints,
+                                            const std::vector<std::vector<int>>& someBelowPointsCounts,
+                                            const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                            const size_t aTotalPointsCount,
+                                            const size_t aMaxPointsCount,
+                                            const long double aMaxArea,
+                                            std::vector<std::unordered_map<size_t, Entry>>& cache)
         {
             AntipodalResult result;
             const auto maxAllowedPoints = std::min(aMaxPointsCount, someRightPoints.size() + someLeftPoints.size());
@@ -152,15 +176,23 @@ namespace MT
                 return result;
             }
 
-            std::vector<CM::Point2> leftPointsWithStart, leftPointsWithEnd,
-                                    rightPointsWithStart, rightPointsWithEnd;
-
-            locCopyListAndPoint(someLeftPoints, aStartPoint, leftPointsWithStart);
+            std::vector<CM::Point2> leftPointsWithEnd, rightPointsWithStart;
             locCopyListAndPoint(someRightPoints, aStartPoint, rightPointsWithStart);
             locCopyListAndPoint(someLeftPoints, anEndPoint, leftPointsWithEnd);
-            locCopyListAndPoint(someRightPoints, anEndPoint, rightPointsWithEnd);
 
-            // Initialize entries at k = 0
+            // constexpr auto ascending = false;
+            std::unordered_map<size_t, size_t> startIndices;
+            locSortPointsByProjectionLength<true>(aStartPoint, anEndPoint, leftPointsWithEnd);
+            locSortPointsByProjectionLength<false>(aStartPoint, anEndPoint, rightPointsWithStart);
+            for(size_t i = 0; i < leftPointsWithEnd.size(); ++i)
+            {
+                startIndices.insert({leftPointsWithEnd[i].index, i + 1});
+            }
+            for(size_t i = 0; i < rightPointsWithStart.size(); ++i)
+            {
+                startIndices.insert({rightPointsWithStart[i].index, i + 1});
+            }
+
             for (const auto& pl: leftPointsWithEnd)
             {
                 for (const auto& pr: rightPointsWithStart)
@@ -215,13 +247,15 @@ namespace MT
                     {
                         const auto triangleArea = std::fabsl(CM::SignedArea(anEndPoint, l, pl));
                         const auto triangleCount = 1 + PointsInTriangle(anEndPoint, l, pl, someBelowPointsCounts, someCollinearPointsCounts);
-
-                        for (const auto& ql : leftPointsWithEnd)
+                        for(size_t i = startIndices[pl.index]; i < leftPointsWithEnd.size(); ++i)
                         {
-                            if (ql.index != l.index && ql.index != pl.index && locIsValidEdge(ql, pl, l, aStartPoint, anEndPoint))
+                            const auto& ql = leftPointsWithEnd[i];
+                            assert(ql.index != l.index && ql.index != pl.index);
+                            if( CM::Orientation(ql, pl, l) >= CM::ORIENTATION::COLLINEAR &&
+                                CM::Orientation(ql, pl, anEndPoint) >= CM::ORIENTATION::COLLINEAR)
                             {
                                 locInsertOrUpdateMinArea<true>(pl.index, ql.index, r.index, pr.index, l.index,
-                                                         currArea + triangleArea, aMaxArea, aTotalPointsCount, cache[k + triangleCount]);
+                                                               currArea + triangleArea, aMaxArea, aTotalPointsCount, cache[k + triangleCount]);
                             }
                         }
                     }
@@ -230,13 +264,15 @@ namespace MT
                     {
                         const auto triangleArea = std::fabsl(CM::SignedArea(aStartPoint, r, pr));
                         const auto triangleCount = 1 + PointsInTriangle(aStartPoint, r, pr, someBelowPointsCounts, someCollinearPointsCounts);
-
-                        for (const auto& qr : rightPointsWithStart)
+                        for(size_t i = startIndices[pr.index]; i < rightPointsWithStart.size(); ++i)
                         {
-                            if (qr.index != r.index && qr.index != pr.index && locIsValidEdge(qr, pr, r, aStartPoint, anEndPoint))
+                            const auto& qr = rightPointsWithStart[i];
+                            assert(qr.index != r.index && qr.index != pr.index);
+                            if (CM::Orientation(qr, pr, r) >= CM::ORIENTATION::COLLINEAR &&
+                                CM::Orientation(qr, pr, aStartPoint) >= CM::ORIENTATION::COLLINEAR)
                             {
                                 locInsertOrUpdateMinArea<false>(l.index, pl.index, pr.index, qr.index, r.index,
-                                                         currArea + triangleArea, aMaxArea, aTotalPointsCount, cache[k + triangleCount]);
+                                                                currArea + triangleArea, aMaxArea, aTotalPointsCount, cache[k + triangleCount]);
                             }
                         }
                     }
@@ -331,7 +367,7 @@ namespace MT
         }
 
         const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;
-        std::pair<size_t, size_t> bestPointsPair;
+        std::pair<size_t, size_t> bestPair;
         std::vector<std::unordered_map<size_t, Entry>> cache {somePoints.size(),
                                                               std::unordered_map<size_t, Entry>{}};
 
@@ -352,12 +388,11 @@ namespace MT
                         result.myPointsCount = pairResult.myPointsCount;
                         result.myHullArea = pairResult.myHullArea;
                         result.myHasFoundSolution = true;
-                        bestPointsPair = std::make_pair(i, j);
+                        bestPair = std::make_pair(i, j);
                     }
                     locClearCache(cache);
                 }
 #ifdef DEBUG_ANTIPODAL
-                if(pairResult.myPointsCount > 0) pairResult.myPointsCount += 2;
                 result.results.emplace_back(pairResult.myHullArea, pairResult.myPointsCount);
 #endif
 
@@ -370,8 +405,13 @@ namespace MT
 
         if(result.myHasFoundSolution && aShouldReconstructHull)
         {
+            const auto& s = somePoints[bestPair.first];
+            const auto& t = somePoints[bestPair.second];
+            std::vector<CM::Point2> leftPoints, rightPoints;
+            locPartitionLeftAndRightPoints(somePoints, s, t, leftPoints,rightPoints);
+            locProcessSegment(s, t, somePoints, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, somePoints.size(), aMaxPointsCount, aMaxArea, cache);
             locReconstructHull(cache, somePoints,pointsBelowCounts,
-                               collinearPointsCounts, somePoints[bestPointsPair.first], somePoints[bestPointsPair.second],
+                               collinearPointsCounts, s, t,
                                result.myPointsCount - 2, result.myHullIndices);
         }
 
