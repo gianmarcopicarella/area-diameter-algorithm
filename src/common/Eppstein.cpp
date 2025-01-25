@@ -222,7 +222,7 @@ namespace MT
                             }
                         }
 #ifdef DEBUG_EPPSTEIN
-                        results[m - 3] = std::min(results[m - 3], minArea);
+                        results[m] = std::min(results[m], minArea);
 #endif
                         minimumAreas[IDX(m, pi.index, pj.index, pl.index, pointsCount)] = minArea;
                     }
