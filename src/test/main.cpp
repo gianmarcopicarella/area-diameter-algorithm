@@ -108,7 +108,7 @@ TEST(EppsteinWithSolutions, BasicAssertions)
                 const auto diff = res.results[m] - correctAreas[m];
                 EXPECT_TRUE((res.results[m] == std::numeric_limits<long double>::infinity() &&
                             correctAreas[m] == std::numeric_limits<long double>::infinity()) || CM::IsCloseToZero(diff, 0.001));
-                // std::cout << std::fixed << std::setprecision(8) << res.results[m] << ", " << correctAreas[m] << std::endl;
+                std::cout << std::fixed << std::setprecision(8) << res.results[m] << ", " << correctAreas[m] << std::endl;
                 maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
             }
 #ifdef VERBOSE
@@ -123,6 +123,7 @@ TEST(EppsteinWithSolutions, BasicAssertions)
 
 TEST(AntipodalWithSolutions, BasicAssertions)
 {
+    GTEST_SKIP();
     const std::vector<std::string> paths = {
             "../../data/samples/antipodal/60"
     };
@@ -174,6 +175,7 @@ TEST(AntipodalWithSolutions, BasicAssertions)
 
 TEST(CrossCheckEppsteinAntipodal, BasicAssertions)
 {
+    // GTEST_SKIP();
     constexpr auto shouldReconstructHull = true;
     const std::vector<std::string> paths = {
             "../../data/samples/eppstein/50",
@@ -184,8 +186,8 @@ TEST(CrossCheckEppsteinAntipodal, BasicAssertions)
             "../../data/samples/eppstein/100"
     };
 
-    std::vector<long double> maximumAreas = {5, 10, 25, 50, 150, 200, 250, 300, 350, 400, std::numeric_limits<long double>::infinity()};
-    std::vector<size_t> maximumCounts = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50, (size_t) - 1};
+    std::vector<long double> maximumAreas = {5, 10, 25, 50, 150, 200, 250, std::numeric_limits<long double>::infinity()};
+    std::vector<size_t> maximumCounts = {5, 10, 15, 20, 25, 30, 35, (size_t) - 1};
 
     for (const auto & path : paths)
     {

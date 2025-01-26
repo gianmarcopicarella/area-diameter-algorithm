@@ -15,8 +15,8 @@ namespace MT
 {
     struct EppsteinResult
     {
-        bool myHasFoundSolution = false;
-        long double myHullArea = 0;
+        bool myHasFoundSolution { false };
+        long double myHullArea { std::numeric_limits<long double>::infinity() };
         size_t myPointsCount = 0;
         std::vector<size_t> myHullIndices;
 #ifdef DEBUG_EPPSTEIN
