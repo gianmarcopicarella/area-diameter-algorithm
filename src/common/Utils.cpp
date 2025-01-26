@@ -23,7 +23,7 @@ namespace MT
             int count = 0;
             for(const auto& pt : somePoints)
             {
-                if(pt.index != p1.index && pt.index != p2.index && pt.index != p3.index)
+                if(pt.myIndex != p1.myIndex && pt.myIndex != p2.myIndex && pt.myIndex != p3.myIndex)
                 {
                     if( CM::AreCollinear(p1, p2, pt) ||
                         CM::AreCollinear(p1, p3, pt) ||
@@ -34,9 +34,9 @@ namespace MT
                         //continue;
                     }
 
-                    long double s1 = (pt.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (pt.y - p2.y);
-                    long double s2 = (pt.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (pt.y - p3.y);
-                    long double s3 = (pt.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (pt.y - p1.y);
+                    long double s1 = (pt.myX - p2.myX) * (p1.myY - p2.myY) - (p1.myX - p2.myX) * (pt.myY - p2.myY);
+                    long double s2 = (pt.myX - p3.myX) * (p2.myY - p3.myY) - (p2.myX - p3.myX) * (pt.myY - p3.myY);
+                    long double s3 = (pt.myX - p1.myX) * (p3.myY - p1.myY) - (p3.myX - p1.myX) * (pt.myY - p1.myY);
                     if(CM::IsCloseToZero(s1)) s1=0;
                     if(CM::IsCloseToZero(s2)) s2=0;
                     if(CM::IsCloseToZero(s3)) s3=0;
@@ -45,7 +45,7 @@ namespace MT
                        (s1 > 0.f && s2 > 0.f && s3 > 0.f))
                     {
                         if(t == 1)
-                            std::cout << pt.x << ", " << pt.y << ", " << pt.index <<std::endl;
+                            std::cout << pt.myX << ", " << pt.myY << ", " << pt.myIndex <<std::endl;
                         ++count;
                     }
                 }
@@ -57,13 +57,25 @@ namespace MT
         {
             for(int i = 0; i < somePoints.size() - 1; ++i)
             {
-                if(somePoints[i].x > aRefPoint.x && somePoints[i+1].x <= aRefPoint.x)
+                if(somePoints[i].myX > aRefPoint.myX && somePoints[i+1].myX <= aRefPoint.myX)
                 {
                     return i + 1;
                 }
             }
             return 0;
         }
+    }
+
+
+    long double Diameter::Value2() const
+    {
+        return CM::Distance2(myFirstPoint, mySecondPoint);
+    }
+
+    bool Diameter::operator==(const Diameter& anotherDiameter) const
+    {
+        return  (myFirstPoint == anotherDiameter.myFirstPoint || myFirstPoint == anotherDiameter.mySecondPoint) &&
+                (mySecondPoint == anotherDiameter.myFirstPoint || mySecondPoint == anotherDiameter.mySecondPoint);
     }
 
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
@@ -78,7 +90,7 @@ namespace MT
         for (int i = 1; i < sortedPoints.size(); ++i)
         {
             const auto& refP = sortedPoints[i];
-            const auto& clockwisePoints = someClockWiseSortedPoints[refP.index];
+            const auto& clockwisePoints = someClockWiseSortedPoints[refP.myIndex];
             const auto startIdx = locGetFirstClockWiseLeftIndex(clockwisePoints, refP);
 
             for(int j = NEXT_CW_IDX(startIdx, clockwisePoints), jp = startIdx;
@@ -91,49 +103,49 @@ namespace MT
 
                 if(areCollinear)
                 {
-                    someOutCollinearCounts[refP.index][currP.index] = 1 + someOutCollinearCounts[refP.index][prevP.index];
-                    someOutCollinearCounts[currP.index][refP.index] = someOutCollinearCounts[refP.index][currP.index];
+                    someOutCollinearCounts[refP.myIndex][currP.myIndex] = 1 + someOutCollinearCounts[refP.myIndex][prevP.myIndex];
+                    someOutCollinearCounts[currP.myIndex][refP.myIndex] = someOutCollinearCounts[refP.myIndex][currP.myIndex];
                 }
 
-                if(currP.x < prevP.x && areCollinear)
+                if(currP.myX < prevP.myX && areCollinear)
                 {
-                    someOutBelowCounts[currP.index][refP.index] = someOutBelowCounts[prevP.index][refP.index] +
-                                                                    someOutBelowCounts[currP.index][prevP.index];
+                    someOutBelowCounts[currP.myIndex][refP.myIndex] = someOutBelowCounts[prevP.myIndex][refP.myIndex] +
+                                                                      someOutBelowCounts[currP.myIndex][prevP.myIndex];
                 }
-                else if(currP.x < prevP.x)
+                else if(currP.myX < prevP.myX)
                 {
-                    const auto b = someOutBelowCounts[prevP.index][refP.index];
-                    const auto a = someOutBelowCounts[currP.index][prevP.index];
-                    const auto c1 = someOutCollinearCounts[refP.index][prevP.index];
-                    const auto c2 = someOutCollinearCounts[prevP.index][currP.index];
+                    const auto b = someOutBelowCounts[prevP.myIndex][refP.myIndex];
+                    const auto a = someOutBelowCounts[currP.myIndex][prevP.myIndex];
+                    const auto c1 = someOutCollinearCounts[refP.myIndex][prevP.myIndex];
+                    const auto c2 = someOutCollinearCounts[prevP.myIndex][currP.myIndex];
 
-                    someOutBelowCounts[currP.index][refP.index] = b + a + c1 + c2 + 1;
+                    someOutBelowCounts[currP.myIndex][refP.myIndex] = b + a + c1 + c2 + 1;
                 }
-                else if(currP.x > prevP.x)
+                else if(currP.myX > prevP.myX)
                 {
-                    someOutBelowCounts[currP.index][refP.index] =
-                            (someOutBelowCounts[prevP.index][refP.index] + someOutCollinearCounts[prevP.index][refP.index]) -
-                            (someOutBelowCounts[prevP.index][currP.index] + someOutCollinearCounts[prevP.index][currP.index]);
+                    someOutBelowCounts[currP.myIndex][refP.myIndex] =
+                            (someOutBelowCounts[prevP.myIndex][refP.myIndex] + someOutCollinearCounts[prevP.myIndex][refP.myIndex]) -
+                            (someOutBelowCounts[prevP.myIndex][currP.myIndex] + someOutCollinearCounts[prevP.myIndex][currP.myIndex]);
                 }
-                someOutBelowCounts[refP.index][currP.index] = someOutBelowCounts[currP.index][refP.index];
+                someOutBelowCounts[refP.myIndex][currP.myIndex] = someOutBelowCounts[currP.myIndex][refP.myIndex];
 
                 // Check the count is correct
                 /*
                 int countBelow = 0;
                 for(auto tp : somePoints)
                 {
-                    if( tp.index != refP.index &&
-                        tp.index != currP.index &&
-                        tp.x >= currP.x && tp.x <= refP.x &&
+                    if( tp.myIndex != refP.myIndex &&
+                        tp.myIndex != currP.myIndex &&
+                        tp.myX >= currP.myX && tp.myX <= refP.myX &&
                         CM::Orientation(refP, currP, tp) == CM::ORIENTATION::LEFT_TURN)
                     {
-                        std::cout << tp.index << std::endl;
+                        std::cout << tp.myIndex << std::endl;
                         ++countBelow;
                     }
                 }
                 std::cout << "---" << std::endl;
 
-                const auto count1 = someOutBelowCounts[refP.index][currP.index];
+                const auto count1 = someOutBelowCounts[refP.myIndex][currP.myIndex];
                 if(count1 != countBelow)
                 {
                     const auto a1 = locProcessAngle(refP, prevP);
@@ -185,9 +197,9 @@ namespace MT
 
         CM::Point2 points[3] = {aFirstPoint, aSecondPoint, aThirdPoint};
         std::sort(points, points + 3, CM::SortPointsHorizontally);
-        const auto li = points[0].index;
-        const auto mi = points[1].index;
-        const auto ri = points[2].index;
+        const auto li = points[0].myIndex;
+        const auto mi = points[1].myIndex;
+        const auto ri = points[2].myIndex;
         const auto count = std::abs(
                 somePointCountBelowSegments[li][mi] +
                 somePointCountBelowSegments[mi][ri] -
@@ -209,13 +221,13 @@ namespace MT
 
     bool ArePointsClockwise(const CM::Point2& aReferencePoint, const CM::Point2& aFirstPoint, const CM::Point2& aSecondPoint)
     {
-        assert(aFirstPoint.index != aSecondPoint.index);
+        assert(aFirstPoint.myIndex != aSecondPoint.myIndex);
         const auto firstAngle = CM::Angle(aReferencePoint, aFirstPoint);
         const auto secondAngle = CM::Angle(aReferencePoint, aSecondPoint);
         if(CM::IsCloseToZero(firstAngle - secondAngle))
         {
-            return CM::SquaredDistance(aReferencePoint, aFirstPoint) <
-                   CM::SquaredDistance(aReferencePoint, aSecondPoint);
+            return CM::Distance2(aReferencePoint, aFirstPoint) <
+                   CM::Distance2(aReferencePoint, aSecondPoint);
         }
         return firstAngle > secondAngle;
     }
@@ -227,147 +239,16 @@ namespace MT
                   std::bind(ArePointsClockwise, aReferencePoint, _1, _2));
     }
 
-    long double ComputeDiameter(const std::vector<CM::Point2>& somePoints)
+    Diameter ComputeDiameter(const std::vector<CM::Point2>& somePoints)
     {
-        auto result = 0.l;
-        for (const auto& point : somePoints)
-        {
-            for (const auto& anotherPoint : somePoints)
+        Diameter result;
+        ForAllAntipodalPairs(somePoints, [&](const auto& p1, const auto& p2){
+            if(CM::Distance2(p1, p2) > result.Value2())
             {
-                if(point.index != anotherPoint.index)
-                {
-                    const auto distance2 = CM::SquaredDistance(point, anotherPoint);
-                    if(distance2 > result)
-                    {
-                        result = distance2;
-                    }
-                }
+                result = {p1, p2};
             }
-        }
-        return std::sqrtl(result);
-    }
-
-    void FindAntipodalPairs(
-            const std::vector<CM::Point2>& somePoints,
-            std::vector<std::pair<size_t, size_t>>& someOutAntipodalIndices)
-    {
-        assert(somePoints.size() > 2);
-        const auto pointsCount = somePoints.size();
-        size_t pi = pointsCount - 1;
-        size_t qi = 0;
-
-        while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
-                CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
-        {
-            qi = NEXT(qi, pointsCount);
-        }
-
-        auto q0 = qi;
-        while (qi != 0)
-        {
-            pi = NEXT(pi, pointsCount);
-            someOutAntipodalIndices.emplace_back(somePoints[pi].index, somePoints[qi].index);
-
-            while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
-                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
-            {
-                qi = NEXT(qi, pointsCount);
-                if(pi != q0 || qi != 0)
-                {
-                    someOutAntipodalIndices.emplace_back(somePoints[pi].index, somePoints[qi].index);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            const auto signedAreaDifference =
-                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) -
-                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]);
-
-            if(CM::IsCloseToZero(signedAreaDifference))
-            {
-                if(pi != q0 || qi != (pointsCount - 1))
-                {
-                    someOutAntipodalIndices.emplace_back(somePoints[pi].index, somePoints[NEXT(qi, pointsCount)].index);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    void AreAntipodalPairs( const std::array<CM::Point2, 6>& somePoints,
-                            const size_t pointsCount,
-                            const size_t aFirstIndex, const size_t aSecondIndex,
-                            const size_t aThirdIndex, const size_t aFourthIndex,
-                            bool& anOutIsFirstAntipodal, bool& anOutIsSecondAntipodal)
-    {
-        assert(pointsCount > 2);
-        //const auto pointsCount = somePoints.size();
-        size_t pi = pointsCount - 1;
-        size_t qi = 0;
-
-        while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
-                CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
-        {
-            qi = NEXT(qi, pointsCount);
-        }
-
-        auto q0 = qi;
-        while (qi != 0)
-        {
-            pi = NEXT(pi, pointsCount);
-
-            anOutIsFirstAntipodal |=
-                    (somePoints[qi].index == aFirstIndex && somePoints[pi].index == aSecondIndex) |
-                    (somePoints[qi].index == aSecondIndex && somePoints[pi].index == aFirstIndex);
-            anOutIsSecondAntipodal |=
-                    (somePoints[qi].index == aFourthIndex && somePoints[pi].index == aThirdIndex) |
-                    (somePoints[qi].index == aThirdIndex && somePoints[pi].index == aFourthIndex);
-
-            while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
-                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
-            {
-                qi = NEXT(qi, pointsCount);
-                if(pi != q0 || qi != 0)
-                {
-                    anOutIsFirstAntipodal |=
-                            (somePoints[qi].index == aFirstIndex && somePoints[pi].index == aSecondIndex) |
-                            (somePoints[qi].index == aSecondIndex && somePoints[pi].index == aFirstIndex);
-                    anOutIsSecondAntipodal |=
-                            (somePoints[qi].index == aFourthIndex && somePoints[pi].index == aThirdIndex) |
-                            (somePoints[qi].index == aThirdIndex && somePoints[pi].index == aFourthIndex);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            const auto signedAreaDifference =
-                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) -
-                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]);
-
-            if(CM::IsCloseToZero(signedAreaDifference))
-            {
-                if(pi != q0 || qi != (pointsCount - 1))
-                {
-                    anOutIsFirstAntipodal |=
-                            (somePoints[qi].index == aFirstIndex && somePoints[pi].index == aSecondIndex) |
-                            (somePoints[qi].index == aSecondIndex && somePoints[pi].index == aFirstIndex);
-                    anOutIsSecondAntipodal |=
-                            (somePoints[qi].index == aFourthIndex && somePoints[pi].index == aThirdIndex) |
-                            (somePoints[qi].index == aThirdIndex && somePoints[pi].index == aFourthIndex);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
+        });
+        return result;
     }
 }
+

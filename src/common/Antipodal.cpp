@@ -31,20 +31,20 @@ namespace MT
                                             std::vector<CM::Point2>& someOutLeftPoints,
                                             std::vector<CM::Point2>& someOutRightPoints)
         {
-            const auto maximumDistance2 = CM::SquaredDistance(aStartPoint, anEndPoint);
-            const CM::Point2 startToEnd { anEndPoint.x - aStartPoint.x, anEndPoint.y - aStartPoint.y, INVALID_INDEX };
-            const CM::Point2 endToStart { aStartPoint.x - anEndPoint.x, aStartPoint.y - anEndPoint.y, INVALID_INDEX };
+            const auto maximumDistance2 = CM::Distance2(aStartPoint, anEndPoint);
+            const CM::Point2 startToEnd { anEndPoint.myX - aStartPoint.myX, anEndPoint.myY - aStartPoint.myY, INVALID_INDEX };
+            const CM::Point2 endToStart { aStartPoint.myX - anEndPoint.myX, aStartPoint.myY - anEndPoint.myY, INVALID_INDEX };
             for (const auto& point : somePoints)
             {
-                if( point.index != aStartPoint.index &&
-                    point.index != anEndPoint.index &&
-                    CM::SquaredDistance(aStartPoint, point) <= maximumDistance2 &&
-                    CM::SquaredDistance(anEndPoint, point) <= maximumDistance2)
+                if( point.myIndex != aStartPoint.myIndex &&
+                    point.myIndex != anEndPoint.myIndex &&
+                    CM::Distance2(aStartPoint, point) <= maximumDistance2 &&
+                    CM::Distance2(anEndPoint, point) <= maximumDistance2)
                 {
-                    const CM::Point2 startToPoint { point.x - aStartPoint.x, point.y - aStartPoint.y, INVALID_INDEX };
-                    const CM::Point2 endToPoint { point.x - anEndPoint.x, point.y - anEndPoint.y, INVALID_INDEX };
-                    if( CM::Dot2(startToEnd, startToPoint) >= 0 &&
-                        CM::Dot2(endToStart, endToPoint) >= 0)
+                    const CM::Point2 startToPoint { point.myX - aStartPoint.myX, point.myY - aStartPoint.myY, INVALID_INDEX };
+                    const CM::Point2 endToPoint { point.myX - anEndPoint.myX, point.myY - anEndPoint.myY, INVALID_INDEX };
+                    if( CM::Dot(startToEnd, startToPoint) >= 0 &&
+                        CM::Dot(endToStart, endToPoint) >= 0)
                     {
                         if(CM::Orientation(aStartPoint, anEndPoint, point) <= CM::ORIENTATION::COLLINEAR)
                         {
@@ -68,23 +68,23 @@ namespace MT
         {
             anOutLength = 0;
             someOutPoints[anOutLength++] = t;
-            if(pl.index != someOutPoints[anOutLength - 1].index)
+            if(pl.myIndex != someOutPoints[anOutLength - 1].myIndex)
             {
                 someOutPoints[anOutLength++] = pl;
             }
 
             someOutPoints[anOutLength++] = l;
 
-            if(s.index != someOutPoints[anOutLength - 1].index)
+            if(s.myIndex != someOutPoints[anOutLength - 1].myIndex)
             {
                 someOutPoints[anOutLength++] = s;
             }
-            if(pr.index != someOutPoints[anOutLength - 1].index)
+            if(pr.myIndex != someOutPoints[anOutLength - 1].myIndex)
             {
                 someOutPoints[anOutLength++] = pr;
             }
-            if( r.index != someOutPoints[anOutLength - 1].index &&
-                r.index != someOutPoints[0].index)
+            if( r.myIndex != someOutPoints[anOutLength - 1].myIndex &&
+                r.myIndex != someOutPoints[0].myIndex)
             {
                 someOutPoints[anOutLength++] = r;
             }
@@ -134,15 +134,13 @@ namespace MT
             std::sort(someOutSortedPoints.begin(), someOutSortedPoints.end(), [&](auto& a, auto& b){
                 if constexpr (Ascending)
                 {
-                    return
-                        CM::ProjectedLen2(aStartPoint, anEndPoint, a) <=
-                        CM::ProjectedLen2(aStartPoint, anEndPoint, b);
+                    return  CM::ProjectedDistance2(aStartPoint, anEndPoint, a) <=
+                            CM::ProjectedDistance2(aStartPoint, anEndPoint, b);
                 }
                 else
                 {
-                    return
-                        CM::ProjectedLen2(aStartPoint, anEndPoint, a) >=
-                        CM::ProjectedLen2(aStartPoint, anEndPoint, b);
+                    return  CM::ProjectedDistance2(aStartPoint, anEndPoint, a) >=
+                            CM::ProjectedDistance2(aStartPoint, anEndPoint, b);
                 }
             });
         }
@@ -201,7 +199,7 @@ namespace MT
         {
             AntipodalResult result;
 
-            const auto maxAllowedPoints = std::min(aMaxPointsCount, someRightPoints.size() + someLeftPoints.size() - 4);
+            const auto maxAllowedPoints = std::min(aMaxPointsCount - 2, someRightPoints.size() + someLeftPoints.size() - 4);
             if(maxAllowedPoints == 0)
             {
                 return result;
@@ -219,7 +217,7 @@ namespace MT
 
             const auto& startPoint = someLeftPoints[0];
             const auto& endPoint = someLeftPoints.back();
-            const auto segmentLength2 = CM::SquaredDistance(startPoint, endPoint);
+            const auto segmentLength2 = CM::Distance2(startPoint, endPoint);
             std::array<CM::Point2, 6> currentPoly;
             size_t currentPolyLength = 0;
 
@@ -231,7 +229,7 @@ namespace MT
                     const auto& l = someLeftPoints[entry.l];
                     const auto& r = someRightPoints[entry.r];
 
-                    if(CM::SquaredDistance(l, r) > segmentLength2)
+                    if(CM::Distance2(l, r) > segmentLength2)
                     {
                         continue;
                     }
@@ -240,7 +238,7 @@ namespace MT
                     const auto& pr = someRightPoints[entry.pr];
                     const auto& currArea = entry.area;
 
-                    if(pl.index == endPoint.index && pr.index == startPoint.index)
+                    if(pl.myIndex == endPoint.myIndex && pr.myIndex == startPoint.myIndex)
                     {
                         if(k > 0 && (k > result.myPointsCount || (result.myPointsCount == k && currArea < result.myHullArea)))
                         {
@@ -252,11 +250,17 @@ namespace MT
 
                     bool isLeftAntipodal = false, isRightAntipodal = false;
                     locKeepUniquePolyPoints(startPoint, endPoint, l, pl, r, pr, currentPoly, currentPolyLength);
-                    AreAntipodalPairs(currentPoly, currentPolyLength, pl.index,
-                                      r.index, l.index, pr.index,
-                                      isLeftAntipodal, isRightAntipodal);
 
-                    if(isLeftAntipodal || (pr.index == startPoint.index && isRightAntipodal))
+                    ForAllAntipodalPairs(currentPoly, [&](const auto& aPoint, const auto& anotherPoint){
+                        isLeftAntipodal |=  (aPoint.myIndex == pl.myIndex && anotherPoint.myIndex == r.myIndex) |
+                                            (aPoint.myIndex == r.myIndex && anotherPoint.myIndex == pl.myIndex);
+
+                        isRightAntipodal |= (aPoint.myIndex == pr.myIndex && anotherPoint.myIndex == l.myIndex) |
+                                            (aPoint.myIndex == l.myIndex && anotherPoint.myIndex == pr.myIndex);
+
+                    }, currentPolyLength);
+
+                    if(isLeftAntipodal || (pr.myIndex == startPoint.myIndex && isRightAntipodal))
                     {
                         constexpr auto STEP_LEFT = true;
                         locAddNextHullPoint<STEP_LEFT>(endPoint, l, pl, someLeftPoints,
@@ -264,7 +268,7 @@ namespace MT
                                                        someBelowPointsCounts, someCollinearPointsCounts, someOutCaches);
                     }
 
-                    if(isRightAntipodal || (pl.index == endPoint.index && isLeftAntipodal))
+                    if(isRightAntipodal || (pl.myIndex == endPoint.myIndex && isLeftAntipodal))
                     {
                         constexpr auto STEP_LEFT = false;
                         locAddNextHullPoint<STEP_LEFT>(startPoint, r, pr, someRightPoints,
@@ -302,27 +306,27 @@ namespace MT
 
             for(const auto& [key, value] : someCaches[k])
             {
-                if( someLeftPoints[value.pl].index == endPoint.index &&
-                    someRightPoints[value.pr].index == startPoint.index)
+                if( someLeftPoints[value.pl].myIndex == endPoint.myIndex &&
+                    someRightPoints[value.pr].myIndex == startPoint.myIndex)
                 {
                     if(value.area < entry.area) entry = value;
                 }
             }
 
-            std::vector<size_t> left = { someLeftPoints[entry.pl].index }, right = { someRightPoints[entry.pr].index };
+            std::vector<size_t> left = { someLeftPoints[entry.pl].myIndex }, right = { someRightPoints[entry.pr].myIndex };
             while(k > 0)
             {
                 if(entry.isLeftSide)
                 {
                     k -= 1 + PointsInTriangle(endPoint, someLeftPoints[entry.l], someLeftPoints[entry.prev], someBelowPointsCounts, someCollinearPointsCounts);
-                    left.emplace_back(someLeftPoints[entry.l].index);
+                    left.emplace_back(someLeftPoints[entry.l].myIndex);
                     const auto key = KEY(entry.prev, entry.l, entry.r, entry.pr, totalPointsCount);
                     entry = someCaches[k].find(key)->second;
                 }
                 else
                 {
                     k -= 1 + PointsInTriangle(startPoint, someRightPoints[entry.r], someRightPoints[entry.prev], someBelowPointsCounts, someCollinearPointsCounts);
-                    right.emplace_back(someRightPoints[entry.r].index);
+                    right.emplace_back(someRightPoints[entry.r].myIndex);
                     const auto key = KEY(entry.l, entry.pl, entry.prev, entry.r, totalPointsCount);
                     entry = someCaches[k].find(key)->second;
                 }
@@ -335,21 +339,19 @@ namespace MT
         }
 
         void locPrepareLeftAndRightPoints(const std::vector<CM::Point2>& somePoints,
-                                          const size_t aStartPointIndex,
-                                          const size_t anEndPointIndex,
+                                          const CM::Point2& aStartPoint,
+                                          const CM::Point2& anEndPoint,
                                           std::vector<CM::Point2>& someOutLeftPoints,
                                           std::vector<CM::Point2>& someOutRightPoints)
         {
-            const auto& startPoint = somePoints[aStartPointIndex];
-            const auto& endPoint = somePoints[anEndPointIndex];
-            locPartitionLeftAndRightPoints(somePoints, startPoint, endPoint, someOutLeftPoints, someOutRightPoints);
-            someOutLeftPoints.emplace_back(startPoint);
-            someOutLeftPoints.emplace_back(endPoint);
-            someOutRightPoints.emplace_back(startPoint);
-            someOutRightPoints.emplace_back(endPoint);
+            locPartitionLeftAndRightPoints(somePoints, aStartPoint, anEndPoint, someOutLeftPoints, someOutRightPoints);
+            someOutLeftPoints.emplace_back(aStartPoint);
+            someOutLeftPoints.emplace_back(anEndPoint);
+            someOutRightPoints.emplace_back(aStartPoint);
+            someOutRightPoints.emplace_back(anEndPoint);
             constexpr auto SORT_LEFT_ASCENDING = true, SORT_RIGHT_ASCENDING = false;
-            locSortPointsByProjectionLength<SORT_LEFT_ASCENDING>(startPoint, endPoint, someOutLeftPoints);
-            locSortPointsByProjectionLength<SORT_RIGHT_ASCENDING>(startPoint, endPoint, someOutRightPoints);
+            locSortPointsByProjectionLength<SORT_LEFT_ASCENDING>(aStartPoint, anEndPoint, someOutLeftPoints);
+            locSortPointsByProjectionLength<SORT_RIGHT_ASCENDING>(aStartPoint, anEndPoint, someOutRightPoints);
         }
     }
 
@@ -385,7 +387,6 @@ namespace MT
         }
 
         const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;
-        std::pair<size_t, size_t> bestPair;
         std::vector<std::unordered_map<size_t, Entry>> cache {somePoints.size(),
                                                               std::unordered_map<size_t, Entry>{}};
 
@@ -395,10 +396,10 @@ namespace MT
             for (size_t j = i + 1; j < somePoints.size(); ++j)
             {
                 AntipodalResult pairResult;
-                if(CM::SquaredDistance(somePoints[i], somePoints[j]) <= maxAllowedDiameter2)
+                if(CM::Distance2(somePoints[i], somePoints[j]) <= maxAllowedDiameter2)
                 {
                     std::vector<CM::Point2> leftPoints, rightPoints;
-                    locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
+                    locPrepareLeftAndRightPoints(somePoints, somePoints[i], somePoints[j], leftPoints, rightPoints);
 #ifdef OPT_USE_OPTIMAL_SOLUTION
                     if((leftPoints.size() + rightPoints.size() - 2) < result.myPointsCount)
                     {
@@ -406,13 +407,14 @@ namespace MT
                     }
 #endif
                     pairResult = locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
-                    if( pairResult.myPointsCount > result.myPointsCount ||
-                        (pairResult.myPointsCount == result.myPointsCount && pairResult.myHullArea < result.myHullArea))
+                    if(pairResult.myPointsCount <= aMaxPointsCount &&
+                       (pairResult.myPointsCount > result.myPointsCount ||
+                        (pairResult.myPointsCount == result.myPointsCount && pairResult.myHullArea < result.myHullArea)))
                     {
                         result.myPointsCount = pairResult.myPointsCount;
                         result.myHullArea = pairResult.myHullArea;
                         result.myHasFoundSolution = true;
-                        bestPair = std::make_pair(i, j);
+                        result.myDiameter = {somePoints[i], somePoints[j]};
                     }
                     locClearCache(cache);
                 }
@@ -430,7 +432,7 @@ namespace MT
         if(result.myHasFoundSolution && aShouldReconstructHull)
         {
             std::vector<CM::Point2> leftPoints, rightPoints;
-            locPrepareLeftAndRightPoints(somePoints, bestPair.first, bestPair.second, leftPoints, rightPoints);
+            locPrepareLeftAndRightPoints(somePoints, result.myDiameter.myFirstPoint, result.myDiameter.mySecondPoint, leftPoints, rightPoints);
             locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
             locReconstructHull(cache, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, result.myPointsCount - 2, result.myHullIndices);
         }

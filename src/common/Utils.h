@@ -7,9 +7,20 @@
 
 #include "CustomMath.h"
 #include <vector>
+#include <functional>
+#include <cassert>
+
+#define NEXT(x, n) ((x + 1) % (n))
 
 namespace MT
 {
+    struct Diameter
+    {
+        CM::Point2 myFirstPoint {}, mySecondPoint {};
+        long double Value2() const;
+        bool operator==(const Diameter&) const;
+    };
+
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
                                      const std::vector<std::vector<CM::Point2>>& someClockWiseSortedPoints,
                                      std::vector<std::vector<int>>& someOutBelowCounts,
@@ -26,17 +37,61 @@ namespace MT
 
     void SortPointsClockWiseAroundPoint(const CM::Point2& aReferencePoint, std::vector<CM::Point2>& someOutClockWiseSortedPoints);
 
-    long double ComputeDiameter(const std::vector<CM::Point2>& somePoints);
+    Diameter ComputeDiameter(const std::vector<CM::Point2>& somePoints);
 
-    void FindAntipodalPairs(
-            const std::vector<CM::Point2>& somePoints,
-            std::vector<std::pair<size_t, size_t>>& someOutAntipodalIndices);
+    template<typename Container>
+    void ForAllAntipodalPairs(const Container& somePoints,
+                              const std::function<void(const CM::Point2&, const CM::Point2&)>& aFunction,
+                              size_t aMaxLength = (size_t) - 1)
+    {
+        assert(somePoints.size() > 2);
+        const auto pointsCount = aMaxLength == ((size_t) - 1) ? somePoints.size() : aMaxLength;
+        size_t pi = pointsCount - 1;
+        size_t qi = 0;
 
-    void AreAntipodalPairs( const std::array<CM::Point2, 6>& somePoints,
-                            size_t aLen,
-                            size_t aFirstIndex, size_t aSecondIndex,
-                            size_t aThirdIndex, size_t aFourthIndex,
-                            bool& anOutIsFirstAntipodal, bool& anOutIsSecondAntipodal);
+        while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+        {
+            qi = NEXT(qi, pointsCount);
+        }
+
+        auto q0 = qi;
+        while (qi != 0)
+        {
+            pi = NEXT(pi, pointsCount);
+            aFunction(somePoints[pi], somePoints[qi]);
+
+            while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+            {
+                qi = NEXT(qi, pointsCount);
+                if(pi != q0 || qi != 0)
+                {
+                    aFunction(somePoints[pi], somePoints[qi]);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            const auto signedAreaDifference =
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) -
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]);
+
+            if(CM::IsCloseToZero(signedAreaDifference))
+            {
+                if(pi != q0 || qi != (pointsCount - 1))
+                {
+                    aFunction(somePoints[pi], somePoints[NEXT(qi, pointsCount)]);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
 }
 
 

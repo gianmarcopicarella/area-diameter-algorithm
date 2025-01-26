@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "CustomMath.h"
+#include "Utils.h"
 
 #define DEBUG_EPPSTEIN
 

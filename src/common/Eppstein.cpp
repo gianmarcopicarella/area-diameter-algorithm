@@ -30,12 +30,12 @@ namespace MT
                 const CM::Point2& pl)
         {
             const auto baseCount =
-                    somePointsCollinearCounts[pi.index][pj.index] +
-                    somePointsCollinearCounts[pj.index][pl.index] +
+                    somePointsCollinearCounts[pi.myIndex][pj.myIndex] +
+                    somePointsCollinearCounts[pj.myIndex][pl.myIndex] +
                     PointsInTriangle(pi, pj, pl, somePointsBelowCounts, somePointsCollinearCounts);
             if(m == 3 && !CM::AreCollinear(pi, pj, pl))
             {
-                return baseCount + somePointsCollinearCounts[pl.index][pi.index];
+                return baseCount + somePointsCollinearCounts[pl.myIndex][pi.myIndex];
             }
             return baseCount;
         }
@@ -44,7 +44,7 @@ namespace MT
         {
             for(int i = 0; i < somePoints.size() - 1; ++i)
             {
-                if(somePoints[i].y < aRefPoint.y && somePoints[i+1].y >= aRefPoint.y)
+                if(somePoints[i].myY < aRefPoint.myY && somePoints[i+1].myY >= aRefPoint.myY)
                 {
                     return i + 1;
                 }
@@ -79,14 +79,14 @@ namespace MT
             std::vector<Wrapper> filteredLeft, filteredRight;
             for (size_t i = 0; i < somePoints.size(); ++i)
             {
-                if (somePoints[i].y >= aStartPoint.y)
+                if (somePoints[i].myY >= aStartPoint.myY)
                 {
                     const auto angle = CM::Angle(anEndPoint, somePoints[i]);
-                    const auto dist = CM::SquaredDistance(anEndPoint, somePoints[i]);
+                    const auto dist = CM::Distance2(anEndPoint, somePoints[i]);
                     const auto orientation = CM::Orientation(aStartPoint, anEndPoint, somePoints[i]);
                     if (orientation == CM::ORIENTATION::COLLINEAR)
                     {
-                        if (somePoints[i].y > anEndPoint.y)
+                        if (somePoints[i].myY > anEndPoint.myY)
                         {
                             filteredLeft.emplace_back(angle, dist, i);
                         }
@@ -106,8 +106,8 @@ namespace MT
             std::vector<size_t> sortedLeft, sortedRight;
             locCollectSortedPoints(filteredLeft, std::less<>(), sortedLeft);
             locCollectSortedPoints(filteredRight, [&](const auto& a, const auto& b){
-                const auto angle = std::get<0>(a) + (somePoints[std::get<2>(a)].y > anEndPoint.y ? (2.f * M_PI) : 0);
-                const auto otherAngle = std::get<0>(b) + (somePoints[std::get<2>(b)].y > anEndPoint.y ? (2.f * M_PI) : 0);
+                const auto angle = std::get<0>(a) + (somePoints[std::get<2>(a)].myY > anEndPoint.myY ? (2.f * M_PI) : 0);
+                const auto otherAngle = std::get<0>(b) + (somePoints[std::get<2>(b)].myY > anEndPoint.myY ? (2.f * M_PI) : 0);
                 return angle < otherAngle || (angle == otherAngle && std::get<1>(a) < std::get<1>(b));
             }, sortedRight);
 
@@ -115,13 +115,13 @@ namespace MT
             std::merge(sortedLeft.begin(), sortedLeft.end(),
                        sortedRight.begin(), sortedRight.end(),
                        std::back_inserter(someOutSortedIndicesBySlope), [&](const auto& aRightPointIndex, const auto& aLeftPointIndex){
-                const auto& oppositePoint = CM::Point2 {
-                        2.f * anEndPoint.x - somePoints[aRightPointIndex].x,
-                        2.f * anEndPoint.y - somePoints[aRightPointIndex].y,
-                        somePoints[aRightPointIndex].index
-                };
-                return ArePointsClockwise(anEndPoint, oppositePoint, somePoints[aLeftPointIndex]);
-            });
+                        const auto& oppositePoint = CM::Point2 {
+                                2.f * anEndPoint.myX - somePoints[aRightPointIndex].myX,
+                                2.f * anEndPoint.myY - somePoints[aRightPointIndex].myY,
+                                somePoints[aRightPointIndex].myIndex
+                        };
+                        return ArePointsClockwise(anEndPoint, oppositePoint, somePoints[aLeftPointIndex]);
+                    });
         }
     }
 
@@ -153,29 +153,30 @@ namespace MT
         std::sort(sortedPoints.begin(), sortedPoints.end(), CM::SortPointsVertically);
 
         // Create a 4-dimensional array storing the minimum areas
-        std::vector<long double> minimumAreas((aMaxPointsCount + 1) * pointsCount * pointsCount * pointsCount,
-                                        std::numeric_limits<long double>::infinity());
+        const auto maxPointsCount = std::min(aMaxPointsCount, somePoints.size());
+        std::vector<long double> minimumAreas((maxPointsCount + 1) * pointsCount * pointsCount * pointsCount,
+                                              std::numeric_limits<long double>::infinity());
         std::array<size_t, 4> axis{pointsCount * pointsCount * pointsCount, pointsCount * pointsCount, pointsCount, 1};
 
         struct Index4D { size_t m, i, j, l; };
         std::optional<Index4D> bestIndex;
 
 #ifdef DEBUG_EPPSTEIN
-        std::vector<long double> results(aMaxPointsCount + 1, std::numeric_limits<long double>::infinity());
+        std::vector<long double> results(maxPointsCount + 1, std::numeric_limits<long double>::infinity());
         std::string txt;
 #endif
 
         for (const auto& pi : sortedPoints)
         {
-            std::fill_n(&minimumAreas[0] + IDX(2, pi.index, 0, 0, pointsCount), axis[1], 0);
-            for (size_t m = 3; m < aMaxPointsCount + 1; ++m)
+            std::fill_n(&minimumAreas[0] + IDX(2, pi.myIndex, 0, 0, pointsCount), axis[1], 0);
+            for (size_t m = 3; m < maxPointsCount + 1; ++m)
             {
-                const auto& clockWisePoints = clockwiseSortedPoints[pi.index];
+                const auto& clockWisePoints = clockwiseSortedPoints[pi.myIndex];
                 const auto startIndex = locGetFirstClockWiseUpIndex(clockWisePoints, pi);
-                for (int j = startIndex, count = 0; count < (pointsCount-1) && clockWisePoints[j].y >= pi.y; ++count, j = MOD(j + 1, pointsCount - 1))
+                for (int j = startIndex, count = 0; count < (pointsCount-1) && clockWisePoints[j].myY >= pi.myY; ++count, j = MOD(j + 1, pointsCount - 1))
                 {
                     const auto& pj = clockWisePoints[j];
-                    const auto& clockWisePointsAbove = clockwiseSortedPoints[pj.index];
+                    const auto& clockWisePointsAbove = clockwiseSortedPoints[pj.myIndex];
                     std::vector<size_t> sortedIndicesBySlope;
                     locGetFirstLeftAndRight(clockWisePointsAbove, pi, pj, sortedIndicesBySlope);
                     auto minArea = std::numeric_limits<long double>::infinity();
@@ -183,7 +184,7 @@ namespace MT
 #ifdef DEBUG_EPPSTEIN
                     if(m ==3)
                     {
-                        txt += "(" + std::to_string(pi.index) + " | " + std::to_string(pj.index) + "): \n";
+                        txt += "(" + std::to_string(pi.myIndex) + " | " + std::to_string(pj.myIndex) + "): \n";
                     }
                     auto debug_counter = 0;
 #endif
@@ -194,7 +195,7 @@ namespace MT
 #ifdef DEBUG_EPPSTEIN
                         if(m == 3)
                         {
-                            txt += std::to_string(pl.index);
+                            txt += std::to_string(pl.myIndex);
                             if(debug_counter++ < sortedIndicesBySlope.size()-1)
                             {
                                 txt += ", ";
@@ -209,7 +210,7 @@ namespace MT
                         if(pointsInTriangleCount <= m && CM::Orientation(pi, pj, pl) >= CM::ORIENTATION::COLLINEAR)
                         {
                             const auto currentArea =
-                                    minimumAreas[IDX(m - pointsInTriangleCount, pi.index, pl.index, pj.index, pointsCount)] +
+                                    minimumAreas[IDX(m - pointsInTriangleCount, pi.myIndex, pl.myIndex, pj.myIndex, pointsCount)] +
                                     std::fabs(CM::SignedArea(pi, pj, pl));
                             if(currentArea < minArea && currentArea <= aMaxArea)
                             {
@@ -217,14 +218,14 @@ namespace MT
                                 if( !bestIndex || m > bestIndex->m ||
                                     (m == bestIndex->m && minArea < minimumAreas[IDX_STRUCT(bestIndex, pointsCount)]))
                                 {
-                                    bestIndex = {m, pi.index, pj.index, pl.index};
+                                    bestIndex = {m, pi.myIndex, pj.myIndex, pl.myIndex};
                                 }
                             }
                         }
 #ifdef DEBUG_EPPSTEIN
                         results[m] = std::min(results[m], minArea);
 #endif
-                        minimumAreas[IDX(m, pi.index, pj.index, pl.index, pointsCount)] = minArea;
+                        minimumAreas[IDX(m, pi.myIndex, pj.myIndex, pl.myIndex, pointsCount)] = minArea;
                     }
                 }
             }
@@ -267,11 +268,11 @@ namespace MT
                         const auto& current = clockWisePointsAbove[sortedIndicesBySlope[k]];
                         const auto& previous = clockWisePointsAbove[sortedIndicesBySlope[k - 1]];
                         if( (k == 0 ||
-                            minimumAreas[IDX(m, i, j, current.index, pointsCount)] !=
-                            minimumAreas[IDX(m, i, j, previous.index, pointsCount)]) &&
+                             minimumAreas[IDX(m, i, j, current.myIndex, pointsCount)] !=
+                             minimumAreas[IDX(m, i, j, previous.myIndex, pointsCount)]) &&
                             CM::Orientation(somePoints[latestHullPoint], somePoints[j], current) >= CM::ORIENTATION::COLLINEAR)
                         {
-                            l = clockWisePointsAbove[sortedIndicesBySlope[k]].index;
+                            l = clockWisePointsAbove[sortedIndicesBySlope[k]].myIndex;
                             break;
                         }
                     }

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "CustomMath.h"
+#include "Utils.h"
 
 // #define VERBOSE_ANTIPODAL
 #define DEBUG_ANTIPODAL
@@ -21,6 +22,7 @@ namespace MT
         size_t myPointsCount { 0 };
         bool myHasFoundSolution { false };
         std::vector<size_t> myHullIndices {};
+        Diameter myDiameter;
 #ifdef DEBUG_ANTIPODAL
         std::vector<std::pair<long double, size_t>> results;
 #endif

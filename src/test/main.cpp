@@ -3,6 +3,7 @@
 #include "../common/Eppstein.h"
 #include "../common/Antipodal.h"
 #include "../common/Parser.h"
+#include "../common/Utils.h"
 
 #define VERBOSE
 
@@ -30,7 +31,7 @@ bool AreThereCollinearPoints(const std::vector<CM::Point2>& somePoints)
         {
             for (const auto& pl: somePoints)
             {
-                if (pi.index != pj.index && pi.index != pl.index && pj.index != pl.index)
+                if (pi.myIndex != pj.myIndex && pi.myIndex != pl.myIndex && pj.myIndex != pl.myIndex)
                 {
                     if(CM::AreCollinear(pi, pj, pl))
                     {
@@ -43,7 +44,27 @@ bool AreThereCollinearPoints(const std::vector<CM::Point2>& somePoints)
     return false;
 }
 
+void GetHullPoints(const std::vector<size_t>& someIndices,
+                   const std::vector<CM::Point2>& somePoints,
+                   std::vector<CM::Point2>& someOutHullPoints)
+{
+    someOutHullPoints.resize(someIndices.size());
+    std::transform(someIndices.begin(), someIndices.end(), someOutHullPoints.begin(),
+                   [&](auto index){ return somePoints[index]; });
+}
 
+template<typename T>
+void PrintResults(const T& aResult, const Diameter& aDiameter, const std::string& aName, bool anAddEndOfLineFlag = false)
+{
+    std::cout << aName;
+    std::cout <<    " (Area= "   << aResult.myHullArea <<
+                    ", Diam= "   << std::sqrtl(aDiameter.Value2()) <<
+                    ", Pts= "    << aResult.myHullIndices.size() << "/" << aResult.myPointsCount << ")";
+    if(anAddEndOfLineFlag)
+    {
+        std::cout << std::endl;
+    }
+}
 
 TEST(EppsteinWithSolutions, BasicAssertions)
 {
@@ -88,15 +109,7 @@ TEST(EppsteinWithSolutions, BasicAssertions)
                 const auto diff = res.results[m] - correctAreas[m];
                 EXPECT_TRUE((res.results[m] == std::numeric_limits<long double>::infinity() &&
                             correctAreas[m] == std::numeric_limits<long double>::infinity()) || CM::IsCloseToZero(diff, 0.001));
-
                 // std::cout << std::fixed << std::setprecision(8) << res.results[m] << ", " << correctAreas[m] << std::endl;
-
-                if(res.results[m] == std::numeric_limits<long double>::infinity() &&
-                    correctAreas[m] == std::numeric_limits<long double>::infinity())
-                {
-                    continue;
-                }
-
                 maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
             }
 #ifdef VERBOSE
@@ -149,15 +162,6 @@ TEST(AntipodalWithSolutions, BasicAssertions)
                 EXPECT_TRUE((res.results[m].first == std::numeric_limits<long double>::infinity() &&
                              correctAreas[m] == std::numeric_limits<long double>::infinity()) || CM::IsCloseToZero(diff, 0.001));
                 EXPECT_EQ(res.results[m].second, correctCounts[m]);
-
-                // std::cout << m << ", " << res.results[m].first << ", " << correctAreas[m] << ", " << res.results[m].second << ", " << correctCounts[m] << std::endl;
-
-                if(res.results[m].first == std::numeric_limits<long double>::infinity() &&
-                   correctAreas[m] == std::numeric_limits<long double>::infinity())
-                {
-                    continue;
-                }
-
                 maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
             }
 #ifdef VERBOSE
@@ -169,9 +173,76 @@ TEST(AntipodalWithSolutions, BasicAssertions)
     }
 }
 
-// Test with increasing k=3 to n with max diam = 50;
-// Test with increasing k=3 to n with max diam = 100;
-// Test with increasing k=3 to n with max diam = 400;
+TEST(CrossCheckEppsteinAntipodal, BasicAssertions)
+{
+    constexpr auto shouldReconstructHull = true;
+    const std::vector<std::string> paths = {
+            "../../data/samples/eppstein/50",
+            "../../data/samples/eppstein/60",
+            "../../data/samples/eppstein/70",
+            "../../data/samples/eppstein/80",
+            "../../data/samples/eppstein/90",
+            "../../data/samples/eppstein/100"
+    };
+
+    std::vector<long double> maximumAreas = {5, 10, 25, 50, 150, 200, 250, 300, 350, 400, std::numeric_limits<long double>::infinity()};
+    std::vector<size_t> maximumCounts = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50, (size_t) - 1};
+
+    for (const auto & path : paths)
+    {
+        const auto filesCount = CountFilesInDirectory(path);
+#ifdef VERBOSE
+        std::cout << "TESTING SAMPLES IN FOLDER: " << path << std::endl;
+#endif
+        for(size_t i = 0; i < filesCount / 2; ++i)
+        {
+            const auto sampleFilename = std::string("data_") + std::to_string(i) + ".txt";
+            std::vector<CM::Point2> points;
+            SZ::ReadPointsFromFile(fs::path{path} / fs::path{sampleFilename}, points);
+
+            for (const auto maxAllowedArea : maximumAreas)
+            {
+                for (const auto maxAllowedPointsCount : maximumCounts)
+                {
+                    const auto eppsteinRes = MT::EppsteinAlgorithm(points, maxAllowedPointsCount, maxAllowedArea, shouldReconstructHull);
+
+                    std::vector<CM::Point2> eppsteinHull;
+                    GetHullPoints(eppsteinRes.myHullIndices, points, eppsteinHull);
+                    const auto eppsteinDiameter = ComputeDiameter(eppsteinHull);
+
+                    constexpr auto epsilon = 0.00001l;
+                    const auto maxAllowedDiameter = std::sqrtl(eppsteinDiameter.Value2()) + epsilon;
+
+                    const auto antipodalRes = MT::AntipodalAlgorithm(points, maxAllowedPointsCount, maxAllowedArea, maxAllowedDiameter, shouldReconstructHull);
+
+                    EXPECT_EQ(eppsteinRes.myHasFoundSolution, antipodalRes.myHasFoundSolution);
+                    EXPECT_TRUE(antipodalRes.myHullIndices.size() == eppsteinRes.myHullIndices.size());
+
+                    EXPECT_TRUE((eppsteinRes.myHullArea == std::numeric_limits<long double>::infinity() &&
+                                 antipodalRes.myHullArea == std::numeric_limits<long double>::infinity()) ||
+                                    CM::IsCloseToZero(eppsteinRes.myHullArea - antipodalRes.myHullArea, 0.001));
+
+                    EXPECT_EQ(eppsteinRes.myPointsCount, antipodalRes.myPointsCount);
+                    EXPECT_EQ(eppsteinDiameter, antipodalRes.myDiameter);
+
+#ifdef VERBOSE
+                    PrintResults(eppsteinRes, eppsteinDiameter, "Epp.Res");
+                    PrintResults(antipodalRes, antipodalRes.myDiameter, "\tAnti.Res", true);
+#endif
+                }
+            }
+
+
+
+#ifdef VERBOSE
+            const auto areThereCollinearPoints = AreThereCollinearPoints(points);
+            std::cout   << std::fixed << std::setprecision(8) << "File " << (1+i) << "/" << (filesCount / 2) << ". Collinear points="
+                        << (areThereCollinearPoints ? "yes" : "no") << std::endl;
+#endif
+        }
+    }
+}
+
 
 // Cross check Eppstein and Antipodal from k=3 to n. First run Eppstein and store the area and diameter. Then use the area and diameter as constraints in Antipodal.
 // Area and Diameter should match
