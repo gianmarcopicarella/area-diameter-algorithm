@@ -3,7 +3,6 @@
 #include "../common/Eppstein.h"
 #include "../common/Antipodal.h"
 #include "../common/Parser.h"
-#include "../common/Utils.h"
 
 #define VERBOSE
 

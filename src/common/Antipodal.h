@@ -30,7 +30,7 @@ namespace MT
 
     AntipodalResult AntipodalAlgorithm(
             const std::vector<CM::Point2>& somePoints,
-            size_t aMaxPointsCount,
+            size_t aMaxPointsCount = (size_t) - 1,
             long double aMaxArea = std::numeric_limits<long double>::max(),
             long double aMaxDiameter = std::numeric_limits<long double>::max(),
             bool aShouldReconstructHull = false);
