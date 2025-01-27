@@ -169,8 +169,9 @@ namespace MT
         bool hasFoundNewBestIndex { false };
 
 #ifdef DEBUG_EPPSTEIN
-        std::vector<long double> results(maxPointsCount + 1, std::numeric_limits<long double>::infinity());
-        std::string txt;
+        result.results = {};
+        result.results.resize(maxPointsCount + 1);
+        std::fill(result.results.begin(), result.results.end(), std::numeric_limits<long double>::infinity());
 #endif
 
         for (const auto& pi : sortedPoints)
@@ -193,37 +194,17 @@ namespace MT
                     locGetFirstLeftAndRight(clockWisePointsAbove, pi, pj, sortedIndicesBySlope);
                     auto minArea = std::numeric_limits<long double>::infinity();
 
-#ifdef DEBUG_EPPSTEIN
-                    if(m ==3)
-                    {
-                        txt += "(" + std::to_string(pi.myIndex) + " | " + std::to_string(pj.myIndex) + "): \n";
-                    }
-                    auto debug_counter = 0;
-#endif
                     for(const auto l : sortedIndicesBySlope)
                     {
                         const auto& pl = clockWisePointsAbove[l];
 
-#ifdef DEBUG_EPPSTEIN
-                        if(m == 3)
-                        {
-                            txt += std::to_string(pl.myIndex);
-                            if(debug_counter++ < sortedIndicesBySlope.size()-1)
-                            {
-                                txt += ", ";
-                            }
-                            else
-                            {
-                                txt += "\n";
-                            }
-                        }
-#endif
                         const auto pointsInTriangleCount = 1 + locPointsWithinTriangleCount(pointsBelowCounts, collinearPointsCounts, m, pi, pj, pl);
                         if(pointsInTriangleCount <= m && CM::Orientation(pi, pj, pl) >= CM::ORIENTATION::COLLINEAR)
                         {
                             const auto currentArea =
                                     minimumAreas[IDX(m - pointsInTriangleCount, minimumAreaIndex, pl.myIndex, pj.myIndex, pointsCount)] +
                                     std::fabs(CM::SignedArea(pi, pj, pl));
+
                             if(currentArea < minArea && currentArea <= aMaxArea)
                             {
                                 minArea = currentArea;
@@ -238,27 +219,13 @@ namespace MT
                             }
                         }
 #ifdef DEBUG_EPPSTEIN
-                        results[m] = std::min(results[m], minArea);
+                        result.results[m] = std::min(result.results[m], minArea);
 #endif
                         minimumAreas[IDX(m, minimumAreaIndex, pj.myIndex, pl.myIndex, pointsCount)] = minArea;
                     }
                 }
             }
         }
-
-#ifdef DEBUG_EPPSTEIN
-        std::ofstream myfile;
-        myfile.open ("slopes.txt");
-        myfile << txt;
-        myfile.close();
-        myfile.open ("results.txt");
-        for (const auto r: results)
-        {
-            myfile << std::fixed << std::setprecision(8) << std::to_string(r) << ", ";
-        }
-        myfile.close();
-        result.results = results;
-#endif
 
         if(result.myHasFoundSolution && aShouldReconstructHull)
         {

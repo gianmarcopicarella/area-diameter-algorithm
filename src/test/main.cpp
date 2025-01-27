@@ -108,7 +108,7 @@ TEST(EppsteinWithSolutions, BasicAssertions)
                 const auto diff = res.results[m] - correctAreas[m];
                 EXPECT_TRUE((res.results[m] == std::numeric_limits<long double>::infinity() &&
                             correctAreas[m] == std::numeric_limits<long double>::infinity()) || CM::IsCloseToZero(diff, 0.001));
-                std::cout << std::fixed << std::setprecision(8) << res.results[m] << ", " << correctAreas[m] << std::endl;
+                // std::cout << std::fixed << std::setprecision(8) << res.results[m] << ", " << correctAreas[m] << std::endl;
                 maxSolutionsDistance = std::max(maxSolutionsDistance, std::fabs(diff));
             }
 #ifdef VERBOSE
@@ -123,8 +123,8 @@ TEST(EppsteinWithSolutions, BasicAssertions)
 
 TEST(AntipodalWithSolutions, BasicAssertions)
 {
-    GTEST_SKIP();
     const std::vector<std::string> paths = {
+            "../../data/samples/antipodal/50",
             "../../data/samples/antipodal/60"
     };
 
@@ -175,7 +175,7 @@ TEST(AntipodalWithSolutions, BasicAssertions)
 
 TEST(CrossCheckEppsteinAntipodal, BasicAssertions)
 {
-    // GTEST_SKIP();
+    GTEST_SKIP();
     constexpr auto shouldReconstructHull = true;
     const std::vector<std::string> paths = {
             "../../data/samples/eppstein/50",
