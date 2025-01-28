@@ -7,6 +7,7 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
-[submodule "external/hopscotch-map"]
-	path = external/hopscotch-map
-	url = https://github.com/Tessil/hopscotch-map.git
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = stable

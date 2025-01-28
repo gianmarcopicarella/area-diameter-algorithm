@@ -1,5 +1,3 @@
-find_package(CGAL REQUIRED)
-
 file(   GLOB_RECURSE
         COMMON_ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/common/*.h
@@ -18,10 +16,10 @@ function(create_exec exec)
     endif() 
 endfunction()
 
-function(target_link_to_exec exec visibility libs)
-    if(TARGET ${exec})
-        target_link_libraries(${exec} ${visibility} ${libs})
-        message(STATUS "Added ${libs} to Executable ${exec}")
+function(target_link_to_libs target visibility libs)
+    if(TARGET ${target})
+        target_link_libraries(${target} ${visibility} ${libs})
+        message(STATUS "Added ${libs} to Executable ${target}")
     endif() 
 endfunction()
 
@@ -31,12 +29,10 @@ create_exec(test)
 
 set_target_properties(raylib gtest gtest_main benchmark benchmark_main uninstall PROPERTIES FOLDER HiddenTargets)
 
-if ( CGAL_AUTO_LINK_ENABLED )
-    target_link_to_exec(main PRIVATE "raylib;tsl::hopscotch_map")
-    target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark;tsl::hopscotch_map")
-    target_link_to_exec(test PRIVATE "raylib;gtest_main;tsl::hopscotch_map")
-else()
-    target_link_to_exec(main PRIVATE "raylib;CGAL::CGAL;CGAL::Data;tsl::hopscotch_map")
-    target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark;CGAL::CGAL;CGAL::Data;tsl::hopscotch_map")
-    target_link_to_exec(test PRIVATE "raylib;gtest_main;CGAL::CGAL;CGAL::Data;tsl::hopscotch_map")
-endif()
+target_link_to_libs(main PRIVATE "raylib")
+target_link_to_libs(bench PRIVATE "raylib;benchmark::benchmark")
+target_link_to_libs(test PRIVATE "raylib;gtest_main")
+
+
+pybind11_add_module(thesis ${CMAKE_CURRENT_SOURCE_DIR}/py-binding/main.cpp;${COMMON_ALL})
+target_link_to_libs(thesis PRIVATE "raylib")
