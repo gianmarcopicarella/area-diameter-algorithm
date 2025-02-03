@@ -24,12 +24,12 @@ py::object EppsteinAlgorithmWithCopy(
     std::vector<MT::CM::Point2> wrappedPoints;
     PointsListToVector(points, wrappedPoints);
     const auto& result = MT::EppsteinAlgorithm(wrappedPoints, maxPointsCount, maxAllowedArea, shouldReconstructHull);
-    if(result.myHasFoundSolution)
+    if(result)
     {
         py::tuple pyResult {3};
-        pyResult[0] = result.myHullArea;
-        pyResult[1] = result.myPointsCount;
-        pyResult[2] = py::cast(result.myHullIndices);
+        pyResult[0] = result->myHullArea;
+        pyResult[1] = result->myPointsCount;
+        pyResult[2] = py::cast(result->myHullIndices);
         return pyResult;
     }
     else
@@ -49,14 +49,14 @@ py::object AntipodalAlgorithmWithCopy(
     PointsListToVector(points, wrappedPoints);
     const auto& result = MT::AntipodalAlgorithm(
             wrappedPoints, maxPointsCount, maxAllowedArea, maxAllowedDiameter, shouldReconstructHull);
-    if(result.myHasFoundSolution)
+    if(result)
     {
         py::tuple pyResult {4};
-        pyResult[0] = result.myHullArea;
-        pyResult[1] = result.myPointsCount;
-        pyResult[2] = py::cast(result.myHullIndices);
-        pyResult[3] = py::cast(std::make_tuple(result.myDiameter.myFirstPoint.myIndex,
-                                               result.myDiameter.mySecondPoint.myIndex));
+        pyResult[0] = result->myHullArea;
+        pyResult[1] = result->myPointsCount;
+        pyResult[2] = py::cast(result->myHullIndices);
+        pyResult[3] = py::cast(std::make_tuple(result->myDiameterOpt->myFirstIndex,
+                                               result->myDiameterOpt->mySecondIndex));
         return pyResult;
     }
     else
@@ -65,17 +65,17 @@ py::object AntipodalAlgorithmWithCopy(
     }
 }
 
-PYBIND11_MODULE(thesis, m)
+PYBIND11_MODULE(thesis, module)
 {
-    m.doc() = "Eppstein's and Antipodal algorithms plugin";
+    module.doc() = "Eppstein's and Antipodal algorithms plugin";
 
-    m.def("Eppstein", &EppsteinAlgorithmWithCopy, "Eppstein algorithm (Performs an initial copy of the input points)",
+    module.def("Eppstein", &EppsteinAlgorithmWithCopy, "Eppstein algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
           py::arg("shouldReconstructHull") = false);
 
-    m.def("Antipodal", &AntipodalAlgorithmWithCopy, "Antipodal algorithm (Performs an initial copy of the input points)",
+    module.def("Antipodal", &AntipodalAlgorithmWithCopy, "Antipodal algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),

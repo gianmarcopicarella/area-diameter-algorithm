@@ -1,180 +1,125 @@
+#include <benchmark/benchmark.h>
 
-#include "benchmark/benchmark.h"
+#include <vector>
+#include <filesystem>
+#include <iostream>
+#include <chrono>
+#include <type_traits>
 
-#define BASIC_BENCHMARK_TEST(x) BENCHMARK(x)->Arg(8)->Arg(512)->Arg(8192)
+#include "../common/Eppstein.h"
+#include "../common/Antipodal.h"
+#include "../common/Parser.h"
 
-void BM_empty(benchmark::State& state) {
-    for (auto _ : state) {
-        auto iterations = double(state.iterations()) * double(state.iterations());
-        benchmark::DoNotOptimize(iterations);
+namespace fs = std::filesystem;
+
+enum class Distribution
+{
+    UNIFORM,
+    GAUSSIAN
+};
+
+enum class Algorithm
+{
+    EPPSTEIN,
+    ANTIPODAL
+};
+
+
+static void Setup(const benchmark::State& state)
+{
+    static bool initCSV = false;
+    if(!initCSV)
+    {
+        initCSV = true;
+        constexpr auto shouldAppendToFile = false;
+        MT::SZ::WriteLineToCsv("benchmark_data_results.csv", [](){
+            return "name, count, area, diameter_indices, hull_indices";
+        }, shouldAppendToFile);
     }
 }
-BENCHMARK(BM_empty);
-BENCHMARK(BM_empty)->ThreadPerCpu();
 
-void BM_spin_empty(benchmark::State& state) {
-    for (auto _ : state) {
-        for (auto x = 0; x < state.range(0); ++x) {
-            benchmark::DoNotOptimize(x);
+
+template<Distribution D>
+fs::path GetPathToFolder(const benchmark::State& aState)
+{
+    const fs::path basePath {"../../data/samples/experiments"};
+    if constexpr (D == Distribution::UNIFORM)
+    {
+        return basePath / fs::path{ "uniform/" + std::to_string(aState.range(0)) };
+    }
+    else
+    {
+        return basePath / fs::path{ "gaussian/" + std::to_string(aState.range(0)) };
+    }
+}
+
+template<Distribution D, Algorithm A>
+void BM_Template(benchmark::State& aState)
+{
+    constexpr auto maxAllowedArea = 4.l; // 2 mm^2
+    constexpr auto maxAllowedDiameter = 2.l; // 4 mm
+    constexpr auto maxAllowedPoints = (size_t) - 1; // No limit
+    constexpr auto reconstructHull = true;
+
+    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::time_point;
+
+    size_t fileIndex = 0;
+    for (auto _ : aState)
+    {
+        std::vector<MT::CM::Point2> points;
+        const fs::path filename { "points_" + std::to_string(fileIndex) + ".csv" };
+        MT::SZ::ReadPointsFromFile(GetPathToFolder<D>(aState) / filename, points);
+        std::optional<MT::ConvexArea> resultOpt;
+
+        auto start = std::chrono::high_resolution_clock::now();
+        if constexpr (A == Algorithm::EPPSTEIN)
+        {
+            resultOpt = MT::EppsteinAlgorithm(points, maxAllowedPoints, maxAllowedArea, reconstructHull);
         }
-    }
-}
-BASIC_BENCHMARK_TEST(BM_spin_empty);
-BASIC_BENCHMARK_TEST(BM_spin_empty)->ThreadPerCpu();
-
-void BM_spin_pause_before(benchmark::State& state) {
-    for (auto i = 0; i < state.range(0); ++i) {
-        benchmark::DoNotOptimize(i);
-    }
-    for (auto _ : state) {
-        for (auto i = 0; i < state.range(0); ++i) {
-            benchmark::DoNotOptimize(i);
+        else
+        {
+            resultOpt = MT::AntipodalAlgorithm(points, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull);
         }
+
+        auto end = std::chrono::high_resolution_clock::now();
+        const auto elapsed =
+                std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+
+        MT::SZ::WriteLineToCsv("benchmark_data_results.csv", [&](){
+            const auto& name = aState.name() + "/" + std::to_string(aState.range(0)) + "/iterations:" + std::to_string(fileIndex);
+            MT::ConvexArea result = resultOpt.has_value() ? *resultOpt : MT::ConvexArea{};
+            const auto& count = std::to_string(result.myPointsCount);
+            const auto& area = std::to_string(result.myHullArea);
+            const auto& diameter =
+                    std::to_string(result.myDiameterOpt->myFirstIndex) + "\t" +
+                    std::to_string(result.myDiameterOpt->mySecondIndex);
+
+            std::string hullIndices = std::to_string(result.myHullIndices[0]);
+            for(size_t i = 1; i < result.myHullIndices.size(); ++i)
+            {
+                hullIndices += "\t" + std::to_string(result.myHullIndices[i]);
+            }
+            return name + ", " + count + ", " + area + ", " + diameter + ", " + hullIndices;
+        });
+
+        ++fileIndex;
     }
 }
-BASIC_BENCHMARK_TEST(BM_spin_pause_before);
-BASIC_BENCHMARK_TEST(BM_spin_pause_before)->ThreadPerCpu();
 
-void BM_spin_pause_during(benchmark::State& state) {
-    for (auto _ : state) {
-        state.PauseTiming();
-        for (auto i = 0; i < state.range(0); ++i) {
-            benchmark::DoNotOptimize(i);
-        }
-        state.ResumeTiming();
-        for (auto i = 0; i < state.range(0); ++i) {
-            benchmark::DoNotOptimize(i);
-        }
-    }
-}
-BASIC_BENCHMARK_TEST(BM_spin_pause_during);
-BASIC_BENCHMARK_TEST(BM_spin_pause_during)->ThreadPerCpu();
+BENCHMARK(BM_Template<Distribution::UNIFORM, Algorithm::EPPSTEIN>)
+->Setup(Setup)->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(60, 70, 10)->Iterations(10);
+/*
+BENCHMARK(BM_Template<Distribution::GAUSSIAN, Algorithm::EPPSTEIN>)
+->Setup(Setup)->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(1, 10, 1)->Iterations(10);
 
-void BM_pause_during(benchmark::State& state) {
-    for (auto _ : state) {
-        state.PauseTiming();
-        state.ResumeTiming();
-    }
-}
-BENCHMARK(BM_pause_during);
-BENCHMARK(BM_pause_during)->ThreadPerCpu();
-BENCHMARK(BM_pause_during)->UseRealTime();
-BENCHMARK(BM_pause_during)->UseRealTime()->ThreadPerCpu();
+BENCHMARK(BM_Template<Distribution::UNIFORM, Algorithm::ANTIPODAL>)
+->Setup(Setup)->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(60, 150, 10)->Iterations(10);
 
-void BM_spin_pause_after(benchmark::State& state) {
-    for (auto _ : state) {
-        for (auto i = 0; i < state.range(0); ++i) {
-            benchmark::DoNotOptimize(i);
-        }
-    }
-    for (auto i = 0; i < state.range(0); ++i) {
-        benchmark::DoNotOptimize(i);
-    }
-}
-BASIC_BENCHMARK_TEST(BM_spin_pause_after);
-BASIC_BENCHMARK_TEST(BM_spin_pause_after)->ThreadPerCpu();
-
-void BM_spin_pause_before_and_after(benchmark::State& state) {
-    for (auto i = 0; i < state.range(0); ++i) {
-        benchmark::DoNotOptimize(i);
-    }
-    for (auto _ : state) {
-        for (auto i = 0; i < state.range(0); ++i) {
-            benchmark::DoNotOptimize(i);
-        }
-    }
-    for (auto i = 0; i < state.range(0); ++i) {
-        benchmark::DoNotOptimize(i);
-    }
-}
-BASIC_BENCHMARK_TEST(BM_spin_pause_before_and_after);
-BASIC_BENCHMARK_TEST(BM_spin_pause_before_and_after)->ThreadPerCpu();
-
-void BM_empty_stop_start(benchmark::State& state) {
-    for (auto _ : state) {
-    }
-}
-BENCHMARK(BM_empty_stop_start);
-BENCHMARK(BM_empty_stop_start)->ThreadPerCpu();
-
-void BM_KeepRunning(benchmark::State& state) {
-    benchmark::IterationCount iter_count = 0;
-    assert(iter_count == state.iterations());
-    while (state.KeepRunning()) {
-        ++iter_count;
-    }
-    assert(iter_count == state.iterations());
-}
-BENCHMARK(BM_KeepRunning);
-
-void BM_KeepRunningBatch(benchmark::State& state) {
-    // Choose a batch size >1000 to skip the typical runs with iteration
-    // targets of 10, 100 and 1000.  If these are not actually skipped the
-    // bug would be detectable as consecutive runs with the same iteration
-    // count.  Below we assert that this does not happen.
-    const benchmark::IterationCount batch_size = 1009;
-
-    static benchmark::IterationCount prior_iter_count = 0;
-    benchmark::IterationCount iter_count = 0;
-    while (state.KeepRunningBatch(batch_size)) {
-        iter_count += batch_size;
-    }
-    assert(state.iterations() == iter_count);
-
-    // Verify that the iteration count always increases across runs (see
-    // comment above).
-    assert(iter_count == batch_size            // max_iterations == 1
-        || iter_count > prior_iter_count);  // max_iterations > batch_size
-    prior_iter_count = iter_count;
-}
-// Register with a fixed repetition count to establish the invariant that
-// the iteration count should always change across runs.  This overrides
-// the --benchmark_repetitions command line flag, which would otherwise
-// cause this test to fail if set > 1.
-BENCHMARK(BM_KeepRunningBatch)->Repetitions(1);
-
-void BM_RangedFor(benchmark::State& state) {
-    benchmark::IterationCount iter_count = 0;
-    for (auto _ : state) {
-        ++iter_count;
-    }
-    assert(iter_count == state.max_iterations);
-}
-BENCHMARK(BM_RangedFor);
-
-#ifdef BENCHMARK_HAS_CXX11
-template <typename T>
-void BM_OneTemplateFunc(benchmark::State& state) {
-    auto arg = state.range(0);
-    T sum = 0;
-    for (auto _ : state) {
-        sum += static_cast<T>(arg);
-    }
-}
-BENCHMARK(BM_OneTemplateFunc<int>)->Arg(1);
-BENCHMARK(BM_OneTemplateFunc<double>)->Arg(1);
-
-template <typename A, typename B>
-void BM_TwoTemplateFunc(benchmark::State& state) {
-    auto arg = state.range(0);
-    A sum = 0;
-    B prod = 1;
-    for (auto _ : state) {
-        sum += static_cast<A>(arg);
-        prod *= static_cast<B>(arg);
-    }
-}
-BENCHMARK(BM_TwoTemplateFunc<int, double>)->Arg(1);
-BENCHMARK(BM_TwoTemplateFunc<double, int>)->Arg(1);
-
-#endif  // BENCHMARK_HAS_CXX11
-
-// Ensure that StateIterator provides all the necessary typedefs required to
-// instantiate std::iterator_traits.
-static_assert(
-    std::is_same<typename std::iterator_traits<
-    benchmark::State::StateIterator>::value_type,
-    typename benchmark::State::StateIterator::value_type>::value,
-    "");
+BENCHMARK(BM_Template<Distribution::GAUSSIAN, Algorithm::ANTIPODAL>)
+->Setup(Setup)->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(1, 10, 1)->Iterations(10);
+*/
 
 BENCHMARK_MAIN();

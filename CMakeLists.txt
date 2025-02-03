@@ -8,12 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(GOOGLETEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 # dependencies
 add_subdirectory(external/raylib)
 add_subdirectory(external/googletest)
 add_subdirectory(external/benchmark)
 add_subdirectory(external/pybind11)
+add_subdirectory(external/nlohmann_json)
 
 # main project
 add_subdirectory(src)

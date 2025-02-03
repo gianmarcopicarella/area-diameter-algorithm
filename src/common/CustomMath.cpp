@@ -6,7 +6,6 @@
 
 #include <cmath>
 #include <cassert>
-#include <functional>
 
 namespace MT
 {

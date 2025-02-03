@@ -14,11 +14,19 @@
 
 namespace MT
 {
+    constexpr auto INVALID_INDEX = (size_t) - 1;
     struct Diameter
     {
-        CM::Point2 myFirstPoint {}, mySecondPoint {};
-        long double Value2() const;
         bool operator==(const Diameter&) const;
+        size_t myFirstIndex { INVALID_INDEX }, mySecondIndex { INVALID_INDEX };
+    };
+
+    struct ConvexArea
+    {
+        long double myHullArea { std::numeric_limits<long double>::infinity() };
+        size_t myPointsCount { 0 };
+        std::optional<Diameter> myDiameterOpt;
+        std::vector<size_t> myHullIndices {};
     };
 
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
@@ -37,11 +45,11 @@ namespace MT
 
     void SortPointsClockWiseAroundPoint(const CM::Point2& aReferencePoint, std::vector<CM::Point2>& someOutClockWiseSortedPoints);
 
-    Diameter ComputeDiameter(const std::vector<CM::Point2>& somePoints);
+    std::optional<Diameter> ComputeDiameter(const std::vector<CM::Point2>& somePoints);
 
     template<typename Container>
     void ForAllAntipodalPairs(const Container& somePoints,
-                              const std::function<void(const CM::Point2&, const CM::Point2&)>& aFunction,
+                              const std::function<void(const size_t, const size_t)>& aFunction,
                               size_t aMaxLength = (size_t) - 1)
     {
         assert(somePoints.size() > 2);
@@ -59,7 +67,7 @@ namespace MT
         while (qi != 0)
         {
             pi = NEXT(pi, pointsCount);
-            aFunction(somePoints[pi], somePoints[qi]);
+            aFunction(pi, qi);
 
             while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
                     CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
@@ -67,7 +75,7 @@ namespace MT
                 qi = NEXT(qi, pointsCount);
                 if(pi != q0 || qi != 0)
                 {
-                    aFunction(somePoints[pi], somePoints[qi]);
+                    aFunction(pi, qi);
                 }
                 else
                 {
@@ -83,7 +91,7 @@ namespace MT
             {
                 if(pi != q0 || qi != (pointsCount - 1))
                 {
-                    aFunction(somePoints[pi], somePoints[NEXT(qi, pointsCount)]);
+                    aFunction(pi, NEXT(qi, pointsCount));
                 }
                 else
                 {
@@ -92,6 +100,10 @@ namespace MT
             }
         }
     }
+
+    void GetHullPoints(const std::vector<size_t>& someIndices,
+                       const std::vector<CM::Point2>& somePoints,
+                       std::vector<CM::Point2>& someOutHullPoints);
 }
 
 

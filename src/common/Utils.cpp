@@ -66,16 +66,10 @@ namespace MT
         }
     }
 
-
-    long double Diameter::Value2() const
-    {
-        return CM::Distance2(myFirstPoint, mySecondPoint);
-    }
-
     bool Diameter::operator==(const Diameter& anotherDiameter) const
     {
-        return  (myFirstPoint == anotherDiameter.myFirstPoint || myFirstPoint == anotherDiameter.mySecondPoint) &&
-                (mySecondPoint == anotherDiameter.myFirstPoint || mySecondPoint == anotherDiameter.mySecondPoint);
+        return  myFirstIndex == anotherDiameter.myFirstIndex && mySecondIndex == anotherDiameter.mySecondIndex ||
+                mySecondIndex == anotherDiameter.myFirstIndex && myFirstIndex == anotherDiameter.mySecondIndex;
     }
 
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
@@ -239,16 +233,35 @@ namespace MT
                   std::bind(ArePointsClockwise, aReferencePoint, _1, _2));
     }
 
-    Diameter ComputeDiameter(const std::vector<CM::Point2>& somePoints)
+    std::optional<Diameter> ComputeDiameter(const std::vector<CM::Point2>& somePoints)
     {
-        Diameter result;
-        ForAllAntipodalPairs(somePoints, [&](const auto& p1, const auto& p2){
-            if(CM::Distance2(p1, p2) > result.Value2())
+        if(somePoints.size() < 2)
+        {
+            return std::nullopt;
+        }
+
+        std::pair<size_t, size_t> bestPair {0, 0};
+        long double bestDistance2 { 0 };
+
+        ForAllAntipodalPairs(somePoints, [&](const size_t aFirstIndex, const size_t aSecondIndex){
+            const auto distance2 = CM::Distance2(somePoints[aFirstIndex], somePoints[aSecondIndex]);
+            if(distance2 > bestDistance2)
             {
-                result = {p1, p2};
+                bestDistance2 = distance2;
+                bestPair = { aFirstIndex, aSecondIndex };
             }
         });
-        return result;
+
+        return Diameter { somePoints[bestPair.first].myIndex, somePoints[bestPair.second].myIndex };
+    }
+
+    void GetHullPoints(const std::vector<size_t>& someIndices,
+                       const std::vector<CM::Point2>& somePoints,
+                       std::vector<CM::Point2>& someOutHullPoints)
+    {
+        someOutHullPoints.resize(someIndices.size());
+        std::transform(someIndices.begin(), someIndices.end(), someOutHullPoints.begin(),
+                       [&](auto index){ return somePoints[index]; });
     }
 }
 
