@@ -1,6 +1,6 @@
 {
   "context": {
-    "date": "2025-02-03T13:05:46+01:00",
+    "date": "2025-02-03T23:16:16+01:00",
     "host_name": "Gianmarcos-MacBook-Pro.local",
     "executable": "/Users/gianmarcopicarella/master-thesis/cmake-build-release/src/bench",
     "num_cpus": 10,
@@ -26,8 +26,8 @@
         "num_sharing": 1
       }
     ],
-    "load_avg": [1.97119,2.18799,2.47803],
-    "library_version": "v1.9.0-21-g62a321d6",
+    "load_avg": [3.92725,4.51514,3.84033],
+    "library_version": "v1.9.1-22-g4a805f9f",
     "library_build_type": "release",
     "json_schema_version": 1
   },
@@ -42,22 +42,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 10,
-      "real_time": 3.1862385002896190e+02,
-      "cpu_time": 3.1508289999999994e+02,
-      "time_unit": "ms"
-    },
-    {
-      "name": "Eppstein/Uniform/70/iterations:10",
-      "family_index": 0,
-      "per_family_instance_index": 1,
-      "run_name": "Eppstein/Uniform/70/iterations:10",
-      "run_type": "iteration",
-      "repetitions": 1,
-      "repetition_index": 0,
-      "threads": 1,
-      "iterations": 10,
-      "real_time": 5.9536109161563218e+02,
-      "cpu_time": 5.9074990000000003e+02,
+      "real_time": 1.5943748876452446e-01,
+      "cpu_time": 2.1999999999999797e-02,
       "time_unit": "ms"
     }
   ]

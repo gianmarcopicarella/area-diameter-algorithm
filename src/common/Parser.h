@@ -13,15 +13,28 @@
 #include <cassert>
 #include <vector>
 #include <optional>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace MT
 {
+    struct Solution
+    {
+        std::string myId { "None" };
+        long double myMaxArea { std::numeric_limits<long double>::infinity() };
+        long double myMaxDiameter { std::numeric_limits<long double>::infinity() };
+        size_t myMaxCount { (size_t) - 1 };
+        std::optional<ConvexArea> myConvexAreaOpt;
+    };
+
+    void from_json(const json& aJson, Solution& anOutSolution);
+    void to_json(json& aJson, const Solution& aSolution);
+
     namespace SZ
     {
         void ReadPointsFromFile(const std::string& aFilePath, std::vector<CM::Point2>& someOutPoints);
-        using Solution = std::tuple<long double, long double, size_t, std::optional<ConvexArea>>;
         void ReadSolutionsFromFile(const std::string& aFilePath, std::vector<Solution>& someOutSolutions);
-        void WriteLineToCsv(const std::string& aFilePath, const std::function<std::string(void)>& aCsvLineGenerator, bool aShouldAppendToFile = true);
     }
 }
 

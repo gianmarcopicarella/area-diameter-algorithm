@@ -3,51 +3,105 @@
 //
 
 #include "Parser.h"
-#include "../../external/fast-cpp-csv-parser/csv.h"
 
 namespace MT
 {
+    void to_json(json& aJson, const Solution& aSolution)
+    {
+        aJson = json{ {"id", aSolution.myId}, {"max_count", aSolution.myMaxCount} };
+        if(aSolution.myMaxArea != std::numeric_limits<long double>::infinity())
+        {
+            aJson.push_back({"max_area", aSolution.myMaxArea});
+        }
+        if(aSolution.myMaxDiameter != std::numeric_limits<long double>::infinity())
+        {
+            aJson.push_back({"max_diameter", aSolution.myMaxDiameter});
+        }
+        const auto& convexAreaOpt = aSolution.myConvexAreaOpt;
+        if(convexAreaOpt)
+        {
+            aJson["convex_area"] = {
+                    { "count", convexAreaOpt->myPointsCount },
+                    { "area", convexAreaOpt->myHullArea },
+                    { "hull_indices", convexAreaOpt->myHullIndices }
+            };
+            if(convexAreaOpt->myDiameterOpt)
+            {
+                std::vector<size_t> indices = {
+                        convexAreaOpt->myDiameterOpt->myFirstIndex,
+                        convexAreaOpt->myDiameterOpt->mySecondIndex
+                };
+                aJson["convex_area"].push_back({ "diameter_indices", indices });
+            }
+        }
+    }
+    void from_json(const json& aJson, Solution& anOutSolution)
+    {
+        if(aJson.contains("id"))
+        {
+            aJson.at("id").get_to(anOutSolution.myId);
+        }
+        if(aJson.contains("max_area"))
+        {
+            aJson.at("max_area").get_to(anOutSolution.myMaxArea);
+        }
+        if(aJson.contains("max_diameter"))
+        {
+            aJson.at("max_diameter").get_to(anOutSolution.myMaxDiameter);
+        }
+        if(aJson.contains("max_count"))
+        {
+            aJson.at("max_count").get_to(anOutSolution.myMaxCount);
+        }
+        if(aJson.contains("convex_area"))
+        {
+            const auto& convexArea = aJson.at("convex_area");
+            const auto count = convexArea.at("count").get<size_t>();
+            const auto area = convexArea.at("area").get<long double>();
+            const auto& diameterIndices = convexArea.at("diameter_indices");
+            assert(diameterIndices.size() == 2);
+            const auto& hullIndices = convexArea.at("hull_indices").get<std::vector<size_t>>();
+            assert(hullIndices.size() > 0);
+            anOutSolution.myConvexAreaOpt =
+                    { area, count, Diameter{ diameterIndices[0].get<size_t>(), diameterIndices[1].get<size_t>() }, hullIndices};
+        }
+    }
+
     namespace SZ
     {
         void ReadPointsFromFile(const std::string& aFilePath, std::vector<CM::Point2>& someOutPoints)
         {
-            constexpr auto columnsCount = 2;
-            io::CSVReader<columnsCount> input(aFilePath);
-            input.read_header(io::ignore_extra_column, "x", "y");
-            long double x, y;
-            size_t index = 0;
-            while(input.read_row(x, y))
+            std::ifstream file(aFilePath);
+            if(file.is_open())
             {
-                someOutPoints.emplace_back(x, y, index++);
+                const json& data = json::parse(file);
+                assert(data.contains("points"));
+                assert(data.contains("count"));
+                const auto points = data.at("points");
+                for(size_t i = 0; i < data.at("count").get<size_t>(); ++i)
+                {
+                    const auto x = points[i].at("x").get<long double>();
+                    const auto y = points[i].at("y").get<long double>();
+                    someOutPoints.emplace_back(x, y, i);
+                }
             }
         }
 
         void ReadSolutionsFromFile(const std::string& aFilePath, std::vector<Solution>& someOutSolutions)
         {
-            constexpr auto columnsCount = 7;
-            io::CSVReader<columnsCount> input(aFilePath);
-            input.read_header(io::ignore_extra_column, "max_count", "max_area", "max_diameter", "area", "count", "diameter_point_index_1", "diameter_point_index_2");
-            long double ma, md, a;
-            size_t mc, c, d1, d2;
-            while(input.read_row(mc, ma, md, a, c, d1, d2))
-            {
-                std::optional<ConvexArea> areaOpt;
-                if(c > 0)
-                {
-                    areaOpt = { a, c, Diameter{ d1, d2 }};
-                }
-                someOutSolutions.emplace_back(ma, md, mc, areaOpt);
-            }
-        }
-
-        void WriteLineToCsv(const std::string& aFilePath, const std::function<std::string(void)>& aCsvLineGenerator, bool aShouldAppendToFile)
-        {
-            std::ofstream file;
-            file.open(aFilePath, std::ios::out | (aShouldAppendToFile ? std::ios::app : std::ios::trunc));
+            std::ifstream file(aFilePath);
             if(file.is_open())
             {
-                file << aCsvLineGenerator() << std::endl;
-                file.close();
+                const json& data = json::parse(file);
+                assert(data.contains("results"));
+                assert(data.contains("count"));
+                const auto results = data.at("results");
+                const auto solutionsCount = data.at("count").get<size_t>();
+                someOutSolutions.reserve(solutionsCount);
+                for(size_t i = 0; i < solutionsCount; ++i)
+                {
+                    someOutSolutions.emplace_back(results[i].get<Solution>());
+                }
             }
         }
     }

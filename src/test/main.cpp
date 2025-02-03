@@ -3,6 +3,7 @@
 #include "../common/Eppstein.h"
 #include "../common/Antipodal.h"
 #include "../common/Parser.h"
+#include "../common/Constants.h"
 
 #define VERBOSE
 
@@ -46,94 +47,49 @@ bool AreThereCollinearPoints(const std::vector<CM::Point2>& somePoints)
     return false;
 }
 
-TEST(EppsteinWithSolutions, BasicAssertions)
+void CheckHullIndices(const std::vector<size_t> & someIndices, const std::vector<size_t> & someOtherIndices)
 {
-    const std::vector<std::string> paths = {
-            "../../data/samples/eppstein/10",
-            "../../data/samples/eppstein/20",
-            "../../data/samples/eppstein/30",
-            "../../data/samples/eppstein/40",
-            "../../data/samples/eppstein/50",
-            "../../data/samples/eppstein/60",
-            "../../data/samples/eppstein/70",
-            "../../data/samples/eppstein/80",
-            "../../data/samples/eppstein/90",
-            "../../data/samples/eppstein/100"
-    };
-
-    for (const auto & path : paths)
+    EXPECT_TRUE((someIndices.empty() && someOtherIndices.empty()) ||
+                (someIndices.size() == someOtherIndices.size()));
+    if(!someIndices.empty())
     {
-#ifdef VERBOSE
-        std::cout << "TESTING SAMPLES IN FOLDER: " << path << std::endl;
-#endif
-        std::vector<SZ::Solution> solutions;
-        SZ::ReadSolutionsFromFile(fs::path{path} / fs::path{"results.csv"}, solutions);
-        for (size_t i = 0; i < CountPointFilesInFolder(path); ++i)
+        const auto referenceIndexIter =
+                std::find(someIndices.begin(), someIndices.end(), someOtherIndices[0]);
+        EXPECT_TRUE(referenceIndexIter != someIndices.end());
+        const auto referenceIndex = std::distance(someIndices.begin(), referenceIndexIter);
+        for(size_t i = 0, j = referenceIndex; i < someIndices.size(); ++i, j = ((j + 1) % someIndices.size()))
         {
-            std::vector<CM::Point2> points;
-            const auto filename = std::string("points_") + std::to_string(i) + ".csv";
-            SZ::ReadPointsFromFile(fs::path{path} / fs::path{filename}, points);
-
-            const auto maxArea = std::get<0>(solutions[i]);
-            const auto maxPointsCount = std::get<2>(solutions[i]);
-            const auto convexArea = std::get<3>(solutions[i]);
-
-            constexpr auto reconstructHull = true;
-            const auto result = MT::EppsteinAlgorithm(points, maxPointsCount, maxArea, reconstructHull);
-
-            EXPECT_EQ(result.has_value(), convexArea.has_value());
-            if (result.has_value())
-            {
-                EXPECT_EQ(result->myPointsCount, convexArea->myPointsCount);
-                EXPECT_EQ(result->myDiameterOpt, convexArea->myDiameterOpt);
-                EXPECT_FLOAT_EQ(result->myHullArea, convexArea->myHullArea);
-            }
-
-#ifdef VERBOSE
-            const auto areThereCollinearPoints = AreThereCollinearPoints(points);
-            std::cout << std::fixed << std::setprecision(8) << "File " << filename << ". Collinear points="
-                      << (areThereCollinearPoints ? "yes" : "no") << std::endl;
-#endif
+            EXPECT_EQ(someOtherIndices[i], someIndices[j]);
         }
     }
 }
 
-TEST(AntipodalWithEppstein, BasicAssertions)
+TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
 {
-    const std::vector<std::string> paths = {
-            "../../data/samples/eppstein/10",
-            "../../data/samples/eppstein/20",
-            "../../data/samples/eppstein/30",
-            "../../data/samples/eppstein/40",
-            "../../data/samples/eppstein/50",
-            "../../data/samples/eppstein/60",
-            "../../data/samples/eppstein/70",
-            "../../data/samples/eppstein/80",
-            "../../data/samples/eppstein/90",
-            "../../data/samples/eppstein/100"
-    };
-
-    constexpr auto epsilon = 0.000001l;
-    constexpr auto reconstructHull = true;
-
-    for (const auto & path : paths)
+    for (const auto& entry : fs::directory_iterator(MT::Constants::UNIT_TESTS_SAMPLES_PATH))
     {
+        if(!entry.is_directory())
+        {
+            continue;
+        }
+
 #ifdef VERBOSE
-        std::cout << "TESTING SAMPLES IN FOLDER: " << path << std::endl;
+        std::cout << "Running tests in folder [" << entry.path() << "]" << std::endl;
 #endif
-        std::vector<SZ::Solution> solutions;
-        SZ::ReadSolutionsFromFile(fs::path{path} / fs::path{"results.csv"}, solutions);
-        for (size_t i = 0; i < CountPointFilesInFolder(path); ++i)
+        std::vector<Solution> solutions;
+        SZ::ReadSolutionsFromFile(entry.path() / fs::path{"results.json"}, solutions);
+        for (size_t i = 0; i < CountPointFilesInFolder(entry.path()); ++i)
         {
             std::vector<CM::Point2> points;
-            const auto filename = std::string("points_") + std::to_string(i) + ".csv";
-            SZ::ReadPointsFromFile(fs::path{path} / fs::path{filename}, points);
+            const auto filename = std::string("points_") + std::to_string(i) + ".json";
+            SZ::ReadPointsFromFile(entry.path() / fs::path{filename}, points);
 
-            const auto maxArea = std::get<0>(solutions[i]);
-            const auto maxPointsCount = std::get<2>(solutions[i]);
-            const auto convexArea = std::get<3>(solutions[i]);
+            const auto& convexArea = solutions[i].myConvexAreaOpt;
 
-            const auto result = MT::EppsteinAlgorithm(points, maxPointsCount, maxArea, reconstructHull);
+            constexpr auto reconstructHull = true;
+            constexpr auto epsilon = 0.000001l;
+
+            const auto result = MT::EppsteinAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, reconstructHull);
 
             EXPECT_EQ(result.has_value(), convexArea.has_value());
             if (result.has_value())
@@ -141,26 +97,28 @@ TEST(AntipodalWithEppstein, BasicAssertions)
                 EXPECT_EQ(result->myPointsCount, convexArea->myPointsCount);
                 EXPECT_EQ(result->myDiameterOpt, convexArea->myDiameterOpt);
                 EXPECT_FLOAT_EQ(result->myHullArea, convexArea->myHullArea);
+                CheckHullIndices(result->myHullIndices, convexArea->myHullIndices);
 
                 const auto maxDiameter = std::sqrtl(
                         CM::Distance2(points[result->myDiameterOpt->myFirstIndex], points[result->myDiameterOpt->mySecondIndex]));
-                const auto antipodalResult = MT::AntipodalAlgorithm(points, maxPointsCount, maxArea, maxDiameter + epsilon, reconstructHull);
+                const auto antipodalResult = MT::AntipodalAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter + epsilon, reconstructHull);
 
                 EXPECT_EQ(result->myPointsCount, antipodalResult->myPointsCount);
                 EXPECT_EQ(result->myDiameterOpt, antipodalResult->myDiameterOpt);
                 EXPECT_FLOAT_EQ(result->myHullArea, antipodalResult->myHullArea);
+                CheckHullIndices(result->myHullIndices, antipodalResult->myHullIndices);
             }
             else
             {
                 constexpr auto maxDiameter = std::numeric_limits<long double>::infinity();
-                const auto antipodalResult = MT::AntipodalAlgorithm(points, maxPointsCount, maxArea, maxDiameter, reconstructHull);
+                const auto antipodalResult = MT::AntipodalAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
                 EXPECT_EQ(result.has_value(), antipodalResult.has_value());
             }
 
 #ifdef VERBOSE
             const auto areThereCollinearPoints = AreThereCollinearPoints(points);
-            std::cout << std::fixed << std::setprecision(8) << "File " << filename << ". Collinear points="
-                      << (areThereCollinearPoints ? "yes" : "no") << std::endl;
+            std::cout << "Done with file [" << filename << "]; Collinear points ["
+                      << (areThereCollinearPoints ? "yes]" : "no]") << std::endl;
 #endif
         }
     }

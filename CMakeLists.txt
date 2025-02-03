@@ -11,11 +11,10 @@ set(GOOGLETEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 # dependencies
-add_subdirectory(external/raylib)
 add_subdirectory(external/googletest)
 add_subdirectory(external/benchmark)
 add_subdirectory(external/pybind11)
-add_subdirectory(external/nlohmann_json)
+add_subdirectory(external/json)
 
 # main project
 add_subdirectory(src)
