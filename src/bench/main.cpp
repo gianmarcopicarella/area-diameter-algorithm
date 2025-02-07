@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <filesystem>
-#include <chrono>
 #include <nlohmann/json.hpp>
 
 #include "../common/Eppstein.h"
@@ -10,36 +9,74 @@
 #include "../common/Parser.h"
 #include "../common/Constants.h"
 
+#include <iostream>
+
+#define MEMORY_PROFILER
+
+#ifdef MEMORY_PROFILER
+static benchmark::IterationCount totalAllocatedBytes { 0 };
+static benchmark::IterationCount totalDeallocatedBytes { 0 };
+static benchmark::IterationCount maxBytesUsed { 0 };
+static bool shouldTrackHeapMemory { false };
+
+static void StartHeapProfiling()
+{
+    totalAllocatedBytes = 0;
+    totalDeallocatedBytes = 0;
+    maxBytesUsed = 0;
+    shouldTrackHeapMemory = true;
+}
+
+static void StopHeapProfiling()
+{
+    shouldTrackHeapMemory = false;
+}
+
+void* operator new(size_t sz)
+{
+    if(shouldTrackHeapMemory)
+    {
+        totalAllocatedBytes += sz;
+        maxBytesUsed = std::max(maxBytesUsed, totalAllocatedBytes - totalDeallocatedBytes);
+    }
+    auto ptr = static_cast<size_t*>(std::malloc(sz+1));
+    *ptr = sz;
+    return ptr + 1;
+}
+
+void operator delete(void* ptr) noexcept
+{
+    auto b_ptr = static_cast<size_t*>(ptr) - 1;
+    if(shouldTrackHeapMemory)
+    {
+        totalDeallocatedBytes += *b_ptr;
+    }
+    std::free(b_ptr);
+}
+#endif
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 enum class Distribution
 {
-    UNIFORM,
+    UNIFORM = 0,
     GAUSSIAN
 };
 
 enum class Algorithm
 {
-    EPPSTEIN,
+    EPPSTEIN = 0,
     ANTIPODAL
 };
 
-
 template<Distribution D>
-fs::path GetPathToFolder(const benchmark::State& aState)
+fs::path GetPathToExperiments(const benchmark::State& aState)
 {
-    if constexpr (D == Distribution::UNIFORM)
-    {
-        return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ "uniform/" + std::to_string(aState.range(0)) };
-    }
-    else
-    {
-        return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ "gaussian/" + std::to_string(aState.range(0)) };
-    }
+    constexpr std::array<std::string_view, 2> folders = { "uniform/", "gaussian/" };
+    const std::string folder { folders[static_cast<size_t>(D)] };
+    return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ folder + std::to_string(aState.range(0)) };
 }
-
 
 template<Distribution D, Algorithm A>
 void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSolutions)
@@ -49,20 +86,25 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
     constexpr auto maxAllowedPoints = (size_t) - 1; // No limit
     constexpr auto reconstructHull = true;
 
-    using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::time_point;
-
     size_t fileIndex = 0;
+#ifdef MEMORY_PROFILER
+    benchmark::IterationCount maxBytesUsedAcrossIterations = 0;
+#endif
     for (auto _ : aState)
     {
         std::vector<MT::CM::Point2> points;
         const fs::path filename { "points_" + std::to_string(fileIndex) + ".json" };
-        MT::SZ::ReadPointsFromFile(GetPathToFolder<D>(aState) / filename, points);
+        MT::SZ::ReadPointsFromFile(GetPathToExperiments<D>(aState) / filename, points);
         std::optional<MT::ConvexArea> resultOpt;
 
-        auto start = std::chrono::high_resolution_clock::now();
+#ifdef MEMORY_PROFILER
+#if defined(__clang__)
+        asm volatile("" ::: "memory");
+#endif
+        StartHeapProfiling();
+#endif
+        const auto startTime = std::chrono::high_resolution_clock::now();
+        benchmark::DoNotOptimize(points);
         if constexpr (A == Algorithm::EPPSTEIN)
         {
             resultOpt = MT::EppsteinAlgorithm(points, maxAllowedPoints, maxAllowedArea, reconstructHull);
@@ -71,10 +113,18 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         {
             resultOpt = MT::AntipodalAlgorithm(points, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull);
         }
+        benchmark::DoNotOptimize(resultOpt);
+        const auto endTime = std::chrono::high_resolution_clock::now();
 
-        auto end = std::chrono::high_resolution_clock::now();
-        const auto elapsed =
-                std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+#ifdef MEMORY_PROFILER
+        StopHeapProfiling();
+#if defined(__clang__)
+        asm volatile("" ::: "memory");
+#endif
+        maxBytesUsedAcrossIterations = std::max(maxBytesUsedAcrossIterations, maxBytesUsed);
+        std::cout << "M " << maxBytesUsed << ", A " << totalAllocatedBytes << ", D " << totalDeallocatedBytes << ", S " << (totalAllocatedBytes - totalDeallocatedBytes) << std::endl;
+#endif
+        aState.SetIterationTime(std::chrono::duration<double, std::milli> {endTime - startTime}.count());
 
         MT::Solution currentSolution;
         currentSolution.myId = aState.name() + "/" + std::to_string(aState.range(0)) + "/iterations:" + std::to_string(fileIndex);
@@ -83,14 +133,18 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         currentSolution.myMaxDiameter = maxAllowedDiameter;
         currentSolution.myConvexAreaOpt = resultOpt;
         someOutSolutions.emplace_back(currentSolution);
-
         ++fileIndex;
     }
+#ifdef MEMORY_PROFILER
+    aState.counters["Max.Memory"] = benchmark::Counter(maxBytesUsedAcrossIterations,
+                                                       benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
+#endif
 }
 
 
 std::vector<MT::Solution> benchmarkSolutions;
 
+/*
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::EPPSTEIN, BM_Eppstein_Uniform, benchmarkSolutions)
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(60, 150, 10)->Iterations(10);
 
@@ -99,9 +153,10 @@ BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::EPPS
 
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::ANTIPODAL, BM_Antipodal_Uniform, benchmarkSolutions)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(60, 150, 10)->Iterations(10);
-
+*/
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::ANTIPODAL, BM_Antipodal_Gaussian, benchmarkSolutions)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(1, 10, 1)->Iterations(10);
+
 
 
 int main(int argc, char** argv)

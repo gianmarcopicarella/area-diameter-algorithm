@@ -13,7 +13,7 @@ namespace MT
     {
         constexpr std::string_view BENCHMARK_OUT_DATA_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/reports";
         constexpr std::string_view UNIT_TESTS_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/eppstein";
-        constexpr std::string_view EXPERIMENT_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/experiments";
+        constexpr std::string_view EXPERIMENT_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/experiments";
     }
 }
 

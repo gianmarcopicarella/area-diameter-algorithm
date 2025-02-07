@@ -31,6 +31,8 @@ function(add_target_coverage target)
     endif()
 endfunction()
 
+add_compile_options(-O3)
+
 create_exec(main)
 create_exec(bench)
 create_exec(test)
@@ -47,6 +49,6 @@ target_link_to_libs(thesis PRIVATE "raylib")
 
 set(BENCHMARK_OUT_DATA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/reports)
 set(UNIT_TESTS_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/eppstein)
-set(EXPERIMENT_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/experiments)
+set(EXPERIMENT_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/experiments)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h)

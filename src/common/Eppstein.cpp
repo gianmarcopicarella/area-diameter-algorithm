@@ -6,12 +6,7 @@
 #include "CustomMath.h"
 #include "Utils.h"
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
 #include <optional>
-#include <cassert>
-#include <functional>
 
 #define MOD(x, n) ((x) % (n))
 #define IDX(m, i, j, l, count) ((m) * (2 * (count) * (count)) + (i) * ((count) * (count)) + (j) * (count) + (l))
@@ -23,7 +18,7 @@ namespace MT
         constexpr int locPointsWithinTriangleCount(
                 const std::vector<std::vector<int>>& somePointsBelowCounts,
                 const std::vector<std::vector<int>>& somePointsCollinearCounts,
-                const int m,
+                const size_t m,
                 const CM::Point2& pi,
                 const CM::Point2& pj,
                 const CM::Point2& pl)
@@ -156,7 +151,7 @@ namespace MT
         std::vector<CM::Point2> sortedPoints(somePoints);
         std::sort(sortedPoints.begin(), sortedPoints.end(), CM::SortPointsVertically);
 
-        // Create a 4-dimensional array storing the minimum areas
+        // Create a 3-dimensional array storing the minimum areas
         const auto maxPointsCount = std::min(aMaxPointsCount, somePoints.size());
         std::vector<long double> minimumAreas((maxPointsCount + 1) * 2 * pointsCount * pointsCount,
                                               std::numeric_limits<long double>::infinity());
@@ -166,13 +161,19 @@ namespace MT
         size_t minimumAreaIndex { 0 };
         bool hasFoundNewBestIndex { false };
 
-        for (const auto& pi : sortedPoints)
+        for (size_t i = 0; i < sortedPoints.size(); ++i)
         {
+            const auto& pi = sortedPoints[i];
             if(hasFoundNewBestIndex)
             {
                 minimumAreaIndex ^= 1;
                 hasFoundNewBestIndex = false;
             }
+            if(resultOpt && resultOpt->myPointsCount > (sortedPoints.size() - i))
+            {
+                break;
+            }
+
             std::fill_n(&minimumAreas[0] + IDX(2, minimumAreaIndex, 0, 0, pointsCount), pointsCount * pointsCount, 0);
             for (size_t m = 3; m < maxPointsCount + 1; ++m)
             {
@@ -219,16 +220,15 @@ namespace MT
         {
             minimumAreaIndex = hasFoundNewBestIndex ? minimumAreaIndex : (minimumAreaIndex ^ 1);
             size_t m = resultOpt->myPointsCount, j = bestIndex.second;
-            resultOpt->myHullIndices.reserve(m);
             resultOpt->myHullIndices.emplace_back(bestIndex.first);
             while (m > 2)
             {
-                size_t l;
+                size_t l { INVALID_INDEX };
                 const auto& latestHullPoint = resultOpt->myHullIndices.back();
                 const auto& clockWisePointsAbove = clockwiseSortedPoints[j];
                 std::vector<size_t> sortedIndicesBySlope;
                 locGetFirstLeftAndRight(clockWisePointsAbove, somePoints[bestIndex.first], somePoints[j], sortedIndicesBySlope);
-                for (int k = sortedIndicesBySlope.size() - 1; k > -1 ; --k)
+                for (size_t k = sortedIndicesBySlope.size() - 1; k >= 0 ; --k)
                 {
                     const auto& current = clockWisePointsAbove[sortedIndicesBySlope[k]];
                     const auto& previous = clockWisePointsAbove[sortedIndicesBySlope[k - 1]];
