@@ -89,6 +89,8 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
     size_t fileIndex = 0;
 #ifdef MEMORY_PROFILER
     benchmark::IterationCount maxBytesUsedAcrossIterations = 0;
+    benchmark::IterationCount minBytesUsedAcrossIterations = std::numeric_limits<int64_t>::max();
+    benchmark::IterationCount avgBytesUsedAcrossIterations = 0;
 #endif
     for (auto _ : aState)
     {
@@ -121,6 +123,8 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
 #if defined(__clang__)
         asm volatile("" ::: "memory");
 #endif
+        avgBytesUsedAcrossIterations += maxBytesUsed;
+        minBytesUsedAcrossIterations = std::min(minBytesUsedAcrossIterations, maxBytesUsed);
         maxBytesUsedAcrossIterations = std::max(maxBytesUsedAcrossIterations, maxBytesUsed);
         std::cout << "M " << maxBytesUsed << ", A " << totalAllocatedBytes << ", D " << totalDeallocatedBytes << ", S " << (totalAllocatedBytes - totalDeallocatedBytes) << std::endl;
 #endif
@@ -136,7 +140,11 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         ++fileIndex;
     }
 #ifdef MEMORY_PROFILER
-    aState.counters["Max.Memory"] = benchmark::Counter(maxBytesUsedAcrossIterations,
+    aState.counters["Max.Mem"] = benchmark::Counter(maxBytesUsedAcrossIterations,
+                                                       benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
+    aState.counters["Min.Mem"] = benchmark::Counter(minBytesUsedAcrossIterations,
+                                                       benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
+    aState.counters["Avg.Mem"] = benchmark::Counter(avgBytesUsedAcrossIterations / aState.iterations(),
                                                        benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
 #endif
 }

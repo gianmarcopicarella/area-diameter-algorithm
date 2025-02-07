@@ -33,13 +33,11 @@ endfunction()
 
 add_compile_options(-O3)
 
-create_exec(main)
 create_exec(bench)
 create_exec(test)
 
 set_target_properties(gtest gtest_main benchmark benchmark_main PROPERTIES FOLDER HiddenTargets)
 
-target_link_to_libs(main PRIVATE "nlohmann_json::nlohmann_json")
 target_link_to_libs(bench PRIVATE "benchmark::benchmark;nlohmann_json::nlohmann_json")
 target_link_to_libs(test PRIVATE "gtest_main;nlohmann_json::nlohmann_json")
 
