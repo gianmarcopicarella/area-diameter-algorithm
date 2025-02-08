@@ -125,6 +125,17 @@ namespace MT
             const long double aMaxArea,
             const bool aShouldReconstructHull)
     {
+        std::optional<BenchmarkInfo> benchmarkInfo = std::nullopt;
+        return EppsteinAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aShouldReconstructHull);
+    }
+
+    std::optional<ConvexArea> EppsteinAlgorithmWithBenchmarkInfo(
+            const std::vector<CM::Point2>& somePoints,
+            std::optional<BenchmarkInfo>& anOutBenchmarkInfoOpt,
+            size_t aMaxPointsCount,
+            long double aMaxArea,
+            bool aShouldReconstructHull)
+    {
         const auto pointsCount = somePoints.size();
         if(pointsCount < 3 || aMaxPointsCount < 3)
         {
@@ -160,6 +171,11 @@ namespace MT
         std::pair<size_t, size_t> bestIndex;
         size_t minimumAreaIndex { 0 };
         bool hasFoundNewBestIndex { false };
+
+        if(anOutBenchmarkInfoOpt)
+        {
+            anOutBenchmarkInfoOpt->myCreatedEntriesCount += minimumAreas.size();
+        }
 
         for (size_t i = 0; i < sortedPoints.size(); ++i)
         {

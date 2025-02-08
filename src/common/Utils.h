@@ -29,6 +29,11 @@ namespace MT
         std::vector<size_t> myHullIndices {};
     };
 
+    struct BenchmarkInfo
+    {
+        int64_t myCreatedEntriesCount { 0 };
+    };
+
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
                                      const std::vector<std::vector<CM::Point2>>& someClockWiseSortedPoints,
                                      std::vector<std::vector<int>>& someOutBelowCounts,

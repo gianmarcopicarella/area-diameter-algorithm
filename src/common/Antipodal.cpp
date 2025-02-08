@@ -281,12 +281,15 @@ namespace MT
             return resultOpt;
         }
 
-        void locClearCache(std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
+        size_t locClearCache(std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
         {
+            size_t entriesCount { 0 };
             for(size_t i = 0; i < someOutCaches.size(); ++i)
             {
+                entriesCount += someOutCaches[i].size();
                 someOutCaches[i].clear();
             }
+            return entriesCount;
         }
 
         void locReconstructHull(const std::vector<std::unordered_map<size_t, Entry>>& someCaches,
@@ -358,6 +361,18 @@ namespace MT
 
     std::optional<ConvexArea> AntipodalAlgorithm(
             const std::vector<CM::Point2>& somePoints,
+            size_t aMaxPointsCount,
+            long double aMaxArea,
+            long double aMaxDiameter,
+            bool aShouldReconstructHull)
+    {
+        std::optional<BenchmarkInfo> benchmarkInfo = std::nullopt;
+        return AntipodalAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aMaxDiameter, aShouldReconstructHull);
+    }
+
+    std::optional<ConvexArea> AntipodalAlgorithmWithBenchmarkInfo(
+            const std::vector<CM::Point2>& somePoints,
+            std::optional<BenchmarkInfo>& anOutBenchmarkInfoOpt,
             size_t aMaxPointsCount,
             long double aMaxArea,
             long double aMaxDiameter,
@@ -455,7 +470,12 @@ namespace MT
                     {
                         resultOpt = { pairResultOpt->myHullArea, pairResultOpt->myPointsCount, Diameter{somePoints[i].myIndex, somePoints[j].myIndex} };
                     }
-                    locClearCache(cache);
+
+                    const auto cacheEntriesCount = locClearCache(cache);
+                    if(anOutBenchmarkInfoOpt)
+                    {
+                        anOutBenchmarkInfoOpt->myCreatedEntriesCount += cacheEntriesCount;
+                    }
                 }
             }
         }
@@ -468,6 +488,10 @@ namespace MT
             locPrepareLeftAndRightPoints(somePoints, diameter.myFirstIndex, diameter.mySecondIndex, leftPoints, rightPoints);
             locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
             locReconstructHull(cache, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, resultOpt->myPointsCount - 2, resultOpt->myHullIndices);
+            if(anOutBenchmarkInfoOpt)
+            {
+                anOutBenchmarkInfoOpt->myCreatedEntriesCount += locClearCache(cache);
+            }
         }
 
         return resultOpt;

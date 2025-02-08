@@ -17,6 +17,13 @@ namespace MT
             size_t aMaxPointsCount = (size_t) - 1,
             long double aMaxArea = std::numeric_limits<long double>::max(),
             bool aShouldReconstructHull = false);
+
+    std::optional<ConvexArea> EppsteinAlgorithmWithBenchmarkInfo(
+            const std::vector<CM::Point2>& somePoints,
+            std::optional<BenchmarkInfo>& anOutBenchmarkInfoOpt,
+            size_t aMaxPointsCount = (size_t) - 1,
+            long double aMaxArea = std::numeric_limits<long double>::max(),
+            bool aShouldReconstructHull = false);
 }
 
 #endif //MASTER_THESIS_EPPSTEIN_H

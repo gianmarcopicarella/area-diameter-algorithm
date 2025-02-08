@@ -70,10 +70,48 @@ enum class Algorithm
     ANTIPODAL
 };
 
+template <typename T>
+T ComputeMean(const std::vector<T>& someValues)
+{
+    const auto sum = std::accumulate(someValues.begin(), someValues.end(), T { 0 });
+    return sum / someValues.size();
+}
+
+template <typename T>
+T ComputeSTDev(const T& aMean, const std::vector<T>& someValues)
+{
+    T sumOfSquaredResiduals { 0 };
+    for(const auto& aValue : someValues)
+    {
+        sumOfSquaredResiduals += (aMean - aValue) * (aMean - aValue);
+    }
+    return std::sqrtl(sumOfSquaredResiduals / someValues.size());
+}
+
+void ComputeExtraMetrics(
+        const std::vector<benchmark::IterationCount>& someMaxBytes,
+        const std::vector<benchmark::IterationCount>& someMaxEntries,
+        benchmark::State& anOutState)
+{
+    const auto maxMemMean = ComputeMean(someMaxBytes);
+    const auto maxMemStd = ComputeSTDev(maxMemMean, someMaxBytes);
+
+    anOutState.counters["Avg.Mem"] = benchmark::Counter(maxMemMean,
+                                                    benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
+    anOutState.counters["Std.Mem"] = benchmark::Counter(maxMemStd,
+                                                    benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
+
+    const auto entriesCountMean = ComputeMean(someMaxEntries);
+    const auto entriesCountStd = ComputeSTDev(entriesCountMean, someMaxEntries);
+
+    anOutState.counters["Avg.Entries"] = benchmark::Counter(entriesCountMean);
+    anOutState.counters["Std.Entries"] = benchmark::Counter(entriesCountStd);
+}
+
 template<Distribution D>
 fs::path GetPathToExperiments(const benchmark::State& aState)
 {
-    constexpr std::array<std::string_view, 2> folders = { "uniform/", "gaussian/" };
+    constexpr std::array<std::string_view, 2> folders = { "uniform_2/", "gaussian_2/" };
     const std::string folder { folders[static_cast<size_t>(D)] };
     return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ folder + std::to_string(aState.range(0)) };
 }
@@ -88,9 +126,10 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
 
     size_t fileIndex = 0;
 #ifdef MEMORY_PROFILER
-    benchmark::IterationCount maxBytesUsedAcrossIterations = 0;
-    benchmark::IterationCount minBytesUsedAcrossIterations = std::numeric_limits<int64_t>::max();
-    benchmark::IterationCount avgBytesUsedAcrossIterations = 0;
+    std::vector<benchmark::IterationCount> maxBytesUsedForAllRepetitions;
+    std::vector<benchmark::IterationCount> maxEntriesUsedForAllRepetitions;
+    maxBytesUsedForAllRepetitions.reserve(aState.iterations());
+    maxEntriesUsedForAllRepetitions.reserve(aState.iterations());
 #endif
     for (auto _ : aState)
     {
@@ -98,6 +137,7 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         const fs::path filename { "points_" + std::to_string(fileIndex) + ".json" };
         MT::SZ::ReadPointsFromFile(GetPathToExperiments<D>(aState) / filename, points);
         std::optional<MT::ConvexArea> resultOpt;
+        std::optional<MT::BenchmarkInfo> benchmarkInfo = MT::BenchmarkInfo {};
 
 #ifdef MEMORY_PROFILER
 #if defined(__clang__)
@@ -109,11 +149,11 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         benchmark::DoNotOptimize(points);
         if constexpr (A == Algorithm::EPPSTEIN)
         {
-            resultOpt = MT::EppsteinAlgorithm(points, maxAllowedPoints, maxAllowedArea, reconstructHull);
+            resultOpt = MT::EppsteinAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, reconstructHull);
         }
         else
         {
-            resultOpt = MT::AntipodalAlgorithm(points, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull);
+            resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull);
         }
         benchmark::DoNotOptimize(resultOpt);
         const auto endTime = std::chrono::high_resolution_clock::now();
@@ -123,9 +163,8 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
 #if defined(__clang__)
         asm volatile("" ::: "memory");
 #endif
-        avgBytesUsedAcrossIterations += maxBytesUsed;
-        minBytesUsedAcrossIterations = std::min(minBytesUsedAcrossIterations, maxBytesUsed);
-        maxBytesUsedAcrossIterations = std::max(maxBytesUsedAcrossIterations, maxBytesUsed);
+        maxBytesUsedForAllRepetitions.emplace_back(maxBytesUsed);
+        maxEntriesUsedForAllRepetitions.emplace_back(benchmarkInfo.has_value() ? benchmarkInfo->myCreatedEntriesCount : 0);
         std::cout << "M " << maxBytesUsed << ", A " << totalAllocatedBytes << ", D " << totalDeallocatedBytes << ", S " << (totalAllocatedBytes - totalDeallocatedBytes) << std::endl;
 #endif
         aState.SetIterationTime(std::chrono::duration<double, std::milli> {endTime - startTime}.count());
@@ -140,31 +179,28 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         ++fileIndex;
     }
 #ifdef MEMORY_PROFILER
-    aState.counters["Max.Mem"] = benchmark::Counter(maxBytesUsedAcrossIterations,
-                                                       benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
-    aState.counters["Min.Mem"] = benchmark::Counter(minBytesUsedAcrossIterations,
-                                                       benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
-    aState.counters["Avg.Mem"] = benchmark::Counter(avgBytesUsedAcrossIterations / aState.iterations(),
-                                                       benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
+    ComputeExtraMetrics(maxBytesUsedForAllRepetitions, maxEntriesUsedForAllRepetitions, aState);
 #endif
 }
 
 
 std::vector<MT::Solution> benchmarkSolutions;
 
+// 1) Uniform distribution, Increasing density [150, 250, step=10]
 /*
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::EPPSTEIN, BM_Eppstein_Uniform, benchmarkSolutions)
-->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(60, 150, 10)->Iterations(10);
-
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::EPPSTEIN, BM_Eppstein_Gaussian, benchmarkSolutions)
-->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(1, 10, 1)->Iterations(10);
-
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::ANTIPODAL, BM_Antipodal_Uniform, benchmarkSolutions)
-->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(60, 150, 10)->Iterations(10);
+->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(150, 250, 10)->Iterations(10);
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::EPPSTEIN, BM_Eppstein_Uniform, benchmarkSolutions)
+->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(150, 250, 10)->Iterations(10);
 */
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::ANTIPODAL, BM_Antipodal_Gaussian, benchmarkSolutions)
-->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(1, 10, 1)->Iterations(10);
 
+// 2) Gaussian distribution, Increasing standard deviation [0.5, 3, step=0.5]
+/*
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::ANTIPODAL, BM_Antipodal_Gaussian, benchmarkSolutions)
+->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(10);
+ */
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::EPPSTEIN, BM_Eppstein_Gaussian, benchmarkSolutions)
+->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(10);
 
 
 int main(int argc, char** argv)
