@@ -14,3 +14,6 @@
 [submodule "external/json"]
 	path = external/json
 	url = https://github.com/nlohmann/json.git
+[submodule "external/Area-Selector"]
+	path = external/Area-Selector
+	url = https://github.com/sjoerd-de-vries/Area-Selector.git
