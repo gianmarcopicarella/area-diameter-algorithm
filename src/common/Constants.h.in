@@ -1,0 +1,20 @@
+//
+// Created by Gianmarco Picarella on 03/02/25.
+//
+
+#ifndef MASTER_THESIS_CONSTANTS_H_IN_H
+#define MASTER_THESIS_CONSTANTS_H_IN_H
+
+#include <string_view>
+
+namespace MT
+{
+    namespace Constants
+    {
+        constexpr std::string_view BENCHMARK_OUT_DATA_PATH = "@BENCHMARK_OUT_DATA_PATH@";
+        constexpr std::string_view UNIT_TESTS_SAMPLES_PATH = "@UNIT_TESTS_SAMPLES_PATH@";
+        constexpr std::string_view EXPERIMENT_SAMPLES_PATH = "@EXPERIMENT_SAMPLES_PATH@";
+    }
+}
+
+#endif //MASTER_THESIS_CONSTANTS_H_IN_H

@@ -1,0 +1,5888 @@
+{
+    "count": 220,
+    "results": [
+        {
+            "convex_area": {
+                "area": 2.5093461640802204,
+                "count": 132,
+                "diameter_indices": [
+                    72,
+                    100
+                ],
+                "hull_indices": [
+                    100,
+                    116,
+                    29,
+                    37,
+                    43,
+                    109,
+                    72,
+                    63,
+                    81,
+                    104,
+                    74,
+                    65,
+                    3
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6319639689036713,
+                "count": 134,
+                "diameter_indices": [
+                    39,
+                    86
+                ],
+                "hull_indices": [
+                    86,
+                    129,
+                    56,
+                    70,
+                    71,
+                    39,
+                    33,
+                    102,
+                    128,
+                    11,
+                    94
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7607387411540034,
+                "count": 133,
+                "diameter_indices": [
+                    21,
+                    70
+                ],
+                "hull_indices": [
+                    70,
+                    129,
+                    114,
+                    115,
+                    73,
+                    97,
+                    59,
+                    21,
+                    68,
+                    47,
+                    142,
+                    139,
+                    120,
+                    15
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.622450440695082,
+                "count": 137,
+                "diameter_indices": [
+                    44,
+                    81
+                ],
+                "hull_indices": [
+                    81,
+                    77,
+                    36,
+                    45,
+                    141,
+                    44,
+                    118,
+                    51,
+                    70,
+                    10,
+                    101
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.622716142175569,
+                "count": 133,
+                "diameter_indices": [
+                    113,
+                    134
+                ],
+                "hull_indices": [
+                    134,
+                    93,
+                    88,
+                    49,
+                    0,
+                    81,
+                    113,
+                    100,
+                    86,
+                    130,
+                    23,
+                    98,
+                    140
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.8328076823880215,
+                "count": 132,
+                "diameter_indices": [
+                    60,
+                    135
+                ],
+                "hull_indices": [
+                    135,
+                    101,
+                    137,
+                    55,
+                    97,
+                    25,
+                    113,
+                    16,
+                    60,
+                    8,
+                    96,
+                    77,
+                    30,
+                    110
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.741686858201911,
+                "count": 133,
+                "diameter_indices": [
+                    29,
+                    107
+                ],
+                "hull_indices": [
+                    107,
+                    73,
+                    15,
+                    7,
+                    29,
+                    19,
+                    78,
+                    117,
+                    94,
+                    103,
+                    32,
+                    37
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.75359945386364,
+                "count": 138,
+                "diameter_indices": [
+                    55,
+                    69
+                ],
+                "hull_indices": [
+                    69,
+                    1,
+                    25,
+                    85,
+                    37,
+                    51,
+                    55,
+                    11,
+                    111,
+                    3,
+                    35,
+                    127,
+                    113,
+                    54,
+                    29
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6689503381196946,
+                "count": 139,
+                "diameter_indices": [
+                    4,
+                    85
+                ],
+                "hull_indices": [
+                    85,
+                    76,
+                    38,
+                    26,
+                    82,
+                    126,
+                    0,
+                    97,
+                    4,
+                    122,
+                    56,
+                    73,
+                    65
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.5774183535619732,
+                "count": 139,
+                "diameter_indices": [
+                    92,
+                    113
+                ],
+                "hull_indices": [
+                    113,
+                    20,
+                    33,
+                    130,
+                    102,
+                    56,
+                    92,
+                    89,
+                    27,
+                    61,
+                    133
+                ]
+            },
+            "id": "Antipodal/Gaussian/0/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.8408580875914073,
+                "count": 106,
+                "diameter_indices": [
+                    14,
+                    24
+                ],
+                "hull_indices": [
+                    24,
+                    1,
+                    107,
+                    37,
+                    146,
+                    142,
+                    80,
+                    14,
+                    105,
+                    111,
+                    31,
+                    17,
+                    112,
+                    46
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.816148671231607,
+                "count": 91,
+                "diameter_indices": [
+                    2,
+                    49
+                ],
+                "hull_indices": [
+                    49,
+                    132,
+                    62,
+                    13,
+                    120,
+                    80,
+                    2,
+                    142,
+                    74,
+                    105,
+                    135,
+                    19
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.809114278542188,
+                "count": 91,
+                "diameter_indices": [
+                    30,
+                    49
+                ],
+                "hull_indices": [
+                    49,
+                    149,
+                    9,
+                    28,
+                    24,
+                    117,
+                    30,
+                    35,
+                    71,
+                    112,
+                    139,
+                    118
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.663311370831401,
+                "count": 93,
+                "diameter_indices": [
+                    119,
+                    138
+                ],
+                "hull_indices": [
+                    138,
+                    25,
+                    86,
+                    147,
+                    67,
+                    130,
+                    119,
+                    111,
+                    112,
+                    77,
+                    51,
+                    110,
+                    62
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6467975612539445,
+                "count": 101,
+                "diameter_indices": [
+                    115,
+                    125
+                ],
+                "hull_indices": [
+                    125,
+                    49,
+                    134,
+                    97,
+                    33,
+                    13,
+                    115,
+                    53,
+                    67,
+                    78,
+                    111,
+                    117
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.895083159513338,
+                "count": 90,
+                "diameter_indices": [
+                    55,
+                    113
+                ],
+                "hull_indices": [
+                    113,
+                    32,
+                    51,
+                    93,
+                    78,
+                    116,
+                    133,
+                    122,
+                    55,
+                    124,
+                    141,
+                    73,
+                    147,
+                    38,
+                    127,
+                    101
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.72394699297806,
+                "count": 81,
+                "diameter_indices": [
+                    7,
+                    30
+                ],
+                "hull_indices": [
+                    30,
+                    119,
+                    28,
+                    25,
+                    24,
+                    20,
+                    6,
+                    134,
+                    7,
+                    23,
+                    17,
+                    82,
+                    61,
+                    143,
+                    108,
+                    88
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.717045194754858,
+                "count": 95,
+                "diameter_indices": [
+                    125,
+                    147
+                ],
+                "hull_indices": [
+                    147,
+                    59,
+                    94,
+                    101,
+                    146,
+                    55,
+                    136,
+                    125,
+                    128,
+                    75,
+                    83,
+                    108
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7991101646103123,
+                "count": 90,
+                "diameter_indices": [
+                    11,
+                    81
+                ],
+                "hull_indices": [
+                    81,
+                    63,
+                    61,
+                    111,
+                    104,
+                    3,
+                    26,
+                    11,
+                    114,
+                    83,
+                    16,
+                    144
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.826502422918836,
+                "count": 95,
+                "diameter_indices": [
+                    3,
+                    100
+                ],
+                "hull_indices": [
+                    100,
+                    56,
+                    133,
+                    105,
+                    137,
+                    3,
+                    24,
+                    19,
+                    46,
+                    26,
+                    36,
+                    115,
+                    11,
+                    140,
+                    16
+                ]
+            },
+            "id": "Antipodal/Gaussian/1/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7193699159260887,
+                "count": 70,
+                "diameter_indices": [
+                    35,
+                    98
+                ],
+                "hull_indices": [
+                    98,
+                    59,
+                    10,
+                    87,
+                    35,
+                    29,
+                    57,
+                    102,
+                    143
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.671754384096225,
+                "count": 74,
+                "diameter_indices": [
+                    57,
+                    104
+                ],
+                "hull_indices": [
+                    104,
+                    91,
+                    64,
+                    129,
+                    95,
+                    58,
+                    80,
+                    57,
+                    44,
+                    59,
+                    101,
+                    90,
+                    30,
+                    27,
+                    4
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.554976620032526,
+                "count": 59,
+                "diameter_indices": [
+                    90,
+                    126
+                ],
+                "hull_indices": [
+                    126,
+                    107,
+                    78,
+                    132,
+                    90,
+                    3,
+                    38,
+                    64,
+                    129,
+                    74,
+                    45,
+                    144
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7398774480992483,
+                "count": 59,
+                "diameter_indices": [
+                    112,
+                    148
+                ],
+                "hull_indices": [
+                    148,
+                    123,
+                    149,
+                    55,
+                    44,
+                    77,
+                    122,
+                    38,
+                    112,
+                    131,
+                    43,
+                    104,
+                    83,
+                    124
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6075089543192966,
+                "count": 63,
+                "diameter_indices": [
+                    39,
+                    144
+                ],
+                "hull_indices": [
+                    144,
+                    45,
+                    116,
+                    52,
+                    127,
+                    80,
+                    18,
+                    39,
+                    94,
+                    44,
+                    16,
+                    132,
+                    111
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.598754755099468,
+                "count": 69,
+                "diameter_indices": [
+                    77,
+                    80
+                ],
+                "hull_indices": [
+                    80,
+                    53,
+                    5,
+                    2,
+                    38,
+                    58,
+                    55,
+                    77,
+                    145,
+                    104,
+                    25,
+                    109,
+                    71,
+                    49,
+                    16
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7533075250170325,
+                "count": 65,
+                "diameter_indices": [
+                    49,
+                    142
+                ],
+                "hull_indices": [
+                    142,
+                    18,
+                    101,
+                    80,
+                    132,
+                    32,
+                    11,
+                    49,
+                    59,
+                    55,
+                    73,
+                    37,
+                    2,
+                    47
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7520263055080947,
+                "count": 63,
+                "diameter_indices": [
+                    2,
+                    113
+                ],
+                "hull_indices": [
+                    113,
+                    33,
+                    19,
+                    69,
+                    124,
+                    87,
+                    2,
+                    44,
+                    149,
+                    136,
+                    15,
+                    83,
+                    102,
+                    62
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.63251716529476,
+                "count": 75,
+                "diameter_indices": [
+                    47,
+                    140
+                ],
+                "hull_indices": [
+                    140,
+                    44,
+                    24,
+                    91,
+                    54,
+                    32,
+                    18,
+                    47,
+                    138,
+                    137,
+                    11,
+                    41,
+                    139
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6686127924527385,
+                "count": 57,
+                "diameter_indices": [
+                    107,
+                    108
+                ],
+                "hull_indices": [
+                    108,
+                    110,
+                    81,
+                    96,
+                    57,
+                    107,
+                    58,
+                    3,
+                    2,
+                    120,
+                    11,
+                    71
+                ]
+            },
+            "id": "Antipodal/Gaussian/2/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.527103400886835,
+                "count": 56,
+                "diameter_indices": [
+                    30,
+                    92
+                ],
+                "hull_indices": [
+                    92,
+                    115,
+                    107,
+                    97,
+                    131,
+                    77,
+                    30,
+                    32,
+                    11,
+                    145,
+                    48
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.693489975294102,
+                "count": 49,
+                "diameter_indices": [
+                    77,
+                    120
+                ],
+                "hull_indices": [
+                    120,
+                    59,
+                    117,
+                    109,
+                    130,
+                    131,
+                    77,
+                    148,
+                    45,
+                    23,
+                    52,
+                    90,
+                    2
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.501592442930896,
+                "count": 46,
+                "diameter_indices": [
+                    15,
+                    32
+                ],
+                "hull_indices": [
+                    32,
+                    46,
+                    23,
+                    101,
+                    27,
+                    6,
+                    15,
+                    26,
+                    145,
+                    123
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.499655269970292,
+                "count": 53,
+                "diameter_indices": [
+                    30,
+                    103
+                ],
+                "hull_indices": [
+                    103,
+                    82,
+                    129,
+                    106,
+                    133,
+                    81,
+                    30,
+                    109,
+                    12,
+                    34,
+                    95,
+                    16,
+                    84,
+                    8
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.5638258824947715,
+                "count": 52,
+                "diameter_indices": [
+                    50,
+                    111
+                ],
+                "hull_indices": [
+                    111,
+                    103,
+                    131,
+                    64,
+                    57,
+                    112,
+                    96,
+                    58,
+                    50,
+                    89,
+                    143,
+                    91,
+                    124
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6765918685306933,
+                "count": 48,
+                "diameter_indices": [
+                    16,
+                    134
+                ],
+                "hull_indices": [
+                    134,
+                    8,
+                    21,
+                    44,
+                    30,
+                    50,
+                    16,
+                    9,
+                    47,
+                    141,
+                    110,
+                    88
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.3462951071064384,
+                "count": 47,
+                "diameter_indices": [
+                    32,
+                    125
+                ],
+                "hull_indices": [
+                    125,
+                    1,
+                    129,
+                    34,
+                    37,
+                    118,
+                    32,
+                    126,
+                    122,
+                    21,
+                    67,
+                    141,
+                    88
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.8083600777600153,
+                "count": 57,
+                "diameter_indices": [
+                    29,
+                    35
+                ],
+                "hull_indices": [
+                    35,
+                    7,
+                    65,
+                    144,
+                    121,
+                    126,
+                    29,
+                    15,
+                    27,
+                    61,
+                    53,
+                    41,
+                    43,
+                    131
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.723827174110522,
+                "count": 46,
+                "diameter_indices": [
+                    20,
+                    47
+                ],
+                "hull_indices": [
+                    47,
+                    126,
+                    97,
+                    104,
+                    61,
+                    36,
+                    20,
+                    106,
+                    66,
+                    121,
+                    21,
+                    148
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7126680838462303,
+                "count": 42,
+                "diameter_indices": [
+                    54,
+                    133
+                ],
+                "hull_indices": [
+                    133,
+                    1,
+                    96,
+                    81,
+                    146,
+                    54,
+                    145,
+                    118,
+                    113
+                ]
+            },
+            "id": "Antipodal/Gaussian/3/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.477365609169023,
+                "count": 37,
+                "diameter_indices": [
+                    13,
+                    25
+                ],
+                "hull_indices": [
+                    25,
+                    21,
+                    42,
+                    85,
+                    136,
+                    13,
+                    16,
+                    36,
+                    141,
+                    17,
+                    22,
+                    68,
+                    95
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.717542190590511,
+                "count": 38,
+                "diameter_indices": [
+                    23,
+                    34
+                ],
+                "hull_indices": [
+                    34,
+                    147,
+                    128,
+                    48,
+                    3,
+                    23,
+                    79,
+                    52,
+                    0,
+                    49,
+                    139
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.340299306994325,
+                "count": 39,
+                "diameter_indices": [
+                    14,
+                    95
+                ],
+                "hull_indices": [
+                    95,
+                    82,
+                    149,
+                    103,
+                    118,
+                    140,
+                    14,
+                    114,
+                    3,
+                    122
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.27526100001868,
+                "count": 35,
+                "diameter_indices": [
+                    48,
+                    95
+                ],
+                "hull_indices": [
+                    95,
+                    99,
+                    135,
+                    92,
+                    48,
+                    34,
+                    27,
+                    101,
+                    146,
+                    30
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.8152333796085163,
+                "count": 44,
+                "diameter_indices": [
+                    6,
+                    96
+                ],
+                "hull_indices": [
+                    96,
+                    42,
+                    49,
+                    106,
+                    6,
+                    35,
+                    105,
+                    47,
+                    39,
+                    129,
+                    76
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.64773682121382,
+                "count": 44,
+                "diameter_indices": [
+                    92,
+                    114
+                ],
+                "hull_indices": [
+                    114,
+                    6,
+                    126,
+                    45,
+                    69,
+                    46,
+                    92,
+                    58,
+                    17,
+                    31,
+                    106
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.8482059266598077,
+                "count": 37,
+                "diameter_indices": [
+                    12,
+                    84
+                ],
+                "hull_indices": [
+                    84,
+                    19,
+                    54,
+                    2,
+                    146,
+                    61,
+                    12,
+                    147,
+                    65,
+                    10,
+                    122,
+                    63,
+                    124
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.5992456547024925,
+                "count": 34,
+                "diameter_indices": [
+                    125,
+                    138
+                ],
+                "hull_indices": [
+                    138,
+                    62,
+                    143,
+                    113,
+                    133,
+                    125,
+                    124,
+                    32,
+                    30,
+                    142,
+                    47
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4994903382132776,
+                "count": 38,
+                "diameter_indices": [
+                    93,
+                    116
+                ],
+                "hull_indices": [
+                    116,
+                    95,
+                    54,
+                    77,
+                    115,
+                    44,
+                    93,
+                    135,
+                    86,
+                    90,
+                    38,
+                    21
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.535079781301077,
+                "count": 38,
+                "diameter_indices": [
+                    10,
+                    82
+                ],
+                "hull_indices": [
+                    82,
+                    9,
+                    148,
+                    92,
+                    84,
+                    10,
+                    49,
+                    126,
+                    98,
+                    30,
+                    88,
+                    55
+                ]
+            },
+            "id": "Antipodal/Gaussian/4/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.515739239427798,
+                "count": 28,
+                "diameter_indices": [
+                    85,
+                    129
+                ],
+                "hull_indices": [
+                    129,
+                    14,
+                    125,
+                    146,
+                    49,
+                    109,
+                    85,
+                    64,
+                    72,
+                    104,
+                    25,
+                    124,
+                    71
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.7498401770641747,
+                "count": 29,
+                "diameter_indices": [
+                    35,
+                    89
+                ],
+                "hull_indices": [
+                    89,
+                    136,
+                    106,
+                    56,
+                    35,
+                    76,
+                    16,
+                    69
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.205820278654202,
+                "count": 26,
+                "diameter_indices": [
+                    30,
+                    135
+                ],
+                "hull_indices": [
+                    135,
+                    130,
+                    73,
+                    25,
+                    30,
+                    98,
+                    18,
+                    36,
+                    71,
+                    38
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.2481218006478425,
+                "count": 28,
+                "diameter_indices": [
+                    95,
+                    136
+                ],
+                "hull_indices": [
+                    136,
+                    74,
+                    120,
+                    9,
+                    67,
+                    95,
+                    19,
+                    91,
+                    87,
+                    124
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4143222994907343,
+                "count": 34,
+                "diameter_indices": [
+                    63,
+                    113
+                ],
+                "hull_indices": [
+                    113,
+                    3,
+                    102,
+                    126,
+                    115,
+                    84,
+                    78,
+                    63,
+                    2,
+                    24,
+                    122,
+                    82
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.446274468354508,
+                "count": 31,
+                "diameter_indices": [
+                    2,
+                    46
+                ],
+                "hull_indices": [
+                    46,
+                    5,
+                    18,
+                    102,
+                    54,
+                    2,
+                    34,
+                    94,
+                    45
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.5618934505445274,
+                "count": 31,
+                "diameter_indices": [
+                    32,
+                    119
+                ],
+                "hull_indices": [
+                    119,
+                    115,
+                    1,
+                    31,
+                    53,
+                    32,
+                    20,
+                    49,
+                    43,
+                    10
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4234247012158847,
+                "count": 34,
+                "diameter_indices": [
+                    41,
+                    95
+                ],
+                "hull_indices": [
+                    95,
+                    116,
+                    88,
+                    41,
+                    97,
+                    118,
+                    112,
+                    75
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.6811813375979963,
+                "count": 33,
+                "diameter_indices": [
+                    89,
+                    127
+                ],
+                "hull_indices": [
+                    127,
+                    146,
+                    29,
+                    71,
+                    89,
+                    88,
+                    105,
+                    10,
+                    21,
+                    136
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.1939826553985005,
+                "count": 29,
+                "diameter_indices": [
+                    65,
+                    133
+                ],
+                "hull_indices": [
+                    133,
+                    149,
+                    94,
+                    59,
+                    97,
+                    65,
+                    20,
+                    8,
+                    4
+                ]
+            },
+            "id": "Antipodal/Gaussian/5/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.243229941901111,
+                "count": 22,
+                "diameter_indices": [
+                    11,
+                    34
+                ],
+                "hull_indices": [
+                    34,
+                    54,
+                    95,
+                    11,
+                    116,
+                    105,
+                    21,
+                    70
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.176616185267288,
+                "count": 22,
+                "diameter_indices": [
+                    72,
+                    93
+                ],
+                "hull_indices": [
+                    93,
+                    119,
+                    62,
+                    102,
+                    3,
+                    47,
+                    72,
+                    63,
+                    35,
+                    28,
+                    138,
+                    125
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.2563931241114443,
+                "count": 24,
+                "diameter_indices": [
+                    31,
+                    89
+                ],
+                "hull_indices": [
+                    89,
+                    127,
+                    103,
+                    101,
+                    132,
+                    86,
+                    25,
+                    31,
+                    16,
+                    126,
+                    108
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4337364530504013,
+                "count": 25,
+                "diameter_indices": [
+                    12,
+                    118
+                ],
+                "hull_indices": [
+                    118,
+                    14,
+                    67,
+                    88,
+                    12,
+                    82,
+                    42,
+                    149
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.5477700033918063,
+                "count": 25,
+                "diameter_indices": [
+                    3,
+                    31
+                ],
+                "hull_indices": [
+                    31,
+                    35,
+                    141,
+                    145,
+                    3,
+                    118,
+                    96
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4141284812207777,
+                "count": 21,
+                "diameter_indices": [
+                    55,
+                    77
+                ],
+                "hull_indices": [
+                    77,
+                    108,
+                    83,
+                    97,
+                    55,
+                    142,
+                    5,
+                    27
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.484256726023603,
+                "count": 32,
+                "diameter_indices": [
+                    20,
+                    137
+                ],
+                "hull_indices": [
+                    137,
+                    40,
+                    124,
+                    24,
+                    38,
+                    70,
+                    72,
+                    20,
+                    7,
+                    33,
+                    122
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.631270921505488,
+                "count": 29,
+                "diameter_indices": [
+                    14,
+                    97
+                ],
+                "hull_indices": [
+                    97,
+                    18,
+                    141,
+                    62,
+                    9,
+                    15,
+                    87,
+                    14,
+                    32,
+                    147,
+                    144,
+                    34
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.1546724357780214,
+                "count": 24,
+                "diameter_indices": [
+                    49,
+                    75
+                ],
+                "hull_indices": [
+                    75,
+                    116,
+                    14,
+                    149,
+                    79,
+                    49,
+                    118,
+                    137,
+                    70,
+                    141
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.2973638882295515,
+                "count": 23,
+                "diameter_indices": [
+                    55,
+                    137
+                ],
+                "hull_indices": [
+                    137,
+                    73,
+                    77,
+                    55,
+                    13
+                ]
+            },
+            "id": "Antipodal/Gaussian/6/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.671102457300862,
+                "count": 18,
+                "diameter_indices": [
+                    28,
+                    115
+                ],
+                "hull_indices": [
+                    115,
+                    83,
+                    77,
+                    47,
+                    101,
+                    28,
+                    148,
+                    70,
+                    128,
+                    74
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.5250263262131987,
+                "count": 22,
+                "diameter_indices": [
+                    32,
+                    63
+                ],
+                "hull_indices": [
+                    63,
+                    60,
+                    143,
+                    125,
+                    35,
+                    32,
+                    97,
+                    56
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.478989996765598,
+                "count": 24,
+                "diameter_indices": [
+                    19,
+                    106
+                ],
+                "hull_indices": [
+                    106,
+                    1,
+                    52,
+                    19,
+                    105,
+                    134,
+                    2,
+                    73
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.155708356854739,
+                "count": 20,
+                "diameter_indices": [
+                    46,
+                    85
+                ],
+                "hull_indices": [
+                    85,
+                    148,
+                    77,
+                    46,
+                    79,
+                    109
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.1634734223771397,
+                "count": 19,
+                "diameter_indices": [
+                    92,
+                    95
+                ],
+                "hull_indices": [
+                    95,
+                    110,
+                    45,
+                    92,
+                    73,
+                    47,
+                    87,
+                    49,
+                    55
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.28657339004639,
+                "count": 23,
+                "diameter_indices": [
+                    97,
+                    149
+                ],
+                "hull_indices": [
+                    149,
+                    84,
+                    30,
+                    110,
+                    16,
+                    97,
+                    33,
+                    102
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.480384246059094,
+                "count": 22,
+                "diameter_indices": [
+                    25,
+                    28
+                ],
+                "hull_indices": [
+                    28,
+                    46,
+                    31,
+                    67,
+                    23,
+                    25,
+                    88,
+                    93,
+                    57,
+                    5
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4044788155168053,
+                "count": 21,
+                "diameter_indices": [
+                    7,
+                    127
+                ],
+                "hull_indices": [
+                    127,
+                    145,
+                    35,
+                    39,
+                    91,
+                    7,
+                    37,
+                    125,
+                    93,
+                    53
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.410648719260133,
+                "count": 25,
+                "diameter_indices": [
+                    105,
+                    110
+                ],
+                "hull_indices": [
+                    110,
+                    61,
+                    26,
+                    133,
+                    84,
+                    105,
+                    52,
+                    38,
+                    91
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.163939566078176,
+                "count": 23,
+                "diameter_indices": [
+                    73,
+                    105
+                ],
+                "hull_indices": [
+                    105,
+                    13,
+                    27,
+                    73,
+                    65,
+                    4,
+                    32,
+                    56,
+                    99
+                ]
+            },
+            "id": "Antipodal/Gaussian/7/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.4660349588504755,
+                "count": 19,
+                "diameter_indices": [
+                    118,
+                    131
+                ],
+                "hull_indices": [
+                    131,
+                    56,
+                    26,
+                    139,
+                    118,
+                    94,
+                    82,
+                    112
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.103784421313203,
+                "count": 21,
+                "diameter_indices": [
+                    100,
+                    148
+                ],
+                "hull_indices": [
+                    148,
+                    115,
+                    70,
+                    100,
+                    19,
+                    127,
+                    39,
+                    49
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.0058931032054192,
+                "count": 18,
+                "diameter_indices": [
+                    8,
+                    113
+                ],
+                "hull_indices": [
+                    113,
+                    130,
+                    91,
+                    7,
+                    115,
+                    8,
+                    136,
+                    106,
+                    56
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.9357073003195373,
+                "count": 23,
+                "diameter_indices": [
+                    77,
+                    119
+                ],
+                "hull_indices": [
+                    119,
+                    58,
+                    99,
+                    35,
+                    77,
+                    136,
+                    1
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.254393911122968,
+                "count": 17,
+                "diameter_indices": [
+                    9,
+                    109
+                ],
+                "hull_indices": [
+                    109,
+                    31,
+                    79,
+                    75,
+                    9,
+                    89
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.1723341595279586,
+                "count": 24,
+                "diameter_indices": [
+                    13,
+                    57
+                ],
+                "hull_indices": [
+                    57,
+                    18,
+                    11,
+                    13,
+                    66,
+                    76,
+                    100,
+                    95
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.3669901416457773,
+                "count": 19,
+                "diameter_indices": [
+                    8,
+                    124
+                ],
+                "hull_indices": [
+                    124,
+                    3,
+                    5,
+                    77,
+                    61,
+                    8,
+                    62,
+                    91,
+                    75
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.074420414377752,
+                "count": 19,
+                "diameter_indices": [
+                    72,
+                    84
+                ],
+                "hull_indices": [
+                    84,
+                    36,
+                    114,
+                    49,
+                    72,
+                    97,
+                    116
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.101121548203303,
+                "count": 21,
+                "diameter_indices": [
+                    64,
+                    141
+                ],
+                "hull_indices": [
+                    141,
+                    3,
+                    134,
+                    41,
+                    15,
+                    64,
+                    51,
+                    90
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.0545426211404116,
+                "count": 18,
+                "diameter_indices": [
+                    25,
+                    103
+                ],
+                "hull_indices": [
+                    103,
+                    32,
+                    144,
+                    93,
+                    95,
+                    25,
+                    52,
+                    39
+                ]
+            },
+            "id": "Antipodal/Gaussian/8/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.9710207442825853,
+                "count": 15,
+                "diameter_indices": [
+                    43,
+                    125
+                ],
+                "hull_indices": [
+                    125,
+                    42,
+                    38,
+                    43,
+                    53,
+                    6
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.076829430418646,
+                "count": 16,
+                "diameter_indices": [
+                    46,
+                    148
+                ],
+                "hull_indices": [
+                    148,
+                    118,
+                    50,
+                    11,
+                    46,
+                    143,
+                    98
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.3929002392745393,
+                "count": 19,
+                "diameter_indices": [
+                    54,
+                    75
+                ],
+                "hull_indices": [
+                    75,
+                    70,
+                    134,
+                    44,
+                    30,
+                    54,
+                    39,
+                    121,
+                    93,
+                    145
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.8807648984131777,
+                "count": 18,
+                "diameter_indices": [
+                    8,
+                    125
+                ],
+                "hull_indices": [
+                    125,
+                    69,
+                    98,
+                    95,
+                    63,
+                    8,
+                    55,
+                    146,
+                    82,
+                    34
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.999579253490486,
+                "count": 13,
+                "diameter_indices": [
+                    42,
+                    68
+                ],
+                "hull_indices": [
+                    68,
+                    41,
+                    69,
+                    34,
+                    42,
+                    109,
+                    26,
+                    115
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.2816638551398842,
+                "count": 15,
+                "diameter_indices": [
+                    9,
+                    90
+                ],
+                "hull_indices": [
+                    90,
+                    52,
+                    108,
+                    14,
+                    9,
+                    149,
+                    125
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.6946335507929362,
+                "count": 13,
+                "diameter_indices": [
+                    127,
+                    139
+                ],
+                "hull_indices": [
+                    139,
+                    148,
+                    114,
+                    66,
+                    6,
+                    127,
+                    15,
+                    16,
+                    94
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.9431545468784248,
+                "count": 18,
+                "diameter_indices": [
+                    18,
+                    79
+                ],
+                "hull_indices": [
+                    79,
+                    39,
+                    6,
+                    83,
+                    18,
+                    71,
+                    5
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.0451231904561538,
+                "count": 15,
+                "diameter_indices": [
+                    4,
+                    73
+                ],
+                "hull_indices": [
+                    73,
+                    83,
+                    57,
+                    130,
+                    98,
+                    39,
+                    4,
+                    68,
+                    51,
+                    71
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.1410436259337993,
+                "count": 15,
+                "diameter_indices": [
+                    88,
+                    103
+                ],
+                "hull_indices": [
+                    103,
+                    140,
+                    58,
+                    106,
+                    88,
+                    49,
+                    62,
+                    68,
+                    28
+                ]
+            },
+            "id": "Antipodal/Gaussian/9/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.822763397831387,
+                "count": 12,
+                "diameter_indices": [
+                    28,
+                    145
+                ],
+                "hull_indices": [
+                    145,
+                    94,
+                    114,
+                    109,
+                    30,
+                    28,
+                    121,
+                    147,
+                    92
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.8324780451266907,
+                "count": 15,
+                "diameter_indices": [
+                    0,
+                    11
+                ],
+                "hull_indices": [
+                    11,
+                    111,
+                    0,
+                    49,
+                    121,
+                    96,
+                    80,
+                    53,
+                    29
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.9212355635330847,
+                "count": 17,
+                "diameter_indices": [
+                    83,
+                    143
+                ],
+                "hull_indices": [
+                    143,
+                    138,
+                    10,
+                    107,
+                    83,
+                    109
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.5203745241603337,
+                "count": 19,
+                "diameter_indices": [
+                    9,
+                    52
+                ],
+                "hull_indices": [
+                    52,
+                    137,
+                    80,
+                    87,
+                    96,
+                    9,
+                    125,
+                    110,
+                    81,
+                    138
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.135824349559026,
+                "count": 15,
+                "diameter_indices": [
+                    77,
+                    108
+                ],
+                "hull_indices": [
+                    108,
+                    69,
+                    98,
+                    77,
+                    100,
+                    50,
+                    45,
+                    91
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.4143792560607122,
+                "count": 15,
+                "diameter_indices": [
+                    87,
+                    90
+                ],
+                "hull_indices": [
+                    90,
+                    82,
+                    86,
+                    67,
+                    87,
+                    79,
+                    37,
+                    54
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.4783005572795198,
+                "count": 11,
+                "diameter_indices": [
+                    0,
+                    44
+                ],
+                "hull_indices": [
+                    44,
+                    106,
+                    112,
+                    103,
+                    0,
+                    93,
+                    24
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.6788926836000198,
+                "count": 12,
+                "diameter_indices": [
+                    38,
+                    98
+                ],
+                "hull_indices": [
+                    98,
+                    82,
+                    85,
+                    38,
+                    4,
+                    119
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 2.05162768082908,
+                "count": 18,
+                "diameter_indices": [
+                    47,
+                    96
+                ],
+                "hull_indices": [
+                    96,
+                    98,
+                    97,
+                    24,
+                    23,
+                    47,
+                    33,
+                    9,
+                    136
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 1.9355204364203416,
+                "count": 16,
+                "diameter_indices": [
+                    82,
+                    135
+                ],
+                "hull_indices": [
+                    135,
+                    140,
+                    57,
+                    26,
+                    35,
+                    82,
+                    56,
+                    81
+                ]
+            },
+            "id": "Antipodal/Gaussian/10/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.875382541484593,
+                "count": 145,
+                "diameter_indices": [
+                    91,
+                    90
+                ],
+                "hull_indices": [
+                    81,
+                    31,
+                    91,
+                    143,
+                    5,
+                    37,
+                    94,
+                    90,
+                    72,
+                    63
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.913623856754811,
+                "count": 147,
+                "diameter_indices": [
+                    86,
+                    82
+                ],
+                "hull_indices": [
+                    101,
+                    2,
+                    94,
+                    86,
+                    129,
+                    56,
+                    146,
+                    32,
+                    148,
+                    82,
+                    5,
+                    132
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9602895464910444,
+                "count": 147,
+                "diameter_indices": [
+                    134,
+                    92
+                ],
+                "hull_indices": [
+                    96,
+                    134,
+                    73,
+                    130,
+                    103,
+                    91,
+                    92,
+                    15,
+                    17
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.922194511180745,
+                "count": 147,
+                "diameter_indices": [
+                    94,
+                    27
+                ],
+                "hull_indices": [
+                    94,
+                    75,
+                    77,
+                    36,
+                    59,
+                    110,
+                    122,
+                    27,
+                    37,
+                    107
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.889190622945852,
+                "count": 146,
+                "diameter_indices": [
+                    93,
+                    91
+                ],
+                "hull_indices": [
+                    12,
+                    29,
+                    134,
+                    93,
+                    52,
+                    49,
+                    0,
+                    124,
+                    47,
+                    91,
+                    101,
+                    130
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.917074779798784,
+                "count": 146,
+                "diameter_indices": [
+                    48,
+                    118
+                ],
+                "hull_indices": [
+                    119,
+                    27,
+                    147,
+                    48,
+                    96,
+                    149,
+                    110,
+                    135,
+                    39,
+                    118
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.989674503361027,
+                "count": 149,
+                "diameter_indices": [
+                    10,
+                    106
+                ],
+                "hull_indices": [
+                    112,
+                    33,
+                    10,
+                    39,
+                    15,
+                    53,
+                    35,
+                    106,
+                    126,
+                    3
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.7571947207958427,
+                "count": 149,
+                "diameter_indices": [
+                    9,
+                    134
+                ],
+                "hull_indices": [
+                    100,
+                    82,
+                    63,
+                    9,
+                    127,
+                    67,
+                    105,
+                    69,
+                    1,
+                    5,
+                    134
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.683328940907072,
+                "count": 149,
+                "diameter_indices": [
+                    95,
+                    83
+                ],
+                "hull_indices": [
+                    82,
+                    126,
+                    95,
+                    139,
+                    84,
+                    115,
+                    129,
+                    73,
+                    65,
+                    83,
+                    45
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.7256815554938694,
+                "count": 148,
+                "diameter_indices": [
+                    76,
+                    85
+                ],
+                "hull_indices": [
+                    76,
+                    38,
+                    57,
+                    56,
+                    92,
+                    5,
+                    85,
+                    139,
+                    7,
+                    146,
+                    113
+                ]
+            },
+            "id": "Eppstein/Gaussian/0/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9460330829021992,
+                "count": 124,
+                "diameter_indices": [
+                    148,
+                    45
+                ],
+                "hull_indices": [
+                    148,
+                    142,
+                    80,
+                    14,
+                    45,
+                    48,
+                    85,
+                    34,
+                    143,
+                    51,
+                    26
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.983986312511088,
+                "count": 109,
+                "diameter_indices": [
+                    146,
+                    44
+                ],
+                "hull_indices": [
+                    146,
+                    129,
+                    136,
+                    149,
+                    73,
+                    13,
+                    22,
+                    80,
+                    39,
+                    44,
+                    94,
+                    87,
+                    64,
+                    96
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9943590036287193,
+                "count": 114,
+                "diameter_indices": [
+                    147,
+                    41
+                ],
+                "hull_indices": [
+                    147,
+                    9,
+                    42,
+                    117,
+                    26,
+                    58,
+                    41,
+                    101,
+                    33,
+                    40,
+                    128,
+                    13
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9910368321841867,
+                "count": 116,
+                "diameter_indices": [
+                    110,
+                    121
+                ],
+                "hull_indices": [
+                    110,
+                    62,
+                    56,
+                    27,
+                    25,
+                    11,
+                    88,
+                    121,
+                    101,
+                    119,
+                    35,
+                    26,
+                    14,
+                    51
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.959394931431646,
+                "count": 126,
+                "diameter_indices": [
+                    128,
+                    15
+                ],
+                "hull_indices": [
+                    13,
+                    115,
+                    128,
+                    55,
+                    5,
+                    87,
+                    99,
+                    90,
+                    15,
+                    28,
+                    97,
+                    33
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.967381840325656,
+                "count": 116,
+                "diameter_indices": [
+                    37,
+                    135
+                ],
+                "hull_indices": [
+                    99,
+                    143,
+                    12,
+                    34,
+                    46,
+                    10,
+                    37,
+                    96,
+                    51,
+                    93,
+                    129,
+                    30,
+                    20,
+                    144,
+                    65,
+                    24,
+                    135,
+                    33
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9831634529857918,
+                "count": 104,
+                "diameter_indices": [
+                    40,
+                    61
+                ],
+                "hull_indices": [
+                    40,
+                    19,
+                    134,
+                    7,
+                    23,
+                    97,
+                    61,
+                    143,
+                    108,
+                    36,
+                    107,
+                    112,
+                    49,
+                    127
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9981827799837464,
+                "count": 120,
+                "diameter_indices": [
+                    89,
+                    110
+                ],
+                "hull_indices": [
+                    127,
+                    51,
+                    83,
+                    26,
+                    13,
+                    149,
+                    89,
+                    10,
+                    11,
+                    31,
+                    146,
+                    124,
+                    39,
+                    110
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9508860311934506,
+                "count": 111,
+                "diameter_indices": [
+                    90,
+                    147
+                ],
+                "hull_indices": [
+                    27,
+                    52,
+                    90,
+                    95,
+                    143,
+                    133,
+                    63,
+                    4,
+                    147,
+                    54,
+                    89,
+                    141
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9512571208901193,
+                "count": 115,
+                "diameter_indices": [
+                    59,
+                    37
+                ],
+                "hull_indices": [
+                    59,
+                    89,
+                    66,
+                    122,
+                    105,
+                    95,
+                    67,
+                    37,
+                    21,
+                    64,
+                    32,
+                    92,
+                    11,
+                    53,
+                    1
+                ]
+            },
+            "id": "Eppstein/Gaussian/1/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.928854421961677,
+                "count": 91,
+                "diameter_indices": [
+                    38,
+                    5
+                ],
+                "hull_indices": [
+                    38,
+                    103,
+                    141,
+                    43,
+                    88,
+                    73,
+                    5,
+                    98,
+                    42,
+                    59,
+                    3,
+                    39
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9657186751173037,
+                "count": 92,
+                "diameter_indices": [
+                    49,
+                    79
+                ],
+                "hull_indices": [
+                    49,
+                    4,
+                    104,
+                    135,
+                    129,
+                    16,
+                    79,
+                    58,
+                    149,
+                    134,
+                    142,
+                    47
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9389149297627832,
+                "count": 81,
+                "diameter_indices": [
+                    26,
+                    28
+                ],
+                "hull_indices": [
+                    12,
+                    90,
+                    26,
+                    146,
+                    64,
+                    129,
+                    74,
+                    45,
+                    92,
+                    54,
+                    28,
+                    97
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.965026622157971,
+                "count": 83,
+                "diameter_indices": [
+                    46,
+                    138
+                ],
+                "hull_indices": [
+                    145,
+                    140,
+                    90,
+                    32,
+                    36,
+                    34,
+                    46,
+                    125,
+                    62,
+                    23,
+                    131,
+                    31,
+                    28,
+                    66,
+                    138,
+                    86
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.99016011357706,
+                "count": 86,
+                "diameter_indices": [
+                    47,
+                    58
+                ],
+                "hull_indices": [
+                    47,
+                    87,
+                    24,
+                    127,
+                    80,
+                    89,
+                    2,
+                    131,
+                    58,
+                    104,
+                    44,
+                    65
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.996899968770083,
+                "count": 91,
+                "diameter_indices": [
+                    139,
+                    80
+                ],
+                "hull_indices": [
+                    38,
+                    58,
+                    68,
+                    139,
+                    90,
+                    97,
+                    74,
+                    29,
+                    61,
+                    129,
+                    89,
+                    112,
+                    49,
+                    16,
+                    80,
+                    53,
+                    5,
+                    2
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9269002007221703,
+                "count": 86,
+                "diameter_indices": [
+                    38,
+                    142
+                ],
+                "hull_indices": [
+                    38,
+                    5,
+                    55,
+                    65,
+                    41,
+                    142,
+                    18,
+                    79,
+                    7
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9825513362589895,
+                "count": 86,
+                "diameter_indices": [
+                    85,
+                    117
+                ],
+                "hull_indices": [
+                    0,
+                    85,
+                    63,
+                    83,
+                    102,
+                    62,
+                    113,
+                    33,
+                    117,
+                    29,
+                    131,
+                    137,
+                    18,
+                    26
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8886440705522314,
+                "count": 91,
+                "diameter_indices": [
+                    135,
+                    60
+                ],
+                "hull_indices": [
+                    35,
+                    23,
+                    0,
+                    135,
+                    61,
+                    16,
+                    137,
+                    11,
+                    41,
+                    46,
+                    134,
+                    60,
+                    40
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.899234651540415,
+                "count": 81,
+                "diameter_indices": [
+                    77,
+                    78
+                ],
+                "hull_indices": [
+                    57,
+                    93,
+                    3,
+                    147,
+                    77,
+                    4,
+                    117,
+                    45,
+                    115,
+                    108,
+                    84,
+                    46,
+                    78
+                ]
+            },
+            "id": "Eppstein/Gaussian/2/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.997824047372917,
+                "count": 75,
+                "diameter_indices": [
+                    13,
+                    128
+                ],
+                "hull_indices": [
+                    69,
+                    13,
+                    82,
+                    20,
+                    131,
+                    38,
+                    64,
+                    128,
+                    71,
+                    75,
+                    145,
+                    48
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9601976603264797,
+                "count": 68,
+                "diameter_indices": [
+                    11,
+                    95
+                ],
+                "hull_indices": [
+                    11,
+                    5,
+                    129,
+                    77,
+                    54,
+                    12,
+                    92,
+                    141,
+                    95,
+                    24,
+                    142,
+                    133,
+                    38,
+                    99
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9207963585619208,
+                "count": 64,
+                "diameter_indices": [
+                    11,
+                    105
+                ],
+                "hull_indices": [
+                    48,
+                    11,
+                    4,
+                    64,
+                    74,
+                    105,
+                    44,
+                    26,
+                    145
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9130395126045556,
+                "count": 72,
+                "diameter_indices": [
+                    73,
+                    138
+                ],
+                "hull_indices": [
+                    81,
+                    30,
+                    111,
+                    73,
+                    71,
+                    16,
+                    125,
+                    138,
+                    118,
+                    44,
+                    133
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.959512907608306,
+                "count": 70,
+                "diameter_indices": [
+                    44,
+                    136
+                ],
+                "hull_indices": [
+                    44,
+                    70,
+                    6,
+                    67,
+                    124,
+                    136,
+                    18,
+                    64,
+                    147,
+                    23
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.949307419447705,
+                "count": 67,
+                "diameter_indices": [
+                    148,
+                    30
+                ],
+                "hull_indices": [
+                    110,
+                    123,
+                    18,
+                    148,
+                    84,
+                    104,
+                    28,
+                    49,
+                    21,
+                    44,
+                    30,
+                    23,
+                    60
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9869583394097496,
+                "count": 69,
+                "diameter_indices": [
+                    82,
+                    35
+                ],
+                "hull_indices": [
+                    120,
+                    82,
+                    123,
+                    74,
+                    32,
+                    40,
+                    145,
+                    111,
+                    35,
+                    105,
+                    9,
+                    141
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.966761055940062,
+                "count": 75,
+                "diameter_indices": [
+                    115,
+                    35
+                ],
+                "hull_indices": [
+                    115,
+                    10,
+                    133,
+                    50,
+                    43,
+                    131,
+                    35,
+                    21,
+                    45,
+                    94,
+                    46,
+                    92,
+                    107
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.951068515189415,
+                "count": 63,
+                "diameter_indices": [
+                    49,
+                    130
+                ],
+                "hull_indices": [
+                    4,
+                    39,
+                    121,
+                    21,
+                    148,
+                    47,
+                    62,
+                    49,
+                    76,
+                    77,
+                    10,
+                    144,
+                    75,
+                    130
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8950552144567516,
+                "count": 58,
+                "diameter_indices": [
+                    94,
+                    147
+                ],
+                "hull_indices": [
+                    145,
+                    118,
+                    116,
+                    30,
+                    39,
+                    6,
+                    94,
+                    5,
+                    96,
+                    4,
+                    117,
+                    37,
+                    147
+                ]
+            },
+            "id": "Eppstein/Gaussian/3/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9235172716905042,
+                "count": 54,
+                "diameter_indices": [
+                    87,
+                    74
+                ],
+                "hull_indices": [
+                    84,
+                    87,
+                    25,
+                    27,
+                    138,
+                    92,
+                    133,
+                    82,
+                    74,
+                    111,
+                    9,
+                    119,
+                    36
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.989373947733457,
+                "count": 55,
+                "diameter_indices": [
+                    94,
+                    90
+                ],
+                "hull_indices": [
+                    85,
+                    139,
+                    109,
+                    94,
+                    30,
+                    53,
+                    148,
+                    90,
+                    145,
+                    135,
+                    0,
+                    49
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.951635807350356,
+                "count": 56,
+                "diameter_indices": [
+                    121,
+                    103
+                ],
+                "hull_indices": [
+                    121,
+                    98,
+                    70,
+                    95,
+                    82,
+                    103,
+                    118,
+                    140,
+                    14,
+                    114,
+                    111,
+                    9,
+                    66
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8714510257989594,
+                "count": 49,
+                "diameter_indices": [
+                    145,
+                    4
+                ],
+                "hull_indices": [
+                    12,
+                    135,
+                    51,
+                    103,
+                    145,
+                    18,
+                    25,
+                    116,
+                    6,
+                    124,
+                    102,
+                    4
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9004018322511764,
+                "count": 60,
+                "diameter_indices": [
+                    136,
+                    115
+                ],
+                "hull_indices": [
+                    121,
+                    58,
+                    136,
+                    65,
+                    49,
+                    85,
+                    99,
+                    137,
+                    124,
+                    115,
+                    147,
+                    70,
+                    47,
+                    39,
+                    129,
+                    76
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9872293868882975,
+                "count": 59,
+                "diameter_indices": [
+                    49,
+                    114
+                ],
+                "hull_indices": [
+                    102,
+                    127,
+                    49,
+                    8,
+                    100,
+                    17,
+                    31,
+                    114,
+                    6,
+                    126
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9436188964885104,
+                "count": 52,
+                "diameter_indices": [
+                    105,
+                    45
+                ],
+                "hull_indices": [
+                    65,
+                    130,
+                    119,
+                    105,
+                    85,
+                    7,
+                    73,
+                    72,
+                    102,
+                    136,
+                    45,
+                    60,
+                    37
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.967146770252741,
+                "count": 51,
+                "diameter_indices": [
+                    44,
+                    65
+                ],
+                "hull_indices": [
+                    112,
+                    44,
+                    87,
+                    143,
+                    113,
+                    12,
+                    79,
+                    120,
+                    122,
+                    65,
+                    116,
+                    30,
+                    33,
+                    2
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9869609006618556,
+                "count": 56,
+                "diameter_indices": [
+                    40,
+                    106
+                ],
+                "hull_indices": [
+                    29,
+                    40,
+                    10,
+                    65,
+                    86,
+                    6,
+                    95,
+                    36,
+                    106,
+                    81,
+                    68,
+                    52,
+                    5,
+                    4
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9284158266422686,
+                "count": 55,
+                "diameter_indices": [
+                    91,
+                    49
+                ],
+                "hull_indices": [
+                    107,
+                    55,
+                    82,
+                    80,
+                    91,
+                    61,
+                    1,
+                    62,
+                    49,
+                    14,
+                    147
+                ]
+            },
+            "id": "Eppstein/Gaussian/4/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9058635666656185,
+                "count": 42,
+                "diameter_indices": [
+                    76,
+                    122
+                ],
+                "hull_indices": [
+                    137,
+                    76,
+                    126,
+                    72,
+                    147,
+                    86,
+                    77,
+                    122,
+                    52,
+                    14,
+                    125,
+                    146
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.843162394635341,
+                "count": 46,
+                "diameter_indices": [
+                    144,
+                    38
+                ],
+                "hull_indices": [
+                    144,
+                    35,
+                    116,
+                    3,
+                    7,
+                    38,
+                    115,
+                    44,
+                    67
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.996885335743209,
+                "count": 41,
+                "diameter_indices": [
+                    116,
+                    140
+                ],
+                "hull_indices": [
+                    144,
+                    73,
+                    120,
+                    116,
+                    78,
+                    36,
+                    115,
+                    140,
+                    72,
+                    40
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.867495598349285,
+                "count": 43,
+                "diameter_indices": [
+                    146,
+                    15
+                ],
+                "hull_indices": [
+                    55,
+                    57,
+                    56,
+                    113,
+                    146,
+                    134,
+                    95,
+                    15,
+                    39,
+                    87
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9122618592851377,
+                "count": 53,
+                "diameter_indices": [
+                    76,
+                    136
+                ],
+                "hull_indices": [
+                    76,
+                    40,
+                    13,
+                    97,
+                    3,
+                    102,
+                    126,
+                    125,
+                    106,
+                    136,
+                    11,
+                    63,
+                    30,
+                    26
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.912836072303852,
+                "count": 46,
+                "diameter_indices": [
+                    84,
+                    26
+                ],
+                "hull_indices": [
+                    54,
+                    2,
+                    84,
+                    71,
+                    94,
+                    45,
+                    100,
+                    49,
+                    26,
+                    141,
+                    147
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.931486718804148,
+                "count": 45,
+                "diameter_indices": [
+                    52,
+                    78
+                ],
+                "hull_indices": [
+                    112,
+                    21,
+                    39,
+                    76,
+                    53,
+                    52,
+                    137,
+                    121,
+                    115,
+                    67,
+                    78,
+                    72,
+                    120
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9816227834500624,
+                "count": 47,
+                "diameter_indices": [
+                    9,
+                    26
+                ],
+                "hull_indices": [
+                    9,
+                    62,
+                    136,
+                    112,
+                    75,
+                    29,
+                    26,
+                    53,
+                    88,
+                    13,
+                    96
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9184347877495442,
+                "count": 46,
+                "diameter_indices": [
+                    50,
+                    103
+                ],
+                "hull_indices": [
+                    29,
+                    61,
+                    50,
+                    89,
+                    88,
+                    143,
+                    33,
+                    103,
+                    149,
+                    30,
+                    127,
+                    146
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.980072452914345,
+                "count": 47,
+                "diameter_indices": [
+                    128,
+                    120
+                ],
+                "hull_indices": [
+                    128,
+                    94,
+                    112,
+                    120,
+                    66,
+                    91,
+                    119,
+                    8,
+                    67,
+                    93,
+                    133
+                ]
+            },
+            "id": "Eppstein/Gaussian/5/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9642760387556217,
+                "count": 34,
+                "diameter_indices": [
+                    148,
+                    54
+                ],
+                "hull_indices": [
+                    148,
+                    134,
+                    42,
+                    54,
+                    132,
+                    85,
+                    47,
+                    51,
+                    16
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9539139162548413,
+                "count": 34,
+                "diameter_indices": [
+                    121,
+                    136
+                ],
+                "hull_indices": [
+                    121,
+                    120,
+                    19,
+                    35,
+                    73,
+                    90,
+                    52,
+                    146,
+                    136,
+                    99,
+                    8,
+                    51,
+                    72,
+                    70
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.983111356955369,
+                "count": 36,
+                "diameter_indices": [
+                    108,
+                    48
+                ],
+                "hull_indices": [
+                    0,
+                    19,
+                    129,
+                    147,
+                    108,
+                    89,
+                    137,
+                    124,
+                    73,
+                    23,
+                    48,
+                    66
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8598050940842406,
+                "count": 39,
+                "diameter_indices": [
+                    89,
+                    128
+                ],
+                "hull_indices": [
+                    66,
+                    149,
+                    102,
+                    61,
+                    89,
+                    101,
+                    131,
+                    128,
+                    12
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.953630024139917,
+                "count": 40,
+                "diameter_indices": [
+                    22,
+                    118
+                ],
+                "hull_indices": [
+                    50,
+                    134,
+                    22,
+                    5,
+                    72,
+                    33,
+                    118,
+                    96,
+                    34,
+                    38
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.831558469538956,
+                "count": 32,
+                "diameter_indices": [
+                    141,
+                    119
+                ],
+                "hull_indices": [
+                    39,
+                    141,
+                    145,
+                    119,
+                    98,
+                    69,
+                    74,
+                    59
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.828020717413774,
+                "count": 45,
+                "diameter_indices": [
+                    102,
+                    108
+                ],
+                "hull_indices": [
+                    102,
+                    74,
+                    7,
+                    140,
+                    123,
+                    108,
+                    65,
+                    124,
+                    24,
+                    143
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8708774201782785,
+                "count": 41,
+                "diameter_indices": [
+                    23,
+                    101
+                ],
+                "hull_indices": [
+                    17,
+                    29,
+                    87,
+                    142,
+                    57,
+                    21,
+                    23,
+                    149,
+                    44,
+                    18,
+                    141,
+                    93,
+                    101
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8775082422625102,
+                "count": 38,
+                "diameter_indices": [
+                    96,
+                    140
+                ],
+                "hull_indices": [
+                    96,
+                    14,
+                    149,
+                    79,
+                    140,
+                    22,
+                    118,
+                    141,
+                    15
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8832776479298503,
+                "count": 37,
+                "diameter_indices": [
+                    111,
+                    126
+                ],
+                "hull_indices": [
+                    111,
+                    11,
+                    13,
+                    137,
+                    6,
+                    89,
+                    126,
+                    75,
+                    77,
+                    114,
+                    14
+                ]
+            },
+            "id": "Eppstein/Gaussian/6/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8714570817173852,
+                "count": 30,
+                "diameter_indices": [
+                    27,
+                    118
+                ],
+                "hull_indices": [
+                    49,
+                    16,
+                    88,
+                    94,
+                    27,
+                    142,
+                    129,
+                    44,
+                    118
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.927301575021828,
+                "count": 37,
+                "diameter_indices": [
+                    87,
+                    35
+                ],
+                "hull_indices": [
+                    32,
+                    6,
+                    45,
+                    96,
+                    87,
+                    16,
+                    116,
+                    134,
+                    65,
+                    60,
+                    143,
+                    125,
+                    35
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9584485506853326,
+                "count": 36,
+                "diameter_indices": [
+                    35,
+                    17
+                ],
+                "hull_indices": [
+                    84,
+                    81,
+                    35,
+                    144,
+                    79,
+                    21,
+                    52,
+                    19,
+                    17,
+                    64,
+                    138
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9961217949793393,
+                "count": 30,
+                "diameter_indices": [
+                    89,
+                    102
+                ],
+                "hull_indices": [
+                    122,
+                    89,
+                    47,
+                    46,
+                    19,
+                    120,
+                    123,
+                    102,
+                    148,
+                    95
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9617951850024316,
+                "count": 31,
+                "diameter_indices": [
+                    93,
+                    127
+                ],
+                "hull_indices": [
+                    93,
+                    69,
+                    24,
+                    106,
+                    86,
+                    127,
+                    49,
+                    55,
+                    95
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.895753108343973,
+                "count": 33,
+                "diameter_indices": [
+                    122,
+                    37
+                ],
+                "hull_indices": [
+                    122,
+                    97,
+                    87,
+                    51,
+                    102,
+                    37,
+                    15,
+                    106,
+                    58
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.986092184019323,
+                "count": 32,
+                "diameter_indices": [
+                    103,
+                    23
+                ],
+                "hull_indices": [
+                    40,
+                    101,
+                    103,
+                    80,
+                    142,
+                    67,
+                    23,
+                    5
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.878732114570963,
+                "count": 32,
+                "diameter_indices": [
+                    131,
+                    91
+                ],
+                "hull_indices": [
+                    7,
+                    37,
+                    134,
+                    68,
+                    128,
+                    131,
+                    52,
+                    59,
+                    17,
+                    91
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.90997971010289,
+                "count": 37,
+                "diameter_indices": [
+                    36,
+                    79
+                ],
+                "hull_indices": [
+                    98,
+                    36,
+                    13,
+                    26,
+                    133,
+                    116,
+                    96,
+                    52,
+                    79,
+                    2,
+                    32,
+                    47
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.998198530125153,
+                "count": 36,
+                "diameter_indices": [
+                    56,
+                    130
+                ],
+                "hull_indices": [
+                    32,
+                    56,
+                    99,
+                    105,
+                    13,
+                    35,
+                    130,
+                    53,
+                    36,
+                    92,
+                    4
+                ]
+            },
+            "id": "Eppstein/Gaussian/7/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9412156141571204,
+                "count": 31,
+                "diameter_indices": [
+                    67,
+                    25
+                ],
+                "hull_indices": [
+                    67,
+                    138,
+                    26,
+                    22,
+                    75,
+                    25,
+                    83,
+                    95,
+                    13,
+                    137,
+                    16,
+                    142
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9751445872470033,
+                "count": 32,
+                "diameter_indices": [
+                    73,
+                    111
+                ],
+                "hull_indices": [
+                    127,
+                    128,
+                    137,
+                    148,
+                    51,
+                    3,
+                    73,
+                    100,
+                    64,
+                    111,
+                    45
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9585128498688977,
+                "count": 31,
+                "diameter_indices": [
+                    110,
+                    146
+                ],
+                "hull_indices": [
+                    110,
+                    101,
+                    147,
+                    129,
+                    119,
+                    146,
+                    7,
+                    115,
+                    8
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8717975136057845,
+                "count": 35,
+                "diameter_indices": [
+                    134,
+                    3
+                ],
+                "hull_indices": [
+                    1,
+                    96,
+                    134,
+                    99,
+                    35,
+                    13,
+                    3,
+                    84,
+                    136
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8483276221966425,
+                "count": 27,
+                "diameter_indices": [
+                    57,
+                    138
+                ],
+                "hull_indices": [
+                    57,
+                    7,
+                    0,
+                    53,
+                    59,
+                    138,
+                    123,
+                    79
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.7597431653933375,
+                "count": 36,
+                "diameter_indices": [
+                    15,
+                    57
+                ],
+                "hull_indices": [
+                    15,
+                    146,
+                    97,
+                    116,
+                    95,
+                    57,
+                    25,
+                    145,
+                    45
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.7886310113776736,
+                "count": 31,
+                "diameter_indices": [
+                    142,
+                    52
+                ],
+                "hull_indices": [
+                    142,
+                    93,
+                    40,
+                    114,
+                    52,
+                    67,
+                    91,
+                    96,
+                    47
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.7376661255969963,
+                "count": 28,
+                "diameter_indices": [
+                    87,
+                    53
+                ],
+                "hull_indices": [
+                    87,
+                    84,
+                    102,
+                    65,
+                    53,
+                    145,
+                    24,
+                    116,
+                    13
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8854154297511783,
+                "count": 31,
+                "diameter_indices": [
+                    101,
+                    7
+                ],
+                "hull_indices": [
+                    101,
+                    60,
+                    134,
+                    27,
+                    7,
+                    119,
+                    61,
+                    34,
+                    144,
+                    87
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.794387483113135,
+                "count": 28,
+                "diameter_indices": [
+                    12,
+                    56
+                ],
+                "hull_indices": [
+                    12,
+                    142,
+                    49,
+                    90,
+                    140,
+                    56,
+                    134,
+                    25
+                ]
+            },
+            "id": "Eppstein/Gaussian/8/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.773216517797106,
+                "count": 26,
+                "diameter_indices": [
+                    60,
+                    118
+                ],
+                "hull_indices": [
+                    60,
+                    69,
+                    145,
+                    118,
+                    130,
+                    103,
+                    41,
+                    117,
+                    8
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.6863614269479092,
+                "count": 26,
+                "diameter_indices": [
+                    117,
+                    58
+                ],
+                "hull_indices": [
+                    117,
+                    88,
+                    119,
+                    43,
+                    68,
+                    58,
+                    51,
+                    31,
+                    12,
+                    1
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9861101431754826,
+                "count": 29,
+                "diameter_indices": [
+                    19,
+                    130
+                ],
+                "hull_indices": [
+                    19,
+                    72,
+                    39,
+                    29,
+                    130,
+                    44,
+                    30,
+                    71,
+                    112
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.778315231382281,
+                "count": 28,
+                "diameter_indices": [
+                    143,
+                    128
+                ],
+                "hull_indices": [
+                    143,
+                    116,
+                    63,
+                    105,
+                    128,
+                    103,
+                    17,
+                    33,
+                    82,
+                    34,
+                    125
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.868912591087936,
+                "count": 22,
+                "diameter_indices": [
+                    122,
+                    14
+                ],
+                "hull_indices": [
+                    122,
+                    14,
+                    31,
+                    37,
+                    107,
+                    97
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.770023315815313,
+                "count": 24,
+                "diameter_indices": [
+                    14,
+                    101
+                ],
+                "hull_indices": [
+                    14,
+                    85,
+                    121,
+                    30,
+                    101,
+                    25,
+                    46,
+                    17
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.84392033623135,
+                "count": 26,
+                "diameter_indices": [
+                    15,
+                    39
+                ],
+                "hull_indices": [
+                    15,
+                    16,
+                    94,
+                    139,
+                    30,
+                    102,
+                    39,
+                    126,
+                    34,
+                    114,
+                    6,
+                    127
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.824244234045007,
+                "count": 27,
+                "diameter_indices": [
+                    10,
+                    34
+                ],
+                "hull_indices": [
+                    10,
+                    20,
+                    142,
+                    133,
+                    58,
+                    8,
+                    61,
+                    34,
+                    109
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9490628476198597,
+                "count": 24,
+                "diameter_indices": [
+                    123,
+                    120
+                ],
+                "hull_indices": [
+                    123,
+                    128,
+                    111,
+                    13,
+                    120,
+                    95
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.9567472192038076,
+                "count": 27,
+                "diameter_indices": [
+                    110,
+                    136
+                ],
+                "hull_indices": [
+                    110,
+                    115,
+                    40,
+                    133,
+                    28,
+                    45,
+                    23,
+                    136,
+                    88,
+                    49,
+                    98,
+                    71
+                ]
+            },
+            "id": "Eppstein/Gaussian/9/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.717726445540949,
+                "count": 22,
+                "diameter_indices": [
+                    131,
+                    72
+                ],
+                "hull_indices": [
+                    106,
+                    149,
+                    22,
+                    131,
+                    72,
+                    41,
+                    37
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:0",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.879436030365457,
+                "count": 26,
+                "diameter_indices": [
+                    50,
+                    45
+                ],
+                "hull_indices": [
+                    71,
+                    116,
+                    50,
+                    89,
+                    22,
+                    111,
+                    76,
+                    45
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:1",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.7431275303367864,
+                "count": 27,
+                "diameter_indices": [
+                    81,
+                    138
+                ],
+                "hull_indices": [
+                    81,
+                    1,
+                    46,
+                    137,
+                    70,
+                    138,
+                    10,
+                    107,
+                    120,
+                    23
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:2",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.908583078234507,
+                "count": 28,
+                "diameter_indices": [
+                    16,
+                    118
+                ],
+                "hull_indices": [
+                    16,
+                    90,
+                    52,
+                    82,
+                    118,
+                    13,
+                    96,
+                    9,
+                    88,
+                    110,
+                    23
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:3",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.793484947865087,
+                "count": 24,
+                "diameter_indices": [
+                    29,
+                    101
+                ],
+                "hull_indices": [
+                    82,
+                    29,
+                    146,
+                    8,
+                    35,
+                    101,
+                    55,
+                    121
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:4",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.5988827196030924,
+                "count": 22,
+                "diameter_indices": [
+                    20,
+                    13
+                ],
+                "hull_indices": [
+                    20,
+                    143,
+                    54,
+                    73,
+                    13,
+                    89,
+                    68,
+                    131
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:5",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.897300499325344,
+                "count": 21,
+                "diameter_indices": [
+                    16,
+                    128
+                ],
+                "hull_indices": [
+                    16,
+                    60,
+                    140,
+                    7,
+                    74,
+                    128,
+                    23,
+                    106,
+                    70
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:6",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.8377610760130025,
+                "count": 23,
+                "diameter_indices": [
+                    125,
+                    5
+                ],
+                "hull_indices": [
+                    125,
+                    75,
+                    82,
+                    107,
+                    5,
+                    98,
+                    55,
+                    22
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:7",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.888808918723555,
+                "count": 28,
+                "diameter_indices": [
+                    28,
+                    30
+                ],
+                "hull_indices": [
+                    28,
+                    132,
+                    96,
+                    38,
+                    59,
+                    30,
+                    62,
+                    24,
+                    23
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:8",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        },
+        {
+            "convex_area": {
+                "area": 3.832832943074242,
+                "count": 25,
+                "diameter_indices": [
+                    32,
+                    99
+                ],
+                "hull_indices": [
+                    104,
+                    64,
+                    100,
+                    140,
+                    117,
+                    32,
+                    26,
+                    35,
+                    61,
+                    49,
+                    99
+                ]
+            },
+            "id": "Eppstein/Gaussian/10/iterations:9",
+            "max_area": 4.0,
+            "max_count": 18446744073709551615,
+            "max_diameter": 2.0
+        }
+    ]
+}

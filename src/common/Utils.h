@@ -7,9 +7,34 @@
 
 #include "CustomMath.h"
 #include <vector>
+#include <functional>
+#include <cassert>
+
+#define NEXT(x, n) ((x + 1) % (n))
 
 namespace MT
 {
+    constexpr auto INVALID_INDEX = (size_t) - 1;
+    struct Diameter
+    {
+        bool operator==(const Diameter&) const;
+        size_t myFirstIndex { INVALID_INDEX }, mySecondIndex { INVALID_INDEX };
+    };
+
+    struct ConvexArea
+    {
+        long double myHullArea { std::numeric_limits<long double>::infinity() };
+        size_t myPointsCount { 0 };
+        std::optional<Diameter> myDiameterOpt;
+        std::vector<size_t> myHullIndices {};
+    };
+
+    struct BenchmarkInfo
+    {
+        int64_t myCreatedEntriesCount { -1 };
+        int64_t myMinEntriesCount { -1 };
+    };
+
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
                                      const std::vector<std::vector<CM::Point2>>& someClockWiseSortedPoints,
                                      std::vector<std::vector<int>>& someOutBelowCounts,
@@ -26,17 +51,65 @@ namespace MT
 
     void SortPointsClockWiseAroundPoint(const CM::Point2& aReferencePoint, std::vector<CM::Point2>& someOutClockWiseSortedPoints);
 
-    long double ComputeDiameter(const std::vector<CM::Point2>& somePoints);
+    std::optional<Diameter> ComputeDiameter(const std::vector<CM::Point2>& somePoints);
 
-    void FindAntipodalPairs(
-            const std::vector<CM::Point2>& somePoints,
-            std::vector<std::pair<size_t, size_t>>& someOutAntipodalIndices);
+    template<typename Container>
+    void ForAllAntipodalPairs(const Container& somePoints,
+                              const std::function<void(const size_t, const size_t)>& aFunction,
+                              size_t aMaxLength = (size_t) - 1)
+    {
+        assert(somePoints.size() > 2);
+        const auto pointsCount = aMaxLength == ((size_t) - 1) ? somePoints.size() : aMaxLength;
+        size_t pi = pointsCount - 1;
+        size_t qi = 0;
 
-    void AreAntipodalPairs( const std::array<CM::Point2, 6>& somePoints,
-                            const size_t aLen,
-                            const size_t aFirstIndex, const size_t aSecondIndex,
-                            const size_t aThirdIndex, const size_t aFourthIndex,
-                            bool& anOutIsFirstAntipodal, bool& anOutIsSecondAntipodal);
+        while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+        {
+            qi = NEXT(qi, pointsCount);
+        }
+
+        auto q0 = qi;
+        while (qi != 0)
+        {
+            pi = NEXT(pi, pointsCount);
+            aFunction(pi, qi);
+
+            while(  CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) >
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]))
+            {
+                qi = NEXT(qi, pointsCount);
+                if(pi != q0 || qi != 0)
+                {
+                    aFunction(pi, qi);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            const auto signedAreaDifference =
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[NEXT(qi, pointsCount)]) -
+                    CM::SignedArea(somePoints[pi], somePoints[NEXT(pi, pointsCount)], somePoints[qi]);
+
+            if(CM::IsCloseToZero(signedAreaDifference))
+            {
+                if(pi != q0 || qi != (pointsCount - 1))
+                {
+                    aFunction(pi, NEXT(qi, pointsCount));
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    void GetHullPoints(const std::vector<size_t>& someIndices,
+                       const std::vector<CM::Point2>& somePoints,
+                       std::vector<CM::Point2>& someOutHullPoints);
 }
 
 

@@ -15,18 +15,19 @@ namespace MT
         struct Point2
         {
             Point2() = default;
-            Point2(long double x, long double y, size_t index) :
-                x(x), y(y), index(index) {}
-            long double x, y;
-            size_t index;
+            Point2(long double anX, long double anY, size_t anIndex) :
+                    myX(anX), myY(anY), myIndex(anIndex) {}
+            long double myX, myY;
+            size_t myIndex;
+            bool operator==(const Point2&) const;
         };
 
         constexpr auto SortPointsHorizontally = [](const Point2& p1, const Point2& p2){
-            return (p1.x < p2.x) || (p1.x == p2.x && p1.y < p2.y);
+            return (p1.myX < p2.myX) || (p1.myX == p2.myX && p1.myY < p2.myY);
         };
 
         constexpr auto SortPointsVertically = [](const Point2& p1, const Point2& p2){
-            return p1.y < p2.y;
+            return p1.myY < p2.myY;
         };
 
         enum class ORIENTATION
@@ -36,9 +37,9 @@ namespace MT
             LEFT_TURN = 1
         };
 
-        long double Dot2(const Point2& aFirstPoint, const Point2& aSecondPoint);
+        long double Dot(const Point2& aFirstPoint, const Point2& aSecondPoint);
 
-        long double SquaredDistance(const Point2& aFirstPoint, const Point2& aSecondPoint);
+        long double Distance2(const Point2& aFirstPoint, const Point2& aSecondPoint);
 
         bool IsCloseToZero(long double aValue,
                            long double anEpsilon = std::numeric_limits<long double>::epsilon());
@@ -50,6 +51,8 @@ namespace MT
         ORIENTATION Orientation(const Point2& aFirstPoint, const Point2& aSecondPoint, const Point2& aThirdPoint);
 
         long double Angle(const CM::Point2& aReferencePoint, const CM::Point2& aPoint);
+
+        long double ProjectedDistance2(const CM::Point2& aStartPoint, const CM::Point2& anEndPoint, const CM::Point2& aPoint);
     }
 }
 

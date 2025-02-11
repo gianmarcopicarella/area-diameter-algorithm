@@ -3,17 +3,15 @@
 //
 
 #include <iostream>
+#include <queue>
 
 #include "Antipodal.h"
 #include "Utils.h"
 
-// https://tessil.github.io/2016/08/29/benchmark-hopscotch-map.html
-// #define TSL_NO_EXCEPTIONS
-#include <tsl/hopscotch_map.h>
-#include <tsl/bhopscotch_map.h>
 
+// #define TO_KEY(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
-// #define MERGE(a, b, c, d) (((uint64_t)a) + (((uint64_t)b) << 16) + (((uint64_t)c) << 32) + (((uint64_t)d) << 48));
+#define KEY2(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
 //#define POINT_FILTER_TRI_AREA
 //#define
 
@@ -21,28 +19,27 @@ namespace MT
 {
     namespace
     {
-        void locPartitionLeftAndRightPoints(
-                const std::vector<CM::Point2>& somePoints,
-                const CM::Point2& aStartPoint,
-                const CM::Point2& anEndPoint,
-                std::vector<CM::Point2>& someOutLeftPoints,
-                std::vector<CM::Point2>& someOutRightPoints)
+        constexpr auto INVALID_INDEX = (size_t) - 1;
+        void locPartitionLeftAndRightPoints(const std::vector<CM::Point2>& somePoints,
+                                            const CM::Point2& aStartPoint,
+                                            const CM::Point2& anEndPoint,
+                                            std::vector<CM::Point2>& someOutLeftPoints,
+                                            std::vector<CM::Point2>& someOutRightPoints)
         {
-            const auto maximumDistance2 = CM::SquaredDistance(aStartPoint, anEndPoint);
-            constexpr auto INVALID_INDEX = (size_t) - 1;
-            const CM::Point2 startToEnd { anEndPoint.x - aStartPoint.x, anEndPoint.y - aStartPoint.y, INVALID_INDEX };
-            const CM::Point2 endToStart { aStartPoint.x - anEndPoint.x, aStartPoint.y - anEndPoint.y, INVALID_INDEX };
+            const auto maximumDistance2 = CM::Distance2(aStartPoint, anEndPoint);
+            const CM::Point2 startToEnd { anEndPoint.myX - aStartPoint.myX, anEndPoint.myY - aStartPoint.myY, INVALID_INDEX };
+            const CM::Point2 endToStart { aStartPoint.myX - anEndPoint.myX, aStartPoint.myY - anEndPoint.myY, INVALID_INDEX };
             for (const auto& point : somePoints)
             {
-                if( point.index != aStartPoint.index &&
-                    point.index != anEndPoint.index &&
-                    CM::SquaredDistance(aStartPoint, point) <= maximumDistance2 &&
-                    CM::SquaredDistance(anEndPoint, point) <= maximumDistance2)
+                if( point.myIndex != aStartPoint.myIndex &&
+                    point.myIndex != anEndPoint.myIndex &&
+                    CM::Distance2(aStartPoint, point) <= maximumDistance2 &&
+                    CM::Distance2(anEndPoint, point) <= maximumDistance2)
                 {
-                    const CM::Point2 startToPoint { point.x - aStartPoint.x, point.y - aStartPoint.y, INVALID_INDEX };
-                    const CM::Point2 endToPoint { point.x - anEndPoint.x, point.y - anEndPoint.y, INVALID_INDEX };
-                    if( CM::Dot2(startToEnd, startToPoint) >= 0 &&
-                        CM::Dot2(endToStart, endToPoint) >= 0)
+                    const CM::Point2 startToPoint { point.myX - aStartPoint.myX, point.myY - aStartPoint.myY, INVALID_INDEX };
+                    const CM::Point2 endToPoint { point.myX - anEndPoint.myX, point.myY - anEndPoint.myY, INVALID_INDEX };
+                    if( CM::Dot(startToEnd, startToPoint) >= 0 &&
+                        CM::Dot(endToStart, endToPoint) >= 0)
                     {
                         if(CM::Orientation(aStartPoint, anEndPoint, point) <= CM::ORIENTATION::COLLINEAR)
                         {
@@ -58,351 +55,343 @@ namespace MT
         }
 
         void locKeepUniquePolyPoints(
-            const CM::Point2& s, const CM::Point2& t,
-            const CM::Point2& l, const CM::Point2& pl,
-            const CM::Point2& r, const CM::Point2& pr,
-            std::array<CM::Point2, 6>& someOutPoints,
-            size_t& anOutLength)
+                const CM::Point2& s, const CM::Point2& t,
+                const CM::Point2& l, const CM::Point2& pl,
+                const CM::Point2& r, const CM::Point2& pr,
+                std::array<CM::Point2, 6>& someOutPoints,
+                size_t& anOutLength)
         {
             anOutLength = 0;
             someOutPoints[anOutLength++] = t;
-            if(pl.index != someOutPoints[anOutLength - 1].index)
+            if(pl.myIndex != someOutPoints[anOutLength - 1].myIndex)
             {
                 someOutPoints[anOutLength++] = pl;
             }
-            if(l.index != someOutPoints[anOutLength - 1].index)
-            {
-                someOutPoints[anOutLength++] = l;
-            }
-            if(s.index != someOutPoints[anOutLength - 1].index)
+
+            someOutPoints[anOutLength++] = l;
+
+            if(s.myIndex != someOutPoints[anOutLength - 1].myIndex)
             {
                 someOutPoints[anOutLength++] = s;
             }
-            if(pr.index != someOutPoints[anOutLength - 1].index)
+            if(pr.myIndex != someOutPoints[anOutLength - 1].myIndex)
             {
                 someOutPoints[anOutLength++] = pr;
             }
-            if( r.index != someOutPoints[anOutLength - 1].index &&
-                r.index != someOutPoints[0].index)
+            if( r.myIndex != someOutPoints[anOutLength - 1].myIndex &&
+                r.myIndex != someOutPoints[0].myIndex)
             {
                 someOutPoints[anOutLength++] = r;
             }
         }
 
-        bool locAreAntipodal(const std::vector<std::pair<size_t, size_t>>& somePairs,
-                             const CM::Point2& aLeftPoint, const CM::Point2& aRightPoint)
+        struct Entry
         {
-            return std::find_if(somePairs.begin(), somePairs.end(), [&](const auto& pair){
-                return  (pair.first == aLeftPoint.index && pair.second == aRightPoint.index) ||
-                        (pair.first == aRightPoint.index && pair.second == aLeftPoint.index);
-            }) != somePairs.end();
-        }
+            size_t l, pl, r, pr, prev;
+            long double area { std::numeric_limits<long double>::infinity() };
+            bool isLeftSide;
+        };
 
-        bool locIsValidEdge(const CM::Point2& a, const CM::Point2& b, const CM::Point2& c, const CM::Point2& s, const CM::Point2& t)
-        {
-            return  CM::Orientation(a, b, s) >= CM::ORIENTATION::COLLINEAR &&
-                    CM::Orientation(a, b, t) >= CM::ORIENTATION::COLLINEAR &&
-                    CM::Orientation(a, b, c) >= CM::ORIENTATION::COLLINEAR;
-        }
-
-        void locCopyListAndPoint(const std::vector<CM::Point2>& somePointsToCopy,
-                                 const CM::Point2& anotherPoint,
-                                 std::vector<CM::Point2>& someOutPoints)
-        {
-            someOutPoints.resize(somePointsToCopy.size() + 1);
-            std::copy(somePointsToCopy.begin(), somePointsToCopy.end(), someOutPoints.begin());
-            someOutPoints.back() = anotherPoint;
-        }
-
-        void locInsertOrUpdateMinArea(const size_t aCacheKey,
+        template <bool isLeftSide=true>
+        void locInsertOrUpdateMinArea(const size_t l,
+                                      const size_t pl,
+                                      const size_t r,
+                                      const size_t pr,
+                                      const size_t prev,
                                       const long double aCurrentArea,
                                       const long double aMaxArea,
-                                      tsl::hopscotch_map<size_t, long double>& anOutcache)
+                                      const size_t aTotalPointsCount,
+                                      std::unordered_map<size_t, Entry>& anOutcache)
         {
             if(aCurrentArea <= aMaxArea)
             {
-                auto nextAreaIter = anOutcache.find(aCacheKey);
+                const auto key = KEY(l, pl, r, pr, aTotalPointsCount);
+                auto nextAreaIter = anOutcache.find(key);
                 if(nextAreaIter == anOutcache.end())
                 {
-                    anOutcache.insert({aCacheKey, aCurrentArea});
+                    anOutcache.emplace(key, Entry{l, pl, r, pr, prev, aCurrentArea, isLeftSide});
+                }
+                else if(aCurrentArea < nextAreaIter->second.area)
+                {
+                    nextAreaIter->second.area = aCurrentArea;
+                    nextAreaIter->second.prev = prev;
+                    nextAreaIter->second.isLeftSide = isLeftSide;
+                }
+            }
+        }
+
+        template <bool Ascending=true>
+        void locSortPointsByProjectionLength(
+                const CM::Point2& aStartPoint,
+                const CM::Point2& anEndPoint,
+                std::vector<CM::Point2>& someOutSortedPoints)
+        {
+            std::sort(someOutSortedPoints.begin(), someOutSortedPoints.end(), [&](auto& a, auto& b){
+                if constexpr (Ascending)
+                {
+                    return  CM::ProjectedDistance2(aStartPoint, anEndPoint, a) <=
+                            CM::ProjectedDistance2(aStartPoint, anEndPoint, b);
                 }
                 else
                 {
-                    nextAreaIter.value() = std::fminl(nextAreaIter.value(), aCurrentArea);
+                    return  CM::ProjectedDistance2(aStartPoint, anEndPoint, a) >=
+                            CM::ProjectedDistance2(aStartPoint, anEndPoint, b);
+                }
+            });
+        }
+
+        template <bool isLeftSide=true>
+        void locAddNextHullPoint( const CM::Point2& aFirstPoint,
+                                  const CM::Point2& aSecondPoint,
+                                  const CM::Point2& aThirdPoint,
+                                  const std::vector<CM::Point2>& somePoints,
+                                  const Entry& anEntry,
+                                  const size_t aCurrentCount,
+                                  const size_t aTotalPointsCount,
+                                  const long double aMaxArea,
+                                  const std::vector<std::vector<int>>& someBelowPointsCounts,
+                                  const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                  std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
+        {
+            const auto triangleArea = std::fabsl(CM::SignedArea(aFirstPoint, aSecondPoint, aThirdPoint));
+            const auto triangleCount = 1 + PointsInTriangle(aFirstPoint, aSecondPoint, aThirdPoint, someBelowPointsCounts, someCollinearPointsCounts);
+            size_t i;
+            if constexpr (isLeftSide)
+            {
+                i = anEntry.pl + 1;
+            }
+            else
+            {
+                i = anEntry.pr + 1;
+            }
+            for(; i < somePoints.size(); ++i)
+            {
+                if( CM::Orientation(somePoints[i], aThirdPoint, aSecondPoint) >= CM::ORIENTATION::COLLINEAR &&
+                    CM::Orientation(somePoints[i], aThirdPoint, aFirstPoint) >= CM::ORIENTATION::COLLINEAR)
+                {
+                    auto& cache = someOutCaches[aCurrentCount + triangleCount];
+                    if constexpr (isLeftSide)
+                    {
+                        locInsertOrUpdateMinArea<isLeftSide>(   anEntry.pl, i, anEntry.r, anEntry.pr, anEntry.l,
+                                                                anEntry.area + triangleArea, aMaxArea, aTotalPointsCount, cache);
+                    }
+                    else
+                    {
+                        locInsertOrUpdateMinArea<isLeftSide>(   anEntry.l, anEntry.pl, anEntry.pr, i, anEntry.r,
+                                                                anEntry.area + triangleArea, aMaxArea, aTotalPointsCount, cache);
+                    }
                 }
             }
         }
 
-        AntipodalResult locProcessSegment(const CM::Point2& aStartPoint,
-                                        const CM::Point2& anEndPoint,
-                                        const std::vector<CM::Point2>& somePoints,
-                                        const std::vector<CM::Point2>& someLeftPoints,
-                                        const std::vector<CM::Point2>& someRightPoints,
-                                        const std::vector<std::vector<int>>& someBelowPointsCounts,
-                                        const std::vector<std::vector<int>>& someCollinearPointsCounts,
-                                        const size_t aTotalPointsCount,
-                                        const size_t aMaxPointsCount,
-                                        const long double aMaxArea)
+        std::optional<ConvexArea> locProcessSegment(  const std::vector<CM::Point2>& someLeftPoints,
+                                                      const std::vector<CM::Point2>& someRightPoints,
+                                                      const std::vector<std::vector<int>>& someBelowPointsCounts,
+                                                      const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                                      const size_t aMaxPointsCount,
+                                                      const long double aMaxArea,
+                                                      std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
         {
-            const auto maxAllowedPoints = std::min(aMaxPointsCount, someRightPoints.size() + someLeftPoints.size());
-            if(maxAllowedPoints == 0) return AntipodalResult{ std::numeric_limits<long double>::infinity(), 0 };
-            // tsl::hopscotch_map<size_t, long double> cache;
-            // std::vector<std::vector<std::tuple<CM::Point2, CM::Point2, CM::Point2, CM::Point2>>> iterCache {maxAllowedPoints + 1, std::vector<std::tuple<CM::Point2, CM::Point2, CM::Point2, CM::Point2>>{}};
-
-            struct Entry { size_t l, pl, r, pr, q; long double a; };
-            std::vector<std::unordered_map<size_t, Entry>> cache {maxAllowedPoints + 1,
-                                                                  std::unordered_map<size_t, Entry>{}};
-
-            std::vector<CM::Point2> leftPointsWithStart, leftPointsWithEnd,
-                                    rightPointsWithStart, rightPointsWithEnd;
-
-            locCopyListAndPoint(someLeftPoints, aStartPoint, leftPointsWithStart);
-            locCopyListAndPoint(someRightPoints, aStartPoint, rightPointsWithStart);
-            locCopyListAndPoint(someLeftPoints, anEndPoint, leftPointsWithEnd);
-            locCopyListAndPoint(someRightPoints, anEndPoint, rightPointsWithEnd);
-
-            // Initialize entries at k = 0
-            for (const auto& pl: leftPointsWithEnd)
+            const auto maxAllowedPoints = std::min(aMaxPointsCount - 2, someRightPoints.size() + someLeftPoints.size() - 4);
+            if(maxAllowedPoints == 0)
             {
-                for (const auto& pr: rightPointsWithStart)
+                return std::nullopt;
+            }
+
+            const auto totalPointsCount = someLeftPoints.size() + someRightPoints.size() - 2;
+            for(size_t i = 1; i < someLeftPoints.size(); ++i)
+            {
+                for(size_t j = 1; j < someRightPoints.size(); ++j)
                 {
-                    const auto key = KEY(aStartPoint.index, pl.index, anEndPoint.index, pr.index, aTotalPointsCount);
-                    Entry entry {aStartPoint.index, pl.index, anEndPoint.index, pr.index, 0, 0};
-                    cache[0].insert({key, entry});
+                    const auto key = KEY(0, i, 0, j, totalPointsCount);
+                    someOutCaches[0].emplace(key, Entry {0, i, 0, j, 0, 0});
                 }
             }
 
-            const auto segmentLength2 = CM::SquaredDistance(aStartPoint, anEndPoint);
-            AntipodalResult result {std::numeric_limits<long double>::infinity(), 0};
-
-
-            std::array<CM::Point2, 6> poly;
+            const auto& startPoint = someLeftPoints[0];
+            const auto& endPoint = someLeftPoints.back();
+            const auto segmentLength2 = CM::Distance2(startPoint, endPoint);
+            std::array<CM::Point2, 6> currentPoly;
+            size_t currentPolyLength = 0;
+            std::optional<ConvexArea> resultOpt;
 
             for (size_t k = 0; k < maxAllowedPoints + 1; ++k)
             {
-                for (const auto& pair : cache[k])
+                for (const auto& pair : someOutCaches[k])
                 {
                     const auto& entry = pair.second;
-                    const auto& l = somePoints[entry.l];
-                    const auto& r = somePoints[entry.r];
+                    const auto& l = someLeftPoints[entry.l];
+                    const auto& r = someRightPoints[entry.r];
 
-                    if(CM::SquaredDistance(l, r) > segmentLength2)
+                    if(CM::Distance2(l, r) > segmentLength2)
                     {
                         continue;
                     }
 
-                    const auto& pl = somePoints[entry.pl];
-                    const auto& pr = somePoints[entry.pr];
-                    const auto& currentArea = entry.a;
+                    const auto& pl = someLeftPoints[entry.pl];
+                    const auto& pr = someRightPoints[entry.pr];
+                    const auto& currArea = entry.area;
 
-                    if(pl.index == anEndPoint.index && pr.index == aStartPoint.index)
+                    if(pl.myIndex == endPoint.myIndex && pr.myIndex == startPoint.myIndex)
                     {
-                        if( k > 0 &&
-                            (result.myPointsCount < k ||
-                             (result.myPointsCount == k && currentArea < result.myHullArea)))
+                        if(k > 0 && (!resultOpt || k > resultOpt->myPointsCount || (resultOpt->myPointsCount == k && currArea < resultOpt->myHullArea)))
                         {
-                            result.myHullArea = currentArea;
-                            result.myPointsCount = k;
+                            resultOpt = { currArea, k };
                         }
                         continue;
                     }
 
-                    size_t aPolyLength = 0;
-                    locKeepUniquePolyPoints(aStartPoint, anEndPoint, l, pl, r, pr, poly, aPolyLength);
+                    bool isLeftAntipodal = false, isRightAntipodal = false;
+                    locKeepUniquePolyPoints(startPoint, endPoint, l, pl, r, pr, currentPoly, currentPolyLength);
 
-                    /*
-                    Should not be needed because the previous check already filters out all the cases for which currPoly
-                    has less than 3 unique vertices
-                    if(currPoly.size() < 3)
+                    ForAllAntipodalPairs(currentPoly, [&](const size_t aFirstIndex, const size_t aSecondIndex){
+                        const auto& firstPoint = currentPoly[aFirstIndex];
+                        const auto& secondPoint = currentPoly[aSecondIndex];
+                        isLeftAntipodal |=  (firstPoint.myIndex == pl.myIndex && secondPoint.myIndex == r.myIndex) |
+                                            (firstPoint.myIndex == r.myIndex && secondPoint.myIndex == pl.myIndex);
+
+                        isRightAntipodal |= (firstPoint.myIndex == pr.myIndex && secondPoint.myIndex == l.myIndex) |
+                                            (firstPoint.myIndex == l.myIndex && secondPoint.myIndex == pr.myIndex);
+
+                    }, currentPolyLength);
+
+                    if(isLeftAntipodal || (pr.myIndex == startPoint.myIndex && isRightAntipodal))
                     {
-                        std::cout << "ao" << std::endl;
-                        assert(false);
-                        continue;
-                    }
-                    */
-
-                    //std::vector<std::pair<size_t, size_t>> currAntipodalPairs;
-                    //FindAntipodalPairs(currPoly, currAntipodalPairs);
-
-                    /*
-                    Should not be needed
-                    if(!locAreAntipodal(currAntipodalPairs, l, r))
-                    {
-                        throw std::runtime_error("DIOP!");
-                        continue;
-                    }
-                    */
-
-                    bool isPrevLeftAPWithRight = false, isPrevRightAPWithLeft = false;
-                    AreAntipodalPairs(poly, aPolyLength, pl.index, r.index,
-                                      pr.index, l.index, isPrevLeftAPWithRight, isPrevRightAPWithLeft);
-
-                    if(isPrevLeftAPWithRight || (pr.index == aStartPoint.index && isPrevRightAPWithLeft))
-                    {
-                        const auto triangleArea = std::fabsl(CM::SignedArea(anEndPoint, l, pl));
-                        const auto triangleCount = 1 + PointsInTriangle(anEndPoint, l, pl, someBelowPointsCounts, someCollinearPointsCounts);
-
-                        for (const auto& ql : leftPointsWithEnd)
-                        {
-                            if (ql.index != l.index && ql.index != pl.index && locIsValidEdge(ql, pl, l, aStartPoint, anEndPoint))
-                            {
-                                const auto nextKey = KEY(pl.index, ql.index, r.index, pr.index, aTotalPointsCount);
-                                if(currentArea + triangleArea <= aMaxArea)
-                                {
-                                    auto& nextCache = cache[k + triangleCount];
-                                    auto nextAreaPair = nextCache.find(nextKey);
-                                    if(nextAreaPair == nextCache.end())
-                                    {
-                                        Entry newEntry {pl.index, ql.index, r.index, pr.index, l.index, currentArea + triangleArea};
-                                        nextCache.insert({nextKey, newEntry});
-                                    }
-                                    else if(currentArea + triangleArea < nextAreaPair->second.a)
-                                    {
-                                        nextAreaPair->second.a = currentArea + triangleArea;
-                                        nextAreaPair->second.q = l.index;
-                                    }
-                                }
-                            }
-                        }
+                        constexpr auto STEP_LEFT = true;
+                        locAddNextHullPoint<STEP_LEFT>(endPoint, l, pl, someLeftPoints,
+                                                       entry, k, totalPointsCount, aMaxArea,
+                                                       someBelowPointsCounts, someCollinearPointsCounts, someOutCaches);
                     }
 
-                    if(isPrevRightAPWithLeft || (pl.index == anEndPoint.index && isPrevLeftAPWithRight))
+                    if(isRightAntipodal || (pl.myIndex == endPoint.myIndex && isLeftAntipodal))
                     {
-                        const auto triangleArea = std::fabsl(CM::SignedArea(aStartPoint, r, pr));
-                        const auto triangleCount = 1 + PointsInTriangle(aStartPoint, r, pr, someBelowPointsCounts, someCollinearPointsCounts);
-
-                        for (const auto& qr : rightPointsWithStart)
-                        {
-                            if (qr.index != r.index && qr.index != pr.index && locIsValidEdge(qr, pr, r, aStartPoint, anEndPoint))
-                            {
-                                if(currentArea + triangleArea <= aMaxArea)
-                                {
-                                    const auto nextKey = KEY(l.index, pl.index, pr.index, qr.index, aTotalPointsCount);
-                                    if(currentArea + triangleArea <= aMaxArea)
-                                    {
-                                        auto& nextCache = cache[k + triangleCount];
-                                        auto nextAreaPair = nextCache.find(nextKey);
-                                        if(nextAreaPair == nextCache.end())
-                                        {
-                                            Entry newEntry {l.index, pl.index, pr.index, qr.index, r.index, currentArea + triangleArea};
-                                            nextCache.insert({nextKey, newEntry});
-                                        }
-                                        else if(currentArea + triangleArea < nextAreaPair->second.a)
-                                        {
-                                            nextAreaPair->second.a = currentArea + triangleArea;
-                                            nextAreaPair->second.q = r.index;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        constexpr auto STEP_LEFT = false;
+                        locAddNextHullPoint<STEP_LEFT>(startPoint, r, pr, someRightPoints,
+                                                       entry, k, totalPointsCount, aMaxArea,
+                                                       someBelowPointsCounts, someCollinearPointsCounts, someOutCaches);
                     }
                 }
-
-                /*
-                for (const auto& l: leftPointsWithStart)
-                {
-                    for (const auto& pl: leftPointsWithEnd)
-                    {
-                        for (const auto& r: rightPointsWithEnd)
-                        {
-                            for (const auto& pr: rightPointsWithStart)
-                            {
-                                const auto currKey = TO_KEY(l.index, pl.index, r.index, pr.index, k, aTotalPointsCount);
-                                if( CM::SquaredDistance(l, r) > segmentLength2 ||
-                                    !cache.contains(currKey))
-                                {
-                                    continue;
-                                }
-
-                                const auto currArea = cache.at(currKey);
-                                if(pl.index == anEndPoint.index && pr.index == aStartPoint.index)
-                                {
-                                    if( k > 0 &&
-                                        (result.myPointsCount < k ||
-                                        (result.myPointsCount == k && currArea < result.myHullArea)))
-                                    {
-                                        result.myHullArea = currArea;
-                                        result.myPointsCount = k;
-                                    }
-                                    continue;
-                                }
-
-                                std::vector<CM::Point2> currPoly;
-                                locKeepUniquePolyPoints(aStartPoint, anEndPoint, l, pl, r, pr, currPoly);
-                                if(currPoly.size() < 3)
-                                {
-                                    continue;
-                                }
-
-                                std::vector<std::pair<size_t, size_t>> currAntipodalPairs;
-                                FindAntipodalPairs(currPoly, currAntipodalPairs);
-
-                                if(!locAreAntipodal(currAntipodalPairs, l, r))
-                                {
-                                    continue;
-                                }
-
-                                const auto isPrevLeftAPWithRight = locAreAntipodal(currAntipodalPairs, pl, r);
-                                const auto isPrevRightAPWithLeft = locAreAntipodal(currAntipodalPairs, pr, l);
-
-                                if(isPrevLeftAPWithRight || (pr.index == aStartPoint.index && isPrevRightAPWithLeft))
-                                {
-                                    const auto triangleArea = std::fabsl(CM::SignedArea(anEndPoint, l, pl));
-                                    const auto triangleCount = 1 + PointsInTriangle(anEndPoint, l, pl, someBelowPointsCounts, someCollinearPointsCounts);
-                                    for (const auto& ql : leftPointsWithEnd)
-                                    {
-                                        if (ql.index != l.index && ql.index != pl.index && locIsValidEdge(ql, pl, l, aStartPoint, anEndPoint))
-                                        {
-                                            const auto nextKey = TO_KEY(pl.index, ql.index, r.index, pr.index, k + triangleCount, aTotalPointsCount);
-                                            locInsertOrUpdateMinArea(nextKey, currArea + triangleArea, aMaxArea, cache);
-                                        }
-                                    }
-                                }
-
-                                if(isPrevRightAPWithLeft || (pl.index == anEndPoint.index && isPrevLeftAPWithRight))
-                                {
-                                    const auto triangleArea = std::fabsl(CM::SignedArea(aStartPoint, r, pr));
-                                    const auto triangleCount = 1 + PointsInTriangle(aStartPoint, r, pr, someBelowPointsCounts, someCollinearPointsCounts);
-                                    for (const auto& qr : rightPointsWithStart)
-                                    {
-                                        if (qr.index != r.index && qr.index != pr.index && locIsValidEdge(qr, pr, r, aStartPoint, anEndPoint))
-                                        {
-                                            if(currArea + triangleArea <= aMaxArea)
-                                            {
-                                                const auto nextKey = TO_KEY(l.index, pl.index, pr.index, qr.index, k + triangleCount, aTotalPointsCount);
-                                                locInsertOrUpdateMinArea(nextKey, currArea + triangleArea, aMaxArea, cache);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }*/
             }
-            return result;
+
+            if(resultOpt)
+            {
+                resultOpt->myPointsCount += 2;
+            }
+
+            return resultOpt;
+        }
+
+        size_t locClearCache(std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
+        {
+            size_t entriesCount { 0 };
+            for(size_t i = 0; i < someOutCaches.size(); ++i)
+            {
+                entriesCount += someOutCaches[i].size();
+                someOutCaches[i].clear();
+            }
+            return entriesCount;
+        }
+
+        void locReconstructHull(const std::vector<std::unordered_map<size_t, Entry>>& someCaches,
+                                const std::vector<CM::Point2>& someLeftPoints,
+                                const std::vector<CM::Point2>& someRightPoints,
+                                const std::vector<std::vector<int>>& someBelowPointsCounts,
+                                const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                const size_t anOptimalCount,
+                                std::vector<size_t>& someOutHullIndices)
+        {
+            const auto& startPoint = someLeftPoints[0];
+            const auto& endPoint = someLeftPoints.back();
+            const auto totalPointsCount = someLeftPoints.size() + someRightPoints.size() - 2;
+            size_t k = anOptimalCount;
+            Entry entry;
+
+            for(const auto& [key, value] : someCaches[k])
+            {
+                if( someLeftPoints[value.pl].myIndex == endPoint.myIndex &&
+                    someRightPoints[value.pr].myIndex == startPoint.myIndex)
+                {
+                    if(value.area < entry.area) entry = value;
+                }
+            }
+
+            std::vector<size_t> left = { someLeftPoints[entry.pl].myIndex }, right = { someRightPoints[entry.pr].myIndex };
+            while(k > 0)
+            {
+                if(entry.isLeftSide)
+                {
+                    k -= 1 + PointsInTriangle(endPoint, someLeftPoints[entry.l], someLeftPoints[entry.prev], someBelowPointsCounts, someCollinearPointsCounts);
+                    left.emplace_back(someLeftPoints[entry.l].myIndex);
+                    const auto key = KEY(entry.prev, entry.l, entry.r, entry.pr, totalPointsCount);
+                    entry = someCaches[k].find(key)->second;
+                }
+                else
+                {
+                    k -= 1 + PointsInTriangle(startPoint, someRightPoints[entry.r], someRightPoints[entry.prev], someBelowPointsCounts, someCollinearPointsCounts);
+                    right.emplace_back(someRightPoints[entry.r].myIndex);
+                    const auto key = KEY(entry.l, entry.pl, entry.prev, entry.r, totalPointsCount);
+                    entry = someCaches[k].find(key)->second;
+                }
+            }
+
+            someOutHullIndices = {};
+            someOutHullIndices.resize(left.size() + right.size());
+            std::copy(left.begin(), left.end(), someOutHullIndices.begin());
+            std::copy(right.begin(), right.end(), someOutHullIndices.begin() + left.size());
+        }
+
+        void locPrepareLeftAndRightPoints(const std::vector<CM::Point2>& somePoints,
+                                          const size_t aFirstIndex,
+                                          const size_t aSecondIndex,
+                                          std::vector<CM::Point2>& someOutLeftPoints,
+                                          std::vector<CM::Point2>& someOutRightPoints)
+        {
+            const auto& startPoint = somePoints[aFirstIndex];
+            const auto& endPoint = somePoints[aSecondIndex];
+            locPartitionLeftAndRightPoints(somePoints, startPoint, endPoint, someOutLeftPoints, someOutRightPoints);
+            someOutLeftPoints.emplace_back(startPoint);
+            someOutLeftPoints.emplace_back(endPoint);
+            someOutRightPoints.emplace_back(startPoint);
+            someOutRightPoints.emplace_back(endPoint);
+            constexpr auto SORT_LEFT_ASCENDING = true, SORT_RIGHT_ASCENDING = false;
+            locSortPointsByProjectionLength<SORT_LEFT_ASCENDING>(startPoint, endPoint, someOutLeftPoints);
+            locSortPointsByProjectionLength<SORT_RIGHT_ASCENDING>(startPoint, endPoint, someOutRightPoints);
         }
     }
 
-    AntipodalResult AntipodalAlgorithm(
+    std::optional<ConvexArea> AntipodalAlgorithm(
             const std::vector<CM::Point2>& somePoints,
             size_t aMaxPointsCount,
             long double aMaxArea,
             long double aMaxDiameter,
             bool aShouldReconstructHull)
     {
+        std::optional<BenchmarkInfo> benchmarkInfo = std::nullopt;
+        return AntipodalAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aMaxDiameter, aShouldReconstructHull);
+    }
+
+    std::optional<ConvexArea> AntipodalAlgorithmWithBenchmarkInfo(
+            const std::vector<CM::Point2>& somePoints,
+            std::optional<BenchmarkInfo>& anOutBenchmarkInfoOpt,
+            size_t aMaxPointsCount,
+            long double aMaxArea,
+            long double aMaxDiameter,
+            bool aShouldReconstructHull)
+    {
+        if(std::min(somePoints.size(), aMaxPointsCount) < 3)
+        {
+            return std::nullopt;
+        }
+
         // Create a 2-dimensional array containing the number of points right below any segment
-        const size_t pointsCount = somePoints.size();
-        std::vector<std::vector<int>> pointsBelowCounts(pointsCount, std::vector<int>(pointsCount, 0));
-        std::vector<std::vector<int>> collinearPointsCounts(pointsCount, std::vector<int>(pointsCount, 0));
+        std::vector<std::vector<int>> pointsBelowCounts(somePoints.size(), std::vector<int>(somePoints.size(), 0));
+        std::vector<std::vector<int>> collinearPointsCounts(somePoints.size(), std::vector<int>(somePoints.size(), 0));
 
         {
             // Create a 2-dimensional array containing for each point the sequence of clockwise sorted points around it
-            std::vector<std::vector<CM::Point2>> clockwiseSortedPoints(pointsCount, std::vector<CM::Point2>(pointsCount - 1));
+            std::vector<std::vector<CM::Point2>> clockwiseSortedPoints(somePoints.size(), std::vector<CM::Point2>(somePoints.size() - 1));
             {
-                for(size_t i = 0; i < pointsCount; ++i)
+                for(size_t i = 0; i < somePoints.size(); ++i)
                 {
                     std::copy(somePoints.begin(), somePoints.begin() + i, clockwiseSortedPoints[i].begin());
                     std::copy(somePoints.begin() + i + 1, somePoints.end(), clockwiseSortedPoints[i].begin() + i);
@@ -412,56 +401,99 @@ namespace MT
             CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsBelowCounts, collinearPointsCounts);
         }
 
-        const auto maxDiameter2 = aMaxDiameter * aMaxDiameter;
-        AntipodalResult result { std::numeric_limits<long double>::infinity(), 0 };
+        std::vector<std::unordered_map<size_t, Entry>> cache {somePoints.size(),
+                                                              std::unordered_map<size_t, Entry>{}};
+        std::optional<ConvexArea> resultOpt;
+        const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;
 
+#ifdef OPT_PRE_SORT_SEGMENTS
+        using SegmentData = std::tuple<size_t, size_t, size_t>;
+        std::vector<SegmentData> segmentsData;
+        // Sort segments pairs by number of left and right points
         for (size_t i = 0; i < somePoints.size(); ++i)
         {
             for (size_t j = i + 1; j < somePoints.size(); ++j)
             {
-                AntipodalResult pairResult { std::numeric_limits<long double>::infinity(), 0 };
-                if(CM::SquaredDistance(somePoints[i], somePoints[j]) <= maxDiameter2)
+                if(CM::Distance2(somePoints[i], somePoints[j]) <= maxAllowedDiameter2)
                 {
                     std::vector<CM::Point2> leftPoints, rightPoints;
-                    locPartitionLeftAndRightPoints(somePoints,somePoints[i],somePoints[j],leftPoints,rightPoints);
+                    locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
+                    segmentsData.emplace_back(i, j, 2 + leftPoints.size() + rightPoints.size());
+                }
+            }
+        }
+        std::sort(segmentsData.begin(), segmentsData.end(), [](const auto& a, const auto& b){
+            return std::get<2>(a) > std::get<2>(b);
+        });
 
-                    /*
-                    if(leftPoints.size() + rightPoints.size() < result.myPointsCount)
+        for(const auto& segment : segmentsData)
+        {
+            if(resultOpt && resultOpt->myPointsCount > std::get<2>(segment))
+            {
+                break;
+            }
+            const auto i = std::get<0>(segment);
+            const auto j = std::get<1>(segment);
+            std::vector<CM::Point2> leftPoints, rightPoints;
+            locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
+            const auto& currentResultOpt = locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
+            if( currentResultOpt && currentResultOpt->myPointsCount <= aMaxPointsCount &&
+                (!resultOpt ||
+                currentResultOpt->myPointsCount > resultOpt->myPointsCount ||
+                (currentResultOpt->myPointsCount == resultOpt->myPointsCount && currentResultOpt->myHullArea < resultOpt->myHullArea)))
+            {
+                resultOpt = { currentResultOpt->myHullArea, currentResultOpt->myPointsCount, Diameter{somePoints[i].myIndex, somePoints[j].myIndex} };
+            }
+            locClearCache(cache);
+        }
+#else
+        // Process each distinct pair of points having squared diameter at most equal to maxDiameter2
+        for (size_t i = 0; i < somePoints.size(); ++i)
+        {
+            for (size_t j = i + 1; j < somePoints.size(); ++j)
+            {
+                std::optional<ConvexArea> pairResultOpt;
+                if(CM::Distance2(somePoints[i], somePoints[j]) <= maxAllowedDiameter2)
+                {
+                    std::vector<CM::Point2> leftPoints, rightPoints;
+                    locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
+#ifdef OPT_USE_OPTIMAL_SOLUTION
+                    if(resultOpt && (leftPoints.size() + rightPoints.size() - 2) < resultOpt->myPointsCount)
                     {
                         continue;
                     }
-                    */
-
-                    pairResult = locProcessSegment(somePoints[i], somePoints[j], somePoints, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, somePoints.size(), aMaxPointsCount, aMaxArea);
-                    if( pairResult.myPointsCount > result.myPointsCount ||
-                        (pairResult.myPointsCount == result.myPointsCount && pairResult.myHullArea < result.myHullArea))
+#endif
+                    pairResultOpt = locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
+                    if( pairResultOpt && pairResultOpt->myPointsCount <= aMaxPointsCount &&
+                        (!resultOpt || pairResultOpt->myPointsCount > resultOpt->myPointsCount ||
+                         (pairResultOpt->myPointsCount == resultOpt->myPointsCount && pairResultOpt->myHullArea < resultOpt->myHullArea)))
                     {
-                        result.myPointsCount = pairResult.myPointsCount;
-                        result.myHullArea = pairResult.myHullArea;
+                        resultOpt = { pairResultOpt->myHullArea, pairResultOpt->myPointsCount, Diameter{somePoints[i].myIndex, somePoints[j].myIndex} };
+                    }
+
+                    const auto cacheEntriesCount = locClearCache(cache);
+                    if(anOutBenchmarkInfoOpt)
+                    {
+                        anOutBenchmarkInfoOpt->myCreatedEntriesCount += cacheEntriesCount;
                     }
                 }
-#ifdef DEBUG_ANTIPODAL
-                if(pairResult.myPointsCount > 0) pairResult.myPointsCount += 2;
-                result.results.emplace_back(pairResult.myHullArea, pairResult.myPointsCount);
-#endif
-
-#ifdef VERBOSE_ANTIPODAL
-                std::cout   << "Done pair (" + std::to_string(i) + ", " + std::to_string(j) + "). Area: " <<
-                                pairResult.myHullArea << ", Count: " << pairResult.myPointsCount << std::endl;
-#endif
             }
         }
+#endif
 
-        result.myHasFoundSolution = result.myPointsCount > 0;
-        if(result.myHasFoundSolution)
+        if(resultOpt && aShouldReconstructHull)
         {
-            result.myPointsCount += 2;
-            if(aShouldReconstructHull)
+            const auto& diameter = *resultOpt->myDiameterOpt;
+            std::vector<CM::Point2> leftPoints, rightPoints;
+            locPrepareLeftAndRightPoints(somePoints, diameter.myFirstIndex, diameter.mySecondIndex, leftPoints, rightPoints);
+            locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
+            locReconstructHull(cache, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, resultOpt->myPointsCount - 2, resultOpt->myHullIndices);
+            if(anOutBenchmarkInfoOpt)
             {
-
+                anOutBenchmarkInfoOpt->myCreatedEntriesCount += locClearCache(cache);
             }
         }
 
-        return result;
+        return resultOpt;
     }
 }

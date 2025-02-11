@@ -1,5 +1,3 @@
-find_package(CGAL REQUIRED)
-
 file(   GLOB_RECURSE
         COMMON_ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/common/*.h
@@ -18,25 +16,36 @@ function(create_exec exec)
     endif() 
 endfunction()
 
-function(target_link_to_exec exec visibility libs)
-    if(TARGET ${exec})
-        target_link_libraries(${exec} ${visibility} ${libs})
-        message(STATUS "Added ${libs} to Executable ${exec}")
+function(target_link_to_libs target visibility libs)
+    if(TARGET ${target})
+        target_link_libraries(${target} ${visibility} ${libs})
+        message(STATUS "Added ${libs} to Executable ${target}")
     endif() 
 endfunction()
 
-create_exec(main)
+function(add_target_coverage target)
+    if(TARGET ${target} AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(${target} PRIVATE -coverage)
+        target_link_options(${target} PRIVATE -coverage)
+        message(STATUS "Enabled coverage for target ${target}")
+    endif()
+endfunction()
+
+add_compile_options(-O3)
+
 create_exec(bench)
 create_exec(test)
 
-set_target_properties(raylib gtest gtest_main benchmark benchmark_main uninstall PROPERTIES FOLDER HiddenTargets)
+set_target_properties(gtest gtest_main benchmark benchmark_main PROPERTIES FOLDER HiddenTargets)
 
-if ( CGAL_AUTO_LINK_ENABLED )
-    target_link_to_exec(main PRIVATE "raylib;tsl::hopscotch_map")
-    target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark;tsl::hopscotch_map")
-    target_link_to_exec(test PRIVATE "raylib;gtest_main;tsl::hopscotch_map")
-else()
-    target_link_to_exec(main PRIVATE "raylib;CGAL::CGAL;CGAL::Data;tsl::hopscotch_map")
-    target_link_to_exec(bench PRIVATE "raylib;benchmark::benchmark;CGAL::CGAL;CGAL::Data;tsl::hopscotch_map")
-    target_link_to_exec(test PRIVATE "raylib;gtest_main;CGAL::CGAL;CGAL::Data;tsl::hopscotch_map")
-endif()
+target_link_to_libs(bench PRIVATE "benchmark::benchmark;nlohmann_json::nlohmann_json")
+target_link_to_libs(test PRIVATE "gtest_main;nlohmann_json::nlohmann_json")
+
+pybind11_add_module(pybind ${CMAKE_CURRENT_SOURCE_DIR}/py-binding/main.cpp;${COMMON_ALL})
+
+
+set(BENCHMARK_OUT_DATA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/reports)
+set(UNIT_TESTS_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/eppstein)
+set(EXPERIMENT_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/experiments)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h)
