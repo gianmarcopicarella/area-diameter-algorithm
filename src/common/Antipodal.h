@@ -9,9 +9,6 @@
 #include "CustomMath.h"
 #include "Utils.h"
 
-// #define OPT_PRE_SORT_SEGMENTS
-#define OPT_USE_OPTIMAL_SOLUTION
-
 namespace MT
 {
     std::optional<ConvexArea> AntipodalAlgorithm(

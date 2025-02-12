@@ -8,12 +8,9 @@
 #include "Antipodal.h"
 #include "Utils.h"
 
-
-// #define TO_KEY(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
-#define KEY2(a, b, c, d, e, n) ((a) * (n) * (n) * (n) * (n) + (b) * (n) * (n) * (n) + (c) * (n) * (n) + (d) * (n) + (e))
-//#define POINT_FILTER_TRI_AREA
-//#define
+
+//#define EARLY_STOP_OPT
 
 namespace MT
 {
@@ -406,47 +403,6 @@ namespace MT
         std::optional<ConvexArea> resultOpt;
         const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;
 
-#ifdef OPT_PRE_SORT_SEGMENTS
-        using SegmentData = std::tuple<size_t, size_t, size_t>;
-        std::vector<SegmentData> segmentsData;
-        // Sort segments pairs by number of left and right points
-        for (size_t i = 0; i < somePoints.size(); ++i)
-        {
-            for (size_t j = i + 1; j < somePoints.size(); ++j)
-            {
-                if(CM::Distance2(somePoints[i], somePoints[j]) <= maxAllowedDiameter2)
-                {
-                    std::vector<CM::Point2> leftPoints, rightPoints;
-                    locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
-                    segmentsData.emplace_back(i, j, 2 + leftPoints.size() + rightPoints.size());
-                }
-            }
-        }
-        std::sort(segmentsData.begin(), segmentsData.end(), [](const auto& a, const auto& b){
-            return std::get<2>(a) > std::get<2>(b);
-        });
-
-        for(const auto& segment : segmentsData)
-        {
-            if(resultOpt && resultOpt->myPointsCount > std::get<2>(segment))
-            {
-                break;
-            }
-            const auto i = std::get<0>(segment);
-            const auto j = std::get<1>(segment);
-            std::vector<CM::Point2> leftPoints, rightPoints;
-            locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
-            const auto& currentResultOpt = locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
-            if( currentResultOpt && currentResultOpt->myPointsCount <= aMaxPointsCount &&
-                (!resultOpt ||
-                currentResultOpt->myPointsCount > resultOpt->myPointsCount ||
-                (currentResultOpt->myPointsCount == resultOpt->myPointsCount && currentResultOpt->myHullArea < resultOpt->myHullArea)))
-            {
-                resultOpt = { currentResultOpt->myHullArea, currentResultOpt->myPointsCount, Diameter{somePoints[i].myIndex, somePoints[j].myIndex} };
-            }
-            locClearCache(cache);
-        }
-#else
         // Process each distinct pair of points having squared diameter at most equal to maxDiameter2
         for (size_t i = 0; i < somePoints.size(); ++i)
         {
@@ -457,7 +413,7 @@ namespace MT
                 {
                     std::vector<CM::Point2> leftPoints, rightPoints;
                     locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
-#ifdef OPT_USE_OPTIMAL_SOLUTION
+#ifdef EARLY_STOP_OPT
                     if(resultOpt && (leftPoints.size() + rightPoints.size() - 2) < resultOpt->myPointsCount)
                     {
                         continue;
@@ -479,7 +435,6 @@ namespace MT
                 }
             }
         }
-#endif
 
         if(resultOpt && aShouldReconstructHull)
         {

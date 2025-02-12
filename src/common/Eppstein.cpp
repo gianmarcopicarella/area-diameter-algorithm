@@ -11,7 +11,7 @@
 #define MOD(x, n) ((x) % (n))
 #define IDX(m, i, j, l, count) ((m) * (2 * (count) * (count)) + (i) * ((count) * (count)) + (j) * (count) + (l))
 
-#define EARLY_STOP_OPT
+// #define EARLY_STOP_OPT
 
 namespace MT
 {
