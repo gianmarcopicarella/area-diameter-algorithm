@@ -11,13 +11,14 @@
 
 #include <iostream>
 
-#define MEMORY_PROFILER
+//#define MEMORY_PROFILER
 
 #ifdef MEMORY_PROFILER
 static benchmark::IterationCount totalAllocatedBytes { 0 };
 static benchmark::IterationCount totalDeallocatedBytes { 0 };
 static benchmark::IterationCount maxBytesUsed { 0 };
 static bool shouldTrackHeapMemory { false };
+
 
 static void StartHeapProfiling()
 {
@@ -61,7 +62,8 @@ namespace fs = std::filesystem;
 enum class Distribution
 {
     UNIFORM = 0,
-    GAUSSIAN
+    GAUSSIAN,
+    REAL
 };
 
 enum class Algorithm
@@ -94,6 +96,13 @@ void ComputeExtraMetrics(
         const std::vector<benchmark::IterationCount>& someMinEntries,
         benchmark::State& anOutState)
 {
+    anOutState.counters["avg_mem"] = -1;
+    anOutState.counters["std_mem"] = -1;
+    anOutState.counters["avg_entries"] = -1;
+    anOutState.counters["std_entries"] = -1;
+    anOutState.counters["avg_min_entries"] = -1;
+    anOutState.counters["std_min_entries"] = -1;
+
     if(!someMaxBytes.empty())
     {
         const auto maxMemMean = ComputeMean(someMaxBytes);
@@ -103,11 +112,6 @@ void ComputeExtraMetrics(
         anOutState.counters["std_mem"] = benchmark::Counter(maxMemStd,
                                                             benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
     }
-    else
-    {
-        anOutState.counters["avg_mem"] = -1;
-        anOutState.counters["std_mem"] = -1;
-    }
 
     if(!someMaxEntries.empty())
     {
@@ -115,11 +119,6 @@ void ComputeExtraMetrics(
         const auto entriesCountStd = ComputeSTDev(entriesCountMean, someMaxEntries);
         anOutState.counters["avg_entries"] = benchmark::Counter(entriesCountMean);
         anOutState.counters["std_entries"] = benchmark::Counter(entriesCountStd);
-    }
-    else
-    {
-        anOutState.counters["avg_entries"] = -1;
-        anOutState.counters["std_entries"] = -1;
     }
 
     if(!someMinEntries.empty())
@@ -129,17 +128,12 @@ void ComputeExtraMetrics(
         anOutState.counters["avg_min_entries"] = benchmark::Counter(entriesCountMean);
         anOutState.counters["std_min_entries"] = benchmark::Counter(entriesCountStd);
     }
-    else
-    {
-        anOutState.counters["avg_min_entries"] = -1;
-        anOutState.counters["std_min_entries"] = -1;
-    }
 }
 
 template<Distribution D>
 fs::path GetPathToExperiments(const benchmark::State& aState)
 {
-    constexpr std::array<std::string_view, 2> folders = { "uniform/", "gaussian/" };
+    constexpr std::array<std::string_view, 3> folders = { "uniform/", "gaussian/", "real/" };
     const std::string folder { folders[static_cast<size_t>(D)] };
     return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ folder + std::to_string(aState.range(0)) };
 }
@@ -224,17 +218,24 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
 std::vector<MT::Solution> benchmarkSolutions;
 
 // 1) Uniform distribution, Increasing density [150, 250, step=10]
+/*
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::ANTIPODAL, BM_Antipodal_Uniform, benchmarkSolutions)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(10);
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::UNIFORM, Algorithm::EPPSTEIN, BM_Eppstein_Uniform, benchmarkSolutions)
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(10);
+*/
 
 // 2) Gaussian distribution, Increasing standard deviation [0.5, 3, step=0.5]
+/*
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::ANTIPODAL, BM_Antipodal_Gaussian, benchmarkSolutions)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(10);
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::GAUSSIAN, Algorithm::EPPSTEIN, BM_Eppstein_Gaussian, benchmarkSolutions)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(10);
+*/
 
+// 3) Real world data [10 different samples]
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Distribution::REAL, Algorithm::ANTIPODAL, BM_Antipodal_Real, benchmarkSolutions)
+->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)->DenseRange(1, 9, 1)->Iterations(1);
 
 int main(int argc, char** argv)
 {

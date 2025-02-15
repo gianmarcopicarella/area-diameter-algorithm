@@ -1,5 +1,5 @@
 //
-// Created by Gianmarco prevPcarella on 28/12/24.
+// Created by Gianmarco Picarella on 28/12/24.
 //
 
 #include "Utils.h"
@@ -14,10 +14,13 @@
 #define NEXT_CW_IDX(idx, seq) (((idx) + 1) % (seq.size()))
 #define PREV_CW_IDX(idx, seq) (((idx) - 1) % (seq.size()))
 
+//#define CHECK_POINTS_COUNT_CORRECTNESS
+
 namespace MT
 {
     namespace
     {
+#ifdef CHECK_POINTS_COUNT_CORRECTNESS
         int locCountPtsInTri(const std::vector<CM::Point2>& somePoints, const CM::Point2& p1, const CM::Point2& p2, const CM::Point2& p3, int t = 0)
         {
             int count = 0;
@@ -37,6 +40,7 @@ namespace MT
                     long double s1 = (pt.myX - p2.myX) * (p1.myY - p2.myY) - (p1.myX - p2.myX) * (pt.myY - p2.myY);
                     long double s2 = (pt.myX - p3.myX) * (p2.myY - p3.myY) - (p2.myX - p3.myX) * (pt.myY - p3.myY);
                     long double s3 = (pt.myX - p1.myX) * (p3.myY - p1.myY) - (p3.myX - p1.myX) * (pt.myY - p1.myY);
+
                     if(CM::IsCloseToZero(s1)) s1=0;
                     if(CM::IsCloseToZero(s2)) s2=0;
                     if(CM::IsCloseToZero(s3)) s3=0;
@@ -44,20 +48,20 @@ namespace MT
                     if((s1 < 0.f && s2 < 0.f && s3 < 0.f) ||
                        (s1 > 0.f && s2 > 0.f && s3 > 0.f))
                     {
-                        if(t == 1)
-                            std::cout << pt.myX << ", " << pt.myY << ", " << pt.myIndex <<std::endl;
+                        //if(t == 1)
+                        //    std::cout << pt.myX << ", " << pt.myY << ", " << pt.myIndex <<std::endl;
                         ++count;
                     }
                 }
             }
             return count;
         }
-
-        int locGetFirstClockWiseLeftIndex(const std::vector<CM::Point2>& somePoints, const CM::Point2& aRefPoint)
+#endif
+        int locGetFirstClockWiseLeftIndex(const std::vector<CM::Point2>& somePoints, const CM::Point2& aPoint)
         {
             for(int i = 0; i < somePoints.size() - 1; ++i)
             {
-                if(somePoints[i].myX > aRefPoint.myX && somePoints[i+1].myX <= aRefPoint.myX)
+                if(somePoints[i].myX > aPoint.myX && somePoints[i+1].myX <= aPoint.myX)
                 {
                     return i + 1;
                 }
@@ -74,115 +78,171 @@ namespace MT
 
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
                                      const std::vector<std::vector<CM::Point2>>& someClockWiseSortedPoints,
-                                     std::vector<std::vector<int>>& someOutBelowCounts,
-                                     std::vector<std::vector<int>>& someOutCollinearCounts)
+                                     PointsInTriangleCache& anOutCache)
     {
+        anOutCache.myPointsBelowSegmentCount = std::vector<std::vector<int>>(somePoints.size(), std::vector<int>(somePoints.size(), 0));
+        anOutCache.myCollinearPointsCount = std::vector<std::vector<int>>(somePoints.size(), std::vector<int>(somePoints.size(), 0));
+        anOutCache.myPointsRightBelowCount = std::vector<int>(somePoints.size(), 0);
+
         // Sort points by increasing x-coordinate
         std::vector<CM::Point2> sortedPoints(somePoints);
-        std::sort(sortedPoints.begin(), sortedPoints.end(),CM::SortPointsHorizontally);
+        std::sort(sortedPoints.begin(), sortedPoints.end(), CM::SortPointsHorizontally);
+
+        for(size_t i = 1; i < sortedPoints.size() - 1; ++i)
+        {
+            const auto& current = sortedPoints[i];
+            const auto& previous = sortedPoints[i - 1];
+            assert(!(current.myX == previous.myX && current.myY == previous.myY && current.myIndex != previous.myIndex));
+            if(current.myX == previous.myX)
+            {
+                anOutCache.myPointsRightBelowCount[current.myIndex] = 1 + anOutCache.myPointsRightBelowCount[previous.myIndex];
+            }
+        }
 
         for (int i = 1; i < sortedPoints.size(); ++i)
         {
-            const auto& refP = sortedPoints[i];
-            const auto& clockwisePoints = someClockWiseSortedPoints[refP.myIndex];
-            const auto startIdx = locGetFirstClockWiseLeftIndex(clockwisePoints, refP);
+            const auto& pi = sortedPoints[i];
+            const auto& clockwisePoints = someClockWiseSortedPoints[pi.myIndex];
+            const auto startIdx = locGetFirstClockWiseLeftIndex(clockwisePoints, pi);
 
             for(int j = NEXT_CW_IDX(startIdx, clockwisePoints), jp = startIdx;
                 j != MOD(startIdx + i, clockwisePoints.size());
                 jp = j, j = NEXT_CW_IDX(j, clockwisePoints))
             {
-                const auto& prevP = clockwisePoints[jp];
-                const auto& currP = clockwisePoints[j];
-                const auto areCollinear = CM::AreCollinear(refP, prevP, currP);
+                const auto& pjPrev = clockwisePoints[jp];
+                const auto& pj = clockwisePoints[j];
 
-                if(areCollinear)
-                {
-                    someOutCollinearCounts[refP.myIndex][currP.myIndex] = 1 + someOutCollinearCounts[refP.myIndex][prevP.myIndex];
-                    someOutCollinearCounts[currP.myIndex][refP.myIndex] = someOutCollinearCounts[refP.myIndex][currP.myIndex];
-                }
+                assert(CM::Orientation(pi, pj, pjPrev) >= CM::ORIENTATION::COLLINEAR);
 
-                if(currP.myX < prevP.myX && areCollinear)
+                if(CM::AreCollinear(pi, pjPrev, pj))
                 {
-                    someOutBelowCounts[currP.myIndex][refP.myIndex] = someOutBelowCounts[prevP.myIndex][refP.myIndex] +
-                                                                      someOutBelowCounts[currP.myIndex][prevP.myIndex];
-                }
-                else if(currP.myX < prevP.myX)
-                {
-                    const auto b = someOutBelowCounts[prevP.myIndex][refP.myIndex];
-                    const auto a = someOutBelowCounts[currP.myIndex][prevP.myIndex];
-                    const auto c1 = someOutCollinearCounts[refP.myIndex][prevP.myIndex];
-                    const auto c2 = someOutCollinearCounts[prevP.myIndex][currP.myIndex];
+                    anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex] = 1 + anOutCache.myCollinearPointsCount[pjPrev.myIndex][pi.myIndex];
+                    anOutCache.myCollinearPointsCount[pj.myIndex][pi.myIndex] = anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex];
 
-                    someOutBelowCounts[currP.myIndex][refP.myIndex] = b + a + c1 + c2 + 1;
-                }
-                else if(currP.myX > prevP.myX)
-                {
-                    someOutBelowCounts[currP.myIndex][refP.myIndex] =
-                            (someOutBelowCounts[prevP.myIndex][refP.myIndex] + someOutCollinearCounts[prevP.myIndex][refP.myIndex]) -
-                            (someOutBelowCounts[prevP.myIndex][currP.myIndex] + someOutCollinearCounts[prevP.myIndex][currP.myIndex]);
-                }
-                someOutBelowCounts[refP.myIndex][currP.myIndex] = someOutBelowCounts[currP.myIndex][refP.myIndex];
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] =
+                            anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex] +
+                            anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
 
-                // Check the count is correct
-                /*
-                int countBelow = 0;
-                for(auto tp : somePoints)
-                {
-                    if( tp.myIndex != refP.myIndex &&
-                        tp.myIndex != currP.myIndex &&
-                        tp.myX >= currP.myX && tp.myX <= refP.myX &&
-                        CM::Orientation(refP, currP, tp) == CM::ORIENTATION::LEFT_TURN)
+                    if(pj.myX != pjPrev.myX)
                     {
-                        std::cout << tp.myIndex << std::endl;
-                        ++countBelow;
+                        anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] -= anOutCache.myPointsRightBelowCount[pjPrev.myIndex];
                     }
                 }
-                std::cout << "---" << std::endl;
-
-                const auto count1 = someOutBelowCounts[refP.myIndex][currP.myIndex];
-                if(count1 != countBelow)
+                else if(pj.myX > pjPrev.myX)
                 {
-                    const auto a1 = locProcessAngle(refP, prevP);
-                    const auto a2 = locProcessAngle(refP, currP);
-                    std::cout << "wtf: " << a1 << ", " << a2 << ", " << locClockWiseCompare(refP, prevP, currP) << std::endl;
+                    if(pj.myX == pi.myX) continue;
+                    const auto a = anOutCache.myCollinearPointsCount[pjPrev.myIndex][pi.myIndex];
+                    const auto b = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
+                    const auto c = anOutCache.myCollinearPointsCount[pj.myIndex][pjPrev.myIndex];
+                    const auto d = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex];
+                    const auto f = anOutCache.myPointsRightBelowCount[pj.myIndex];
+
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = (a + b) - (c + d) + f;
                 }
-                assert(countBelow == count1);
-                */
+                else if(pj.myX < pjPrev.myX)
+                {
+                    if(pj.myX == pi.myX) continue;
+                    const auto a = anOutCache.myCollinearPointsCount[pjPrev.myIndex][pi.myIndex];
+                    const auto b = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
+                    const auto c = anOutCache.myCollinearPointsCount[pj.myIndex][pjPrev.myIndex];
+                    const auto d = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex];
+                    const auto e = anOutCache.myPointsRightBelowCount[pjPrev.myIndex];
+
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = (a + b) + (c + d) + 1 - e;
+                }
+                else
+                {
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex] + 1;
+                }
+
+                anOutCache.myPointsBelowSegmentCount[pi.myIndex][pj.myIndex] = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex];
+#ifdef CHECK_POINTS_COUNT_CORRECTNESS
+                // Check that collinear counts are correct
+                {
+                    size_t collinearCount = 0;
+                    for(const auto& p : somePoints)
+                    {
+                        if(p.myIndex != pi.myIndex && p.myIndex != pj.myIndex && p.myX <= pi.myX && CM::AreCollinear(pi, pj, p))
+                        {
+                            const CM::Point2 first {pj.myX - pi.myX, pj.myY - pi.myY, INVALID_INDEX };
+                            const CM::Point2 second {p.myX - pi.myX, p.myY - pi.myY, INVALID_INDEX };
+                            const auto dot = CM::Dot(first, second);
+                            if(dot > 0 && dot < CM::Distance2(pi, pj))
+                            {
+                                // std::cout << pi.myIndex << ", " << pj.myIndex << ", " << p.myIndex << ", " << pjPrev.myIndex << ", " << CM::Distance2(pi, p) << ", " << CM::Distance2(pi, pj) << std::endl;
+                                ++collinearCount;
+                            }
+                        }
+                    }
+
+                    const auto myCollinearCount = anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex];
+                    if(myCollinearCount != collinearCount)
+                    {
+                        // throw std::runtime_error("WTF coll!!!");
+                        std::cout << "wtf: " << collinearCount << ", " << myCollinearCount <<std::endl;
+                        std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << std::endl;
+                    }
+                    assert(collinearCount == myCollinearCount);
+                }
+
+                // Check that below counts are correct
+                {
+                    size_t belowCount = 0;
+                    for(const auto& p : somePoints)
+                    {
+                        if( p.myIndex != pi.myIndex &&
+                            p.myIndex != pj.myIndex &&
+                            p.myX >= pj.myX && p.myX <= pi.myX &&
+                            CM::Orientation(pi, pj, p) == CM::ORIENTATION::LEFT_TURN)
+                        {
+                            // std::cout << pi.myIndex << ", " << pj.myIndex << ", " << p.myIndex << std::endl;
+                            ++belowCount;
+                        }
+                    }
+
+                    //std::cout << "----" << std::endl;
+
+                    const auto myBelowCount = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pj.myIndex];
+                    if(myBelowCount != belowCount)
+                    {
+                        std::cout << "wtf: " << belowCount << ", " << myBelowCount <<std::endl;
+                        std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << std::endl;
+                        throw std::runtime_error("WTF below!!!");
+                    }
+                    assert(belowCount == myBelowCount);
+                }
+#endif
             }
         }
 
-/*
+#ifdef CHECK_POINTS_COUNT_CORRECTNESS
         for(int i = 0; i < somePoints.size(); ++i)
         {
-            for(int j = 0; j < somePoints.size(); ++j)
+            for(int j = i+1; j < somePoints.size(); ++j)
             {
-                for(int l = 0; l < somePoints.size(); ++l)
+                for(int l = j+1; l < somePoints.size(); ++l)
                 {
-                    if(i != j && i != l && j != l)
+                    const auto count1 = locCountPtsInTri(somePoints, somePoints[i], somePoints[j], somePoints[l]);
+                    const auto count2 = PointsInTriangle(somePoints[i], somePoints[j], somePoints[l], anOutCache);
+                    if(count1 != count2)
                     {
-                        const auto count1 = locCountPtsInTri(somePoints, somePoints[i], somePoints[j], somePoints[l]);
-                        const auto count2 = PointsInTriangle(somePoints[i], somePoints[j], somePoints[l], someOutBelowCounts, someOutCollinearCounts);
-                        if(count1 != count2)
-                        {
-                            locCountPtsInTri(somePoints, somePoints[i], somePoints[j], somePoints[l], 1);
-                            PointsInTriangle(somePoints[i], somePoints[j], somePoints[l], someOutBelowCounts, someOutCollinearCounts);
-                        }
-
-                        //std::cout << count1 << " and " << count2 << "for tri " << i << ", " << j << ", " << l << std::endl;
-                        assert(count1 == count2);
+                        std::cout << count1 << ", " << count2 << ", " << i << ", " << j << ", " << l << std::endl;
+                        locCountPtsInTri(somePoints, somePoints[i], somePoints[j], somePoints[l], 1);
+                        PointsInTriangle(somePoints[i], somePoints[j], somePoints[l], anOutCache);
+                        throw std::runtime_error("!!!");
                     }
+                    assert(count1 == count2);
                 }
             }
         }
-*/
+#endif
     }
 
     int PointsInTriangle(
             const CM::Point2& aFirstPoint,
             const CM::Point2& aSecondPoint,
             const CM::Point2& aThirdPoint,
-            const std::vector<std::vector<int>>& somePointCountBelowSegments,
-            const std::vector<std::vector<int>>& someCollinearPointCounts)
+            const PointsInTriangleCache& aCache)
     {
         if(CM::AreCollinear(aFirstPoint, aSecondPoint, aThirdPoint))
         {
@@ -191,26 +251,33 @@ namespace MT
 
         CM::Point2 points[3] = {aFirstPoint, aSecondPoint, aThirdPoint};
         std::sort(points, points + 3, CM::SortPointsHorizontally);
+
         const auto li = points[0].myIndex;
         const auto mi = points[1].myIndex;
         const auto ri = points[2].myIndex;
-        const auto count = std::abs(
-                somePointCountBelowSegments[li][mi] +
-                somePointCountBelowSegments[mi][ri] -
-                somePointCountBelowSegments[li][ri]);
 
-        const auto orientation = CM::Orientation(points[2], points[0], points[1]);
-        if(orientation == CM::ORIENTATION::LEFT_TURN)
+        const auto orientation = CM::Orientation(points[2], points[0], points[1]) == CM::ORIENTATION::LEFT_TURN;
+        const auto overlap = points[0].myX == points[1].myX || points[1].myX == points[2].myX;
+
+        switch (overlap << 1 | orientation)
         {
-            // not counting collinear points
-            return count - 1 - someCollinearPointCounts[li][mi] - someCollinearPointCounts[mi][ri];
-            // counting collinear points
-            // return  count - 1 + someCollinearPointCounts[li][ri];
+            case 0: return  aCache.myPointsBelowSegmentCount[ri][mi] + aCache.myPointsBelowSegmentCount[mi][li] -
+                            aCache.myPointsBelowSegmentCount[ri][li] - aCache.myCollinearPointsCount[ri][li] -
+                            aCache.myPointsRightBelowCount[mi];
+
+            case 1: return  aCache.myPointsBelowSegmentCount[ri][li] - aCache.myPointsBelowSegmentCount[ri][mi] -
+                            aCache.myPointsBelowSegmentCount[mi][li] - aCache.myCollinearPointsCount[ri][mi] -
+                            aCache.myCollinearPointsCount[mi][li] + aCache.myPointsRightBelowCount[mi] - 1;
+
+            case 2: return  aCache.myPointsBelowSegmentCount[ri][mi] - aCache.myPointsBelowSegmentCount[ri][li] -
+                            aCache.myCollinearPointsCount[ri][li] - aCache.myPointsRightBelowCount[mi] +
+                            aCache.myPointsRightBelowCount[li];
+
+            default:
+                return  aCache.myPointsBelowSegmentCount[ri][li] - aCache.myPointsBelowSegmentCount[ri][mi] -
+                        aCache.myPointsBelowSegmentCount[mi][li] - aCache.myCollinearPointsCount[ri][mi] -
+                        aCache.myCollinearPointsCount[mi][li] - 1;
         }
-        // not counting collinear points
-        return count - someCollinearPointCounts[li][ri];
-        // counting collinear points
-        // return count + someCollinearPointCounts[li][mi] + someCollinearPointCounts[mi][ri];
     }
 
     bool ArePointsClockwise(const CM::Point2& aReferencePoint, const CM::Point2& aFirstPoint, const CM::Point2& aSecondPoint)
@@ -218,11 +285,14 @@ namespace MT
         assert(aFirstPoint.myIndex != aSecondPoint.myIndex);
         const auto firstAngle = CM::Angle(aReferencePoint, aFirstPoint);
         const auto secondAngle = CM::Angle(aReferencePoint, aSecondPoint);
-        if(CM::IsCloseToZero(firstAngle - secondAngle))
+
+        if( std::fabsl(firstAngle - secondAngle) < 0.000001l &&
+            CM::AreCollinear(aReferencePoint, aFirstPoint, aSecondPoint))
         {
-            return CM::Distance2(aReferencePoint, aFirstPoint) <
-                   CM::Distance2(aReferencePoint, aSecondPoint);
+            return  CM::Distance2(aReferencePoint, aFirstPoint) <
+                    CM::Distance2(aReferencePoint, aSecondPoint);
         }
+
         return firstAngle > secondAngle;
     }
 

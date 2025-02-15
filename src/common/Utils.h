@@ -29,6 +29,13 @@ namespace MT
         std::vector<size_t> myHullIndices {};
     };
 
+    struct PointsInTriangleCache
+    {
+        std::vector<std::vector<int>> myPointsBelowSegmentCount;
+        std::vector<std::vector<int>> myCollinearPointsCount;
+        std::vector<int> myPointsRightBelowCount;
+    };
+
     struct BenchmarkInfo
     {
         int64_t myCreatedEntriesCount { -1 };
@@ -37,15 +44,13 @@ namespace MT
 
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
                                      const std::vector<std::vector<CM::Point2>>& someClockWiseSortedPoints,
-                                     std::vector<std::vector<int>>& someOutBelowCounts,
-                                     std::vector<std::vector<int>>& someOutCollinearCounts);
+                                     PointsInTriangleCache& anOutCache);
 
     int PointsInTriangle(
             const CM::Point2& aFirstPoint,
             const CM::Point2& aSecondPoint,
             const CM::Point2& aThirdPoint,
-            const std::vector<std::vector<int>>& somePointCountBelowSegments,
-            const std::vector<std::vector<int>>& someCollinearPointCounts);
+            const PointsInTriangleCache& aCache);
 
     bool ArePointsClockwise(const CM::Point2& aReferencePoint, const CM::Point2& aFirstPoint, const CM::Point2& aSecondPoint);
 

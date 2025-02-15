@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
+
 void PointsListToVector(const py::list& somePoints, std::vector<MT::CM::Point2>& someOutPoints)
 {
     someOutPoints.reserve(somePoints.size());
@@ -81,5 +82,7 @@ PYBIND11_MODULE(thesis, module)
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
           py::arg("maxAllowedDiameter") = std::numeric_limits<long double>::infinity(),
           py::arg("shouldReconstructHull") = false);
+
+    module.attr("__version__") = "dev";
 }
 

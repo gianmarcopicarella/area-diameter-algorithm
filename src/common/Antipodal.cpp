@@ -10,7 +10,8 @@
 
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
 
-//#define EARLY_STOP_OPT
+#define EARLY_STOP_OPT
+#define ITERATIVE_ALGORITHM
 
 namespace MT
 {
@@ -146,12 +147,11 @@ namespace MT
                                   const size_t aCurrentCount,
                                   const size_t aTotalPointsCount,
                                   const long double aMaxArea,
-                                  const std::vector<std::vector<int>>& someBelowPointsCounts,
-                                  const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                  const PointsInTriangleCache& aPointsCountCache,
                                   std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
         {
             const auto triangleArea = std::fabsl(CM::SignedArea(aFirstPoint, aSecondPoint, aThirdPoint));
-            const auto triangleCount = 1 + PointsInTriangle(aFirstPoint, aSecondPoint, aThirdPoint, someBelowPointsCounts, someCollinearPointsCounts);
+            const auto triangleCount = 1 + PointsInTriangle(aFirstPoint, aSecondPoint, aThirdPoint, aPointsCountCache);
             size_t i;
             if constexpr (isLeftSide)
             {
@@ -166,6 +166,7 @@ namespace MT
                 if( CM::Orientation(somePoints[i], aThirdPoint, aSecondPoint) >= CM::ORIENTATION::COLLINEAR &&
                     CM::Orientation(somePoints[i], aThirdPoint, aFirstPoint) >= CM::ORIENTATION::COLLINEAR)
                 {
+                    // std::cout << aCurrentCount << ", " << triangleCount << ", " << (aCurrentCount + triangleCount) << std::endl;
                     auto& cache = someOutCaches[aCurrentCount + triangleCount];
                     if constexpr (isLeftSide)
                     {
@@ -183,8 +184,7 @@ namespace MT
 
         std::optional<ConvexArea> locProcessSegment(  const std::vector<CM::Point2>& someLeftPoints,
                                                       const std::vector<CM::Point2>& someRightPoints,
-                                                      const std::vector<std::vector<int>>& someBelowPointsCounts,
-                                                      const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                                      const PointsInTriangleCache& aPointsCountCache,
                                                       const size_t aMaxPointsCount,
                                                       const long double aMaxArea,
                                                       std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
@@ -257,7 +257,7 @@ namespace MT
                         constexpr auto STEP_LEFT = true;
                         locAddNextHullPoint<STEP_LEFT>(endPoint, l, pl, someLeftPoints,
                                                        entry, k, totalPointsCount, aMaxArea,
-                                                       someBelowPointsCounts, someCollinearPointsCounts, someOutCaches);
+                                                       aPointsCountCache, someOutCaches);
                     }
 
                     if(isRightAntipodal || (pl.myIndex == endPoint.myIndex && isLeftAntipodal))
@@ -265,7 +265,7 @@ namespace MT
                         constexpr auto STEP_LEFT = false;
                         locAddNextHullPoint<STEP_LEFT>(startPoint, r, pr, someRightPoints,
                                                        entry, k, totalPointsCount, aMaxArea,
-                                                       someBelowPointsCounts, someCollinearPointsCounts, someOutCaches);
+                                                       aPointsCountCache, someOutCaches);
                     }
                 }
             }
@@ -277,6 +277,107 @@ namespace MT
 
             return resultOpt;
         }
+#ifndef ITERATIVE_ALGORITHM
+        struct RecEntry
+        {
+            long double area {std::numeric_limits<long double>::infinity()};
+            size_t prevIndex {0};
+            bool isLeft {false};
+        };
+
+        bool locProcessSegmentRecursively(const CM::Point2& aLeft, const CM::Point2& aPrevLeft,
+                                          const CM::Point2& aRight, const CM::Point2& aPrevRight,
+                                          const int64_t aPointCount,
+
+                                          const CM::Point2& aBottom, const CM::Point2& aTop,
+                                          const std::vector<CM::Point2>& someLeftPoints,
+                                          const std::vector<CM::Point2>& someRightPoints,
+                                          const std::vector<std::vector<int>>& someBelowPointsCounts,
+                                          const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                          const long double aMaxDiameter2, const long double aMaxArea,
+                                          const size_t aTotalPointsCount,
+                                          std::unordered_map<size_t, RecEntry>& anOutCache)
+        {
+            if(CM::Distance2(aLeft, aRight) > aMaxDiameter2 || aPointCount < 0)
+            {
+                return false;
+            }
+            else if(aPrevLeft == aTop && aPrevRight == aBottom && aPointCount == 0)
+            {
+                return true;
+            }
+            else
+            {
+                const auto key = KEY_REC(aLeft.myIndex, aPrevLeft.myIndex,
+                                         aRight.myIndex, aPrevRight.myIndex, aPointCount, aTotalPointsCount);
+                if(anOutCache.find(key) != anOutCache.end())
+                {
+                    return true;
+                }
+            }
+
+            std::array<CM::Point2, 6> polygon;
+            size_t polygonCount = 0;
+            locKeepUniquePolyPoints(aBottom, aTop, aLeft, aPrevLeft, aRight, aPrevRight, polygon, polygonCount);
+            if(polygonCount < 3)
+            {
+                return false;
+            }
+
+            bool isLeftAntipodal = false, isRightAntipodal = false;
+            ForAllAntipodalPairs(polygon, [&](const size_t aFirstIndex, const size_t aSecondIndex){
+                const auto& firstPoint = polygon[aFirstIndex];
+                const auto& secondPoint = polygon[aSecondIndex];
+                isLeftAntipodal |=  (firstPoint.myIndex == aPrevLeft.myIndex && secondPoint.myIndex == aRight.myIndex) |
+                                    (firstPoint.myIndex == aRight.myIndex && secondPoint.myIndex == aPrevLeft.myIndex);
+                isRightAntipodal |= (firstPoint.myIndex == aPrevRight.myIndex && secondPoint.myIndex == aLeft.myIndex) |
+                                    (firstPoint.myIndex == aLeft.myIndex && secondPoint.myIndex == aPrevRight.myIndex);
+            }, polygonCount);
+
+            long double bestArea = std::numeric_limits<long double>::infinity();
+            size_t bestPrevIndex = 0;
+            bool isLeft = false;
+
+            if(isLeftAntipodal || (aPrevRight.myIndex == aBottom.myIndex && isRightAntipodal))
+            {
+                const auto triangleArea = std::fabsl(CM::SignedArea(aTop, aLeft, aPrevLeft));
+                const auto triangleCount = 1 + PointsInTriangle(aTop, aLeft, aPrevLeft, someBelowPointsCounts, someCollinearPointsCounts);
+                for(size_t i = aPrevLeft.myIndex + 1; i < someLeftPoints.size(); ++i)
+                {
+                    // pl, l, top
+                    if( CM::Orientation(someLeftPoints[i], aPrevLeft, aLeft) >= CM::ORIENTATION::COLLINEAR &&
+                        CM::Orientation(someLeftPoints[i], aPrevLeft, aTop) >= CM::ORIENTATION::COLLINEAR)
+                    {
+                        if(locProcessSegmentRecursively(aPrevLeft, someLeftPoints[i], aRight, aPrevRight,
+                                                        aPointCount - triangleCount, aBottom, aTop, someLeftPoints,
+                                                        someRightPoints, someBelowPointsCounts, someCollinearPointsCounts, aMaxDiameter2,
+                                                        aMaxArea, aTotalPointsCount, anOutCache))
+                        {
+                            const auto key = KEY_REC(aPrevLeft.myIndex, someLeftPoints[i].myIndex, aRight.myIndex, aPrevRight.myIndex,
+                                                     aPointCount - triangleCount, aTotalPointsCount);
+                            const auto& entryIter = anOutCache.find(key);
+                            const auto sumArea = entryIter->second.area + triangleArea;
+                            if(sumArea <= aMaxArea && sumArea < bestArea)
+                            {
+                                bestArea = sumArea;
+                                bestPrevIndex = i;
+                                isLeft = true;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            if(isRightAntipodal || (aPrevLeft.myIndex == aTop.myIndex && isLeftAntipodal))
+            {
+
+            }
+
+
+
+        }
+#endif
 
         size_t locClearCache(std::vector<std::unordered_map<size_t, Entry>>& someOutCaches)
         {
@@ -292,8 +393,7 @@ namespace MT
         void locReconstructHull(const std::vector<std::unordered_map<size_t, Entry>>& someCaches,
                                 const std::vector<CM::Point2>& someLeftPoints,
                                 const std::vector<CM::Point2>& someRightPoints,
-                                const std::vector<std::vector<int>>& someBelowPointsCounts,
-                                const std::vector<std::vector<int>>& someCollinearPointsCounts,
+                                const PointsInTriangleCache& aPointsCountCache,
                                 const size_t anOptimalCount,
                                 std::vector<size_t>& someOutHullIndices)
         {
@@ -317,14 +417,14 @@ namespace MT
             {
                 if(entry.isLeftSide)
                 {
-                    k -= 1 + PointsInTriangle(endPoint, someLeftPoints[entry.l], someLeftPoints[entry.prev], someBelowPointsCounts, someCollinearPointsCounts);
+                    k -= 1 + PointsInTriangle(endPoint, someLeftPoints[entry.l], someLeftPoints[entry.prev], aPointsCountCache);
                     left.emplace_back(someLeftPoints[entry.l].myIndex);
                     const auto key = KEY(entry.prev, entry.l, entry.r, entry.pr, totalPointsCount);
                     entry = someCaches[k].find(key)->second;
                 }
                 else
                 {
-                    k -= 1 + PointsInTriangle(startPoint, someRightPoints[entry.r], someRightPoints[entry.prev], someBelowPointsCounts, someCollinearPointsCounts);
+                    k -= 1 + PointsInTriangle(startPoint, someRightPoints[entry.r], someRightPoints[entry.prev], aPointsCountCache);
                     right.emplace_back(someRightPoints[entry.r].myIndex);
                     const auto key = KEY(entry.l, entry.pl, entry.prev, entry.r, totalPointsCount);
                     entry = someCaches[k].find(key)->second;
@@ -381,8 +481,7 @@ namespace MT
         }
 
         // Create a 2-dimensional array containing the number of points right below any segment
-        std::vector<std::vector<int>> pointsBelowCounts(somePoints.size(), std::vector<int>(somePoints.size(), 0));
-        std::vector<std::vector<int>> collinearPointsCounts(somePoints.size(), std::vector<int>(somePoints.size(), 0));
+        PointsInTriangleCache pointsInTriangleCache;
 
         {
             // Create a 2-dimensional array containing for each point the sequence of clockwise sorted points around it
@@ -395,9 +494,10 @@ namespace MT
                     SortPointsClockWiseAroundPoint(somePoints[i], clockwiseSortedPoints[i]);
                 }
             }
-            CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsBelowCounts, collinearPointsCounts);
+            CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsInTriangleCache);
         }
 
+#ifdef ITERATIVE_ALGORITHM
         std::vector<std::unordered_map<size_t, Entry>> cache {somePoints.size(),
                                                               std::unordered_map<size_t, Entry>{}};
         std::optional<ConvexArea> resultOpt;
@@ -406,6 +506,7 @@ namespace MT
         // Process each distinct pair of points having squared diameter at most equal to maxDiameter2
         for (size_t i = 0; i < somePoints.size(); ++i)
         {
+            std::cout << "[" << i << "]" << std::endl;
             for (size_t j = i + 1; j < somePoints.size(); ++j)
             {
                 std::optional<ConvexArea> pairResultOpt;
@@ -419,7 +520,9 @@ namespace MT
                         continue;
                     }
 #endif
-                    pairResultOpt = locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
+
+                    // std::cout << "count: " << leftPoints.size() + rightPoints.size() - 2 << std::endl;
+                    pairResultOpt = locProcessSegment(leftPoints, rightPoints, pointsInTriangleCache, aMaxPointsCount, aMaxArea, cache);
                     if( pairResultOpt && pairResultOpt->myPointsCount <= aMaxPointsCount &&
                         (!resultOpt || pairResultOpt->myPointsCount > resultOpt->myPointsCount ||
                          (pairResultOpt->myPointsCount == resultOpt->myPointsCount && pairResultOpt->myHullArea < resultOpt->myHullArea)))
@@ -441,14 +544,14 @@ namespace MT
             const auto& diameter = *resultOpt->myDiameterOpt;
             std::vector<CM::Point2> leftPoints, rightPoints;
             locPrepareLeftAndRightPoints(somePoints, diameter.myFirstIndex, diameter.mySecondIndex, leftPoints, rightPoints);
-            locProcessSegment(leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, aMaxPointsCount, aMaxArea, cache);
-            locReconstructHull(cache, leftPoints, rightPoints, pointsBelowCounts, collinearPointsCounts, resultOpt->myPointsCount - 2, resultOpt->myHullIndices);
+            locProcessSegment(leftPoints, rightPoints, pointsInTriangleCache, aMaxPointsCount, aMaxArea, cache);
+            locReconstructHull(cache, leftPoints, rightPoints, pointsInTriangleCache, resultOpt->myPointsCount - 2, resultOpt->myHullIndices);
             if(anOutBenchmarkInfoOpt)
             {
                 anOutBenchmarkInfoOpt->myCreatedEntriesCount += locClearCache(cache);
             }
         }
-
+#endif
         return resultOpt;
     }
 }

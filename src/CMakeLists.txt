@@ -31,7 +31,7 @@ function(add_target_coverage target)
     endif()
 endfunction()
 
-add_compile_options(-O3)
+# add_compile_options(-O3)
 
 create_exec(bench)
 create_exec(test)
@@ -41,8 +41,9 @@ set_target_properties(gtest gtest_main benchmark benchmark_main PROPERTIES FOLDE
 target_link_to_libs(bench PRIVATE "benchmark::benchmark;nlohmann_json::nlohmann_json")
 target_link_to_libs(test PRIVATE "gtest_main;nlohmann_json::nlohmann_json")
 
-pybind11_add_module(pybind ${CMAKE_CURRENT_SOURCE_DIR}/py-binding/main.cpp;${COMMON_ALL})
-
+pybind11_add_module(thesis ${CMAKE_CURRENT_SOURCE_DIR}/py-binding/main.cpp;${COMMON_ALL})
+target_link_to_libs(thesis PRIVATE "nlohmann_json::nlohmann_json")
+set_target_properties(thesis PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../python-wrapper-build)
 
 set(BENCHMARK_OUT_DATA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/reports)
 set(UNIT_TESTS_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/eppstein)

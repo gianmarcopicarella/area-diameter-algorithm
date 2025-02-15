@@ -37,12 +37,18 @@ namespace MT
             LEFT_TURN = 1
         };
 
+        template <typename T> int Sign(const T& aValue)
+        {
+            return (T(0) < aValue) - (aValue < T(0));
+        }
+
         long double Dot(const Point2& aFirstPoint, const Point2& aSecondPoint);
 
         long double Distance2(const Point2& aFirstPoint, const Point2& aSecondPoint);
 
+        // Using this value for epsilon guarantees that std::atan2l and SignedArea produce coherent results for collinear points
         bool IsCloseToZero(long double aValue,
-                           long double anEpsilon = std::numeric_limits<long double>::epsilon());
+                           long double anEpsilon = 0.0000000001l/*std::numeric_limits<long double>::epsilon()*/);
 
         bool AreCollinear(const Point2& aFirstPoint, const Point2& aSecondPoint, const Point2& aThirdPoint);
 

@@ -18,20 +18,19 @@ namespace MT
     namespace
     {
         constexpr int locPointsWithinTriangleCount(
-                const std::vector<std::vector<int>>& somePointsBelowCounts,
-                const std::vector<std::vector<int>>& somePointsCollinearCounts,
+                const PointsInTriangleCache& aPointsCountCache,
                 const size_t m,
                 const CM::Point2& pi,
                 const CM::Point2& pj,
                 const CM::Point2& pl)
         {
             const auto baseCount =
-                    somePointsCollinearCounts[pi.myIndex][pj.myIndex] +
-                    somePointsCollinearCounts[pj.myIndex][pl.myIndex] +
-                    PointsInTriangle(pi, pj, pl, somePointsBelowCounts, somePointsCollinearCounts);
+                    aPointsCountCache.myCollinearPointsCount[pi.myIndex][pj.myIndex] +
+                    aPointsCountCache.myCollinearPointsCount[pj.myIndex][pl.myIndex] +
+                    PointsInTriangle(pi, pj, pl, aPointsCountCache);
             if(m == 3 && !CM::AreCollinear(pi, pj, pl))
             {
-                return baseCount + somePointsCollinearCounts[pl.myIndex][pi.myIndex];
+                return baseCount + aPointsCountCache.myCollinearPointsCount[pl.myIndex][pi.myIndex];
             }
             return baseCount;
         }
@@ -156,9 +155,8 @@ namespace MT
         }
 
         // Create a 2-dimensional array containing the number of points right below any segment
-        std::vector<std::vector<int>> pointsBelowCounts(pointsCount, std::vector<int>(pointsCount, 0));
-        std::vector<std::vector<int>> collinearPointsCounts(pointsCount, std::vector<int>(pointsCount, 0));
-        CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsBelowCounts, collinearPointsCounts);
+        PointsInTriangleCache pointsCountCache;
+        CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsCountCache);
 
         // Sort points by y-coordinate
         std::vector<CM::Point2> sortedPoints(somePoints);
@@ -212,7 +210,7 @@ namespace MT
                     {
                         const auto& pl = clockWisePointsAbove[l];
 
-                        const auto pointsInTriangleCount = 1 + locPointsWithinTriangleCount(pointsBelowCounts, collinearPointsCounts, m, pi, pj, pl);
+                        const auto pointsInTriangleCount = 1 + locPointsWithinTriangleCount(pointsCountCache, m, pi, pj, pl);
                         if(pointsInTriangleCount <= m && CM::Orientation(pi, pj, pl) >= CM::ORIENTATION::COLLINEAR)
                         {
                             const auto currentArea =
@@ -268,7 +266,7 @@ namespace MT
                         break;
                     }
                 }
-                m -= 1 + locPointsWithinTriangleCount(pointsBelowCounts, collinearPointsCounts, m, somePoints[bestIndex.first], somePoints[j], somePoints[l]);
+                m -= 1 + locPointsWithinTriangleCount(pointsCountCache, m, somePoints[bestIndex.first], somePoints[j], somePoints[l]);
                 resultOpt->myHullIndices.emplace_back(j);
                 j = l;
             }

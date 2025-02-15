@@ -46,20 +46,15 @@ namespace MT
 
         ORIENTATION Orientation(const Point2& aFirstPoint, const Point2& aSecondPoint, const Point2& aThirdPoint)
         {
+            constexpr std::array<CM::ORIENTATION, 2> table = { CM::ORIENTATION::RIGHT_TURN, CM::ORIENTATION::LEFT_TURN };
             const auto signedArea = SignedArea(aFirstPoint, aSecondPoint, aThirdPoint);
-            if(signedArea > 0)
+
+            if(IsCloseToZero(signedArea))
             {
-                return ORIENTATION::LEFT_TURN;
-            }
-            else if(signedArea < 0)
-            {
-                return ORIENTATION::RIGHT_TURN;
-            }
-            else
-            {
-                // assert(IsCloseToZero(signedArea));
                 return ORIENTATION::COLLINEAR;
             }
+
+            return table[(1 + Sign(signedArea)) / 2];
         }
 
         long double Angle(const CM::Point2& aReferencePoint, const CM::Point2& aPoint)
