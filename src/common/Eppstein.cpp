@@ -174,8 +174,8 @@ namespace MT
 
         if(anOutBenchmarkInfoOpt)
         {
-            anOutBenchmarkInfoOpt->myCreatedEntriesCount = minimumAreas.size();
-            anOutBenchmarkInfoOpt->myMinEntriesCount = 0;
+            anOutBenchmarkInfoOpt->myAllocatedEntriesCount = minimumAreas.size();
+            anOutBenchmarkInfoOpt->myRequiredEntriesCount = 0;
         }
 
         for (size_t i = 0; i < sortedPoints.size(); ++i)
@@ -232,7 +232,7 @@ namespace MT
                         if(minArea != lastMinArea && anOutBenchmarkInfoOpt)
                         {
                             lastMinArea = minArea;
-                            anOutBenchmarkInfoOpt->myMinEntriesCount += 1;
+                            anOutBenchmarkInfoOpt->myRequiredEntriesCount += 1;
                         }
 
                         minimumAreas[IDX(m, minimumAreaIndex, pj.myIndex, pl.myIndex, pointsCount)] = minArea;

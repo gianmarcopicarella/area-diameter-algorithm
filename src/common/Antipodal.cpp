@@ -533,7 +533,8 @@ namespace MT
                     const auto cacheEntriesCount = locClearCache(cache);
                     if(anOutBenchmarkInfoOpt)
                     {
-                        anOutBenchmarkInfoOpt->myCreatedEntriesCount += cacheEntriesCount;
+                        anOutBenchmarkInfoOpt->myAllocatedEntriesCount += cacheEntriesCount;
+                        anOutBenchmarkInfoOpt->myRequiredEntriesCount += cacheEntriesCount;
                     }
                 }
             }
@@ -548,7 +549,9 @@ namespace MT
             locReconstructHull(cache, leftPoints, rightPoints, pointsInTriangleCache, resultOpt->myPointsCount - 2, resultOpt->myHullIndices);
             if(anOutBenchmarkInfoOpt)
             {
-                anOutBenchmarkInfoOpt->myCreatedEntriesCount += locClearCache(cache);
+                const auto cacheEntriesCount = locClearCache(cache);
+                anOutBenchmarkInfoOpt->myAllocatedEntriesCount += cacheEntriesCount;
+                anOutBenchmarkInfoOpt->myRequiredEntriesCount += cacheEntriesCount;
             }
         }
 #endif

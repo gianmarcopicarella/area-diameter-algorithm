@@ -38,8 +38,8 @@ namespace MT
 
     struct BenchmarkInfo
     {
-        int64_t myCreatedEntriesCount { -1 };
-        int64_t myMinEntriesCount { -1 };
+        int64_t myAllocatedEntriesCount { -1 };
+        int64_t myRequiredEntriesCount { -1 };
     };
 
     void CountPointsBelowAllSegments(const std::vector<CM::Point2>& somePoints,
