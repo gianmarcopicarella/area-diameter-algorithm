@@ -10,7 +10,7 @@
 
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
 
-#define EARLY_STOP_OPT
+// #define EARLY_STOP_OPT
 #define ITERATIVE_ALGORITHM
 
 namespace MT
@@ -506,7 +506,7 @@ namespace MT
         // Process each distinct pair of points having squared diameter at most equal to maxDiameter2
         for (size_t i = 0; i < somePoints.size(); ++i)
         {
-            std::cout << "[" << i << "]" << std::endl;
+            // std::cout << "[" << i << "]" << std::endl;
             for (size_t j = i + 1; j < somePoints.size(); ++j)
             {
                 std::optional<ConvexArea> pairResultOpt;

@@ -24,6 +24,8 @@ enum class Algorithm
     ANTIPODAL
 };
 
+constexpr std::string_view benchmarkSolutionsFilename = "benchmark_data_results.json";
+
 static benchmark::IterationCount totalAllocatedBytes { 0 };
 static bool shouldTrackHeapMemory { false };
 
@@ -85,8 +87,21 @@ fs::path PathToData(const benchmark::State& aState)
     return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ folder + std::to_string(aState.range(0)) };
 }
 
+template<Algorithm A>
+std::string ResultId(const benchmark::State& aState, const size_t aFileIndex)
+{
+    if constexpr(A == Algorithm::ANTIPODAL)
+    {
+        return aState.name() + "/" + std::to_string(aState.range(0)) + "/" + std::to_string(aState.range(1)) + "/iterations:" + std::to_string(aFileIndex);
+    }
+    else
+    {
+        return aState.name() + "/" + std::to_string(aState.range(0)) +  + "/iterations:" + std::to_string(aFileIndex);
+    }
+}
+
 template<Data D, Algorithm A>
-void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSolutions)
+void BM_Template(benchmark::State& aState)
 {
     constexpr auto maxAllowedArea = 4.l; // 2 mm^2
     constexpr auto maxAllowedPoints = (size_t) - 1; // No limit
@@ -94,9 +109,16 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
 
     size_t fileIndex = 0;
 
-    std::vector<benchmark::IterationCount> allocatedBytesCount { aState.iterations(), 0 };
-    std::vector<benchmark::IterationCount> requiredEntriesCount { aState.iterations(), 0 };
-    std::vector<benchmark::IterationCount> allocatedEntriesCount { aState.iterations(), 0 };
+    std::vector<MT::Solution> solutions;
+    solutions.reserve(aState.iterations());
+
+    std::vector<benchmark::IterationCount> allocatedBytesCount;
+    std::vector<benchmark::IterationCount> requiredEntriesCount;
+    std::vector<benchmark::IterationCount> allocatedEntriesCount;
+
+    allocatedBytesCount.reserve(aState.iterations());
+    requiredEntriesCount.reserve(aState.iterations());
+    allocatedEntriesCount.reserve(aState.iterations());
 
     for (auto _ : aState)
     {
@@ -126,15 +148,15 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         StopHeapProfiling();
         benchmark::ClobberMemory();
 
-        allocatedBytesCount[fileIndex] = totalAllocatedBytes;
-        requiredEntriesCount[fileIndex] = benchmarkInfo->myRequiredEntriesCount;
-        allocatedEntriesCount[fileIndex] = benchmarkInfo->myAllocatedEntriesCount;
+        allocatedBytesCount.emplace_back(totalAllocatedBytes);
+        requiredEntriesCount.emplace_back(benchmarkInfo->myRequiredEntriesCount);
+        allocatedEntriesCount.emplace_back(benchmarkInfo->myAllocatedEntriesCount);
         std::cout << "AB " << allocatedBytesCount[fileIndex] << ", RE " << requiredEntriesCount[fileIndex] << ", AE " << allocatedEntriesCount[fileIndex] << std::endl;
 
         aState.SetIterationTime(std::chrono::duration<double, std::milli> {endTime - startTime}.count());
 
         MT::Solution currentSolution;
-        currentSolution.myId = aState.name() + "/" + std::to_string(aState.range(0)) + "/iterations:" + std::to_string(fileIndex);
+        currentSolution.myId = ResultId<A>(aState, fileIndex);
         currentSolution.myMaxCount = maxAllowedPoints;
         currentSolution.myMaxArea = maxAllowedArea;
 
@@ -144,36 +166,59 @@ void BM_Template(benchmark::State& aState, std::vector<MT::Solution>& someOutSol
         }
 
         currentSolution.myConvexAreaOpt = resultOpt;
-        someOutSolutions.emplace_back(currentSolution);
+        solutions.emplace_back(currentSolution);
         ++fileIndex;
     }
 
     AddExtraCounter("mem", allocatedBytesCount, aState, benchmark::Counter::kDefaults, benchmark::Counter::kIs1024);
     AddExtraCounter("entries", allocatedEntriesCount, aState);
     AddExtraCounter("min_entries", requiredEntriesCount, aState);
-}
 
-std::vector<MT::Solution> benchmarkSolutions;
+    const auto& filepath = fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ benchmarkSolutionsFilename };
+    std::ifstream oldBenchmarkSolutionsFile {filepath};
+    json data;
+
+    if(oldBenchmarkSolutionsFile.good())
+    {
+        data = json::parse(oldBenchmarkSolutionsFile);
+        oldBenchmarkSolutionsFile.close();
+        data["results"].insert(data["results"].end(), solutions);
+        data["count"] = data["count"].get<size_t>() + solutions.size();
+    }
+    else
+    {
+        data = json{{"results", solutions}, {"count", solutions.size()}};
+    }
+
+    std::ofstream newBenchmarkSolutionsFile(filepath, std::ios::trunc);
+    assert(newBenchmarkSolutionsFile.is_open());
+    if(!newBenchmarkSolutionsFile.is_open()) throw std::runtime_error("Cannot write benchmark results to JSON file!");
+    newBenchmarkSolutionsFile << std::setw(4) << data;
+    newBenchmarkSolutionsFile.close();
+}
 
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
 
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL, BM_Antipodal_Uniform, benchmarkSolutions)
-->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->DenseRange(2, 5, 1)->Iterations(100);
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN, BM_Eppstein_Uniform, benchmarkSolutions)
+BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL)
+->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
+->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 5, 1) })->Iterations(100);
+
+BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
 
-
 // 2) Gaussian distribution, Increasing standard deviation [0.5, 3, step=0.25]
-/*
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL, BM_Antipodal_Gaussian, benchmarkSolutions)
-->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->DenseRange(2, 5, 1)->Iterations(100);
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, BM_Eppstein_Gaussian, benchmarkSolutions)
+
+BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
+->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
+->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 5, 1) })->Iterations(100);
+
+BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
-*/
+
 
 // 3) Real world data [10 different samples]
 /*
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::REAL, Algorithm::ANTIPODAL, BM_Antipodal_Real, benchmarkSolutions)
+BENCHMARK_TEMPLATE2(BM_Template, Data::REAL, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)->DenseRange(1, 9, 1)->DenseRange(2, 5, 1)->Iterations(1);
 */
 
@@ -191,15 +236,9 @@ int main(int argc, char** argv)
     {
         return 1;
     }
+    fs::remove(fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ benchmarkSolutionsFilename });
     ::benchmark::RunSpecifiedBenchmarks();
     ::benchmark::Shutdown();
-
-    const auto& filepath = fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ "benchmark_data_results.json" };
-    std::ofstream file(filepath, std::ios::trunc);
-    assert(file.is_open());
-    if(!file.is_open()) throw std::runtime_error("Cannot write benchmark results to JSON file!");
-    file << std::setw(4) << json{{"results", benchmarkSolutions}, {"count", benchmarkSolutions.size()}};
-    file.close();
 
     return 0;
   }
