@@ -151,7 +151,7 @@ void BM_Template(benchmark::State& aState)
         allocatedBytesCount.emplace_back(totalAllocatedBytes);
         requiredEntriesCount.emplace_back(benchmarkInfo->myRequiredEntriesCount);
         allocatedEntriesCount.emplace_back(benchmarkInfo->myAllocatedEntriesCount);
-        std::cout << "AB " << allocatedBytesCount[fileIndex] << ", RE " << requiredEntriesCount[fileIndex] << ", AE " << allocatedEntriesCount[fileIndex] << std::endl;
+        std::cout << "[" << fileIndex << "] AB " << allocatedBytesCount[fileIndex] << ", RE " << requiredEntriesCount[fileIndex] << ", AE " << allocatedEntriesCount[fileIndex] << std::endl;
 
         aState.SetIterationTime(std::chrono::duration<double, std::milli> {endTime - startTime}.count());
 
