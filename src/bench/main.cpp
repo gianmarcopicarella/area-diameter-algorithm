@@ -182,13 +182,14 @@ void BM_Template(benchmark::State& aState)
     {
         data = json::parse(oldBenchmarkSolutionsFile);
         oldBenchmarkSolutionsFile.close();
-        data["results"].insert(data["results"].end(), solutions);
-        data["count"] = data["count"].get<size_t>() + solutions.size();
     }
     else
     {
-        data = json{{"results", solutions}, {"count", solutions.size()}};
+        data = json{{"results", std::vector<MT::Solution>{}}, {"count", 0}};
     }
+
+    data["results"].insert(data["results"].end(), solutions);
+    data["count"] = data["count"].get<size_t>() + solutions.size();
 
     std::ofstream newBenchmarkSolutionsFile(filepath, std::ios::trunc);
     assert(newBenchmarkSolutionsFile.is_open());
