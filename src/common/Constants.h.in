@@ -14,6 +14,7 @@ namespace MT
         constexpr std::string_view BENCHMARK_OUT_DATA_PATH = "@BENCHMARK_OUT_DATA_PATH@";
         constexpr std::string_view UNIT_TESTS_SAMPLES_PATH = "@UNIT_TESTS_SAMPLES_PATH@";
         constexpr std::string_view EXPERIMENT_SAMPLES_PATH = "@EXPERIMENT_SAMPLES_PATH@";
+        constexpr std::string_view BENCHMARK_OUT_CUSTOM_FILENAME = "@BENCHMARK_OUT_CUSTOM_FILENAME@";
     }
 }
 

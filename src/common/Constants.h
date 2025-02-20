@@ -12,8 +12,9 @@ namespace MT
     namespace Constants
     {
         constexpr std::string_view BENCHMARK_OUT_DATA_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/reports";
-        constexpr std::string_view UNIT_TESTS_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/eppstein";
+        constexpr std::string_view UNIT_TESTS_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/tests";
         constexpr std::string_view EXPERIMENT_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/experiments";
+        constexpr std::string_view BENCHMARK_OUT_CUSTOM_FILENAME = "benchmark_data_results.json";
     }
 }
 

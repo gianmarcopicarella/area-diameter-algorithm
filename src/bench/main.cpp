@@ -8,64 +8,10 @@
 #include "../common/Antipodal.h"
 #include "../common/Parser.h"
 #include "../common/Constants.h"
+#include "../common/TestingUtils.h"
+#include "../common/Constants.h"
 
 #include <iostream>
-
-enum class Data
-{
-    SYNTHETIC_UNIFORM = 0,
-    SYNTHETIC_GAUSSIAN,
-    REAL
-};
-
-enum class Algorithm
-{
-    EPPSTEIN = 0,
-    ANTIPODAL
-};
-
-constexpr std::string_view benchmarkSolutionsFilename = "benchmark_data_results.json";
-
-static benchmark::IterationCount totalAllocatedBytes { 0 };
-static bool shouldTrackHeapMemory { false };
-
-static void StartHeapProfiling()
-{
-    totalAllocatedBytes = 0;
-    shouldTrackHeapMemory = true;
-}
-
-static void StopHeapProfiling()
-{
-    shouldTrackHeapMemory = false;
-}
-
-void* operator new(size_t sz)
-{
-    if(shouldTrackHeapMemory)
-    {
-        totalAllocatedBytes += sz;
-    }
-    return std::malloc(sz);
-}
-
-template <typename T>
-T Mean(const std::vector<T>& someValues)
-{
-    const auto sum = std::accumulate(someValues.begin(), someValues.end(), T { 0 });
-    return sum / someValues.size();
-}
-
-template <typename T>
-T StandardDeviation(const T& aMean, const std::vector<T>& someValues)
-{
-    T sumOfSquaredResiduals { 0 };
-    for(const auto& aValue : someValues)
-    {
-        sumOfSquaredResiduals += (aMean - aValue) * (aMean - aValue);
-    }
-    return std::sqrtl(sumOfSquaredResiduals / someValues.size());
-}
 
 void AddExtraCounter(const std::string& aName,
                      const std::vector<benchmark::IterationCount>& someValues,
@@ -174,7 +120,7 @@ void BM_Template(benchmark::State& aState)
     AddExtraCounter("entries", allocatedEntriesCount, aState);
     AddExtraCounter("min_entries", requiredEntriesCount, aState);
 
-    const auto& filepath = fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ benchmarkSolutionsFilename };
+    const auto& filepath = fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ MT::Constants::BENCHMARK_OUT_CUSTOM_FILENAME };
     std::ifstream oldBenchmarkSolutionsFile {filepath};
     json data;
 
@@ -199,7 +145,7 @@ void BM_Template(benchmark::State& aState)
 }
 
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
-
+/*
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 5, 1) })->Iterations(100);
@@ -215,12 +161,13 @@ BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
-
+*/
 
 // 3) Real world data [10 different samples]
 /*
 BENCHMARK_TEMPLATE2(BM_Template, Data::REAL, Algorithm::ANTIPODAL)
-->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)->DenseRange(1, 9, 1)->DenseRange(2, 5, 1)->Iterations(1);
+->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)
+->ArgsProduct({ benchmark::CreateDenseRange(1, 9, 1), benchmark::CreateDenseRange(2, 2, 1) })->Iterations(1);
 */
 
 int main(int argc, char** argv)
@@ -237,7 +184,7 @@ int main(int argc, char** argv)
     {
         return 1;
     }
-    fs::remove(fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ benchmarkSolutionsFilename });
+    fs::remove(fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ MT::Constants::BENCHMARK_OUT_CUSTOM_FILENAME });
     ::benchmark::RunSpecifiedBenchmarks();
     ::benchmark::Shutdown();
 

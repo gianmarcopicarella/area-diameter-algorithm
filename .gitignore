@@ -1,3 +1,7 @@
+python/.idea
+data/plots/*
+data/raw/*
+data/samples/experiments/*
 build/
 cmake-build-release/
 cmake-build-debug/

@@ -15,6 +15,7 @@ add_subdirectory(external/googletest)
 add_subdirectory(external/benchmark)
 add_subdirectory(external/pybind11)
 add_subdirectory(external/json)
+add_subdirectory(external/args)
 
 # main project
 add_subdirectory(src)
