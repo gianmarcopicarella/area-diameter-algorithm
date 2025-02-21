@@ -47,9 +47,18 @@ pybind11_add_module(thesis ${CMAKE_CURRENT_SOURCE_DIR}/py-binding/main.cpp;${COM
 target_link_to_libs(thesis PRIVATE "nlohmann_json::nlohmann_json")
 set_target_properties(thesis PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../python/wrapper-build)
 
-set(BENCHMARK_OUT_DATA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/reports)
-set(UNIT_TESTS_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/tests)
-set(EXPERIMENT_SAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../data/samples/experiments)
-set(BENCHMARK_OUT_CUSTOM_FILENAME benchmark_data_results.json)
+
+set(PATH_TO_DATA ${CMAKE_CURRENT_SOURCE_DIR}/../data)
+
+set(PATH_TO_RAW_DATASET ${PATH_TO_DATA}/raw/detections_subset.json)
+set(PATH_TO_EXPERIMENTS ${PATH_TO_DATA}/samples/experiments)
+set(PATH_TO_TESTS ${PATH_TO_DATA}/samples/tests)
+set(PATH_TO_REPORTS ${PATH_TO_DATA}/reports)
+set(PATH_TO_PLOTS ${PATH_TO_DATA}/plots)
+set(PATH_TO_BENCHMARK_BASE_REPORT ${PATH_TO_REPORTS}/benchmark_runs.json)
+set(PATH_TO_BENCHMARK_CUSTOM_REPORT ${PATH_TO_REPORTS}/benchmark_data_results.json)
+set(PATH_TO_REL_BUILD ${CMAKE_CURRENT_BINARY_DIR})
+
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../python/constants.py.in ${CMAKE_CURRENT_SOURCE_DIR}/../python/constants.py)

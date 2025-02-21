@@ -66,7 +66,7 @@ void CheckHullIndices(const std::vector<size_t> & someIndices, const std::vector
 
 TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
 {
-    for (const auto& entry : fs::directory_iterator(MT::Constants::UNIT_TESTS_SAMPLES_PATH))
+    for (const auto& entry : fs::directory_iterator(MT::Constants::PATH_TO_TESTS))
     {
         if(!entry.is_directory())
         {

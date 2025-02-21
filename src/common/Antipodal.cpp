@@ -400,6 +400,12 @@ namespace MT
         std::optional<ConvexArea> resultOpt;
         const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;
 
+        if(anOutBenchmarkInfoOpt)
+        {
+            anOutBenchmarkInfoOpt->myAllocatedEntriesCount = 0;
+            anOutBenchmarkInfoOpt->myRequiredEntriesCount = 0;
+        }
+
         // Process each distinct pair of points having squared diameter at most equal to maxDiameter2
         for (size_t i = 0; i < somePoints.size(); ++i)
         {

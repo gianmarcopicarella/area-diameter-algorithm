@@ -1,13 +1,8 @@
 import os
 
 import numpy as np
-import json
-import shutil
-
-PATH_TO_DATA = os.path.join("..", "data")
-PATH_TO_EXPERIMENTS = os.path.join(PATH_TO_DATA, "samples", "experiments")
-PATH_TO_RAW = os.path.join(PATH_TO_DATA, "raw")
-RAW_DATA_FILENAME = "detections_subset.json"
+import constants
+import utils
 
 
 def rand_points_in_square(count, s=20):
@@ -38,71 +33,67 @@ def norm_points_in_square(count, std=1, s=20, c=10):
     return list(pts)
 
 
-def generate_synthetic_data(uniform_x_values, gaussian_x_values, iterations_count):
+def generate_synthetic_data():
+    uniform_x_values = np.arange(100, 201, 10)
+    gaussian_x_values = np.arange(0.5, 5.51, 0.5)
+    iterations = 100
+    assert (len(uniform_x_values) == len(gaussian_x_values))
 
-    PATH_TO_UNIFORM = os.path.join(PATH_TO_EXPERIMENTS, "uniform")
-    if os.path.isdir(PATH_TO_UNIFORM):
-        shutil.rmtree(PATH_TO_UNIFORM)
-    os.makedirs(PATH_TO_UNIFORM)
+    path_to_uniform = os.path.join(constants.PATH_TO_EXPERIMENTS, "uniform")
+    path_to_gaussian = os.path.join(constants.PATH_TO_EXPERIMENTS, "gaussian")
 
-    for i, n in enumerate(uniform_x_values):
-        os.makedirs(os.path.join(PATH_TO_UNIFORM, f"{i}"))
-        for j in range(iterations_count):
-            data = {"count": int(n),
-                    "points": [{"x": x, "y": y} for x, y in rand_points_in_square(n)]}
-            json_path = os.path.join(PATH_TO_UNIFORM, f"{i}", f"points_{j}.json")
-            with open(json_path, 'w') as file:
-                json.dump(data, file)
+    utils.prepare_path(path_to_uniform)
+    utils.prepare_path(path_to_gaussian)
 
-    PATH_TO_GAUSSIAN = os.path.join(PATH_TO_EXPERIMENTS, "gaussian")
-    if os.path.isdir(PATH_TO_GAUSSIAN):
-        shutil.rmtree(PATH_TO_GAUSSIAN)
-    os.makedirs(PATH_TO_GAUSSIAN)
-
-    gaussian_n = uniform_x_values[0]
-    for i, std in enumerate(gaussian_x_values):
-        os.makedirs(os.path.join(PATH_TO_GAUSSIAN, f"{i}"))
-        for j in range(iterations_count):
-            data = {"count": int(gaussian_n),
-                    "points": [{"x": x, "y": y} for x, y in norm_points_in_square(gaussian_n, std)]}
-            json_path = os.path.join(PATH_TO_GAUSSIAN, f"{i}", f"points_{j}.json")
-            with open(json_path, 'w') as file:
-                json.dump(data, file)
+    for i in range(len(uniform_x_values)):
+        path_to_uniform_samples = os.path.join(path_to_uniform, str(i))
+        path_to_gaussian_samples = os.path.join(path_to_gaussian, str(i))
+        utils.prepare_path(path_to_uniform_samples)
+        utils.prepare_path(path_to_gaussian_samples)
+        for j in range(iterations):
+            uniform_data = {"count": int(uniform_x_values[i]),
+                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(uniform_x_values[i])]}
+            gaussian_data = {"count": int(uniform_x_values[0]),
+                             "points": [{"x": x, "y": y} for x, y in
+                                        norm_points_in_square(uniform_x_values[0], gaussian_x_values[i])]}
+            utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
+            utils.write_json(os.path.join(path_to_gaussian_samples, f"points_{j}.json"), gaussian_data)
 
 
-def generate_real_data(ALGORITHM="midog21_1st_stage", THRESHOLD=0.64):
+def generate_real_data():
     def to_mm(v):
         micron_per_pixel = 0.23
         factor = micron_per_pixel / 1000.0
         return v * factor
 
-    with open(os.path.join(PATH_TO_RAW, RAW_DATA_FILENAME), "rb") as file:
-        raw_data = json.load(file)
-    data = []
-    for entry in raw_data:
-        if ALGORITHM not in entry:
+    raw_dataset = utils.read_json(constants.PATH_TO_RAW_DATASET, "rb")
+
+    algorithm = "midog21_1st_stage"
+    threshold = 0.64
+    samples_count = 10
+    dataset = []
+
+    for entry in raw_dataset:
+        if algorithm not in entry:
             continue
-        sample = entry[ALGORITHM]
-        points = {(to_mm(float(s["x"])), to_mm(float(s["y"]))) for s in sample if s["prob"] >= THRESHOLD}
+        sample = entry[algorithm]
+        points = {(to_mm(float(s["x"])), to_mm(float(s["y"]))) for s in sample if s["prob"] >= threshold}
         if len(points) == 0:
             continue
-        data.append(list(points))
-    data.sort(key=lambda x: len(x), reverse=True)
+        dataset.append(list(points))
+    dataset.sort(key=lambda x: len(x), reverse=True)
 
-    PATH_TO_REAL = os.path.join(PATH_TO_EXPERIMENTS, "real")
-    if os.path.isdir(PATH_TO_REAL):
-        shutil.rmtree(PATH_TO_REAL)
-    os.makedirs(PATH_TO_REAL)
+    path_to_real = os.path.join(constants.PATH_TO_EXPERIMENTS, "real")
+    utils.prepare_path(path_to_real)
 
-    for i in range(10):
-        os.makedirs(os.path.join(PATH_TO_REAL, f"{i}"))
-        out_data = {"count": len(data[i]),
-                    "points": [{"x": p[0], "y": p[1]} for p in data[i]]}
-        json_path = os.path.join(PATH_TO_REAL, f"{i}", "points_0.json")
-        with open(json_path, 'w') as file:
-            json.dump(out_data, file)
+    for i in range(samples_count):
+        path_to_real_samples = os.path.join(path_to_real, str(i))
+        utils.prepare_path(path_to_real_samples)
+        real_data = {"count": len(dataset[i]),
+                     "points": [{"x": p[0], "y": p[1]} for p in dataset[i]]}
+        utils.write_json(os.path.join(path_to_real_samples, "points_0.json"), real_data)
 
 
 np.random.seed(0)
-generate_synthetic_data(np.arange(100, 201, 10), np.arange(0.5, 5.51, 0.5), 100)
+generate_synthetic_data()
 generate_real_data()

@@ -28,9 +28,9 @@ namespace fs = std::filesystem;
 template<Data D>
 fs::path PathToData(const benchmark::State& aState)
 {
-    constexpr std::array<std::string_view, 3> folders = { "uniform/", "gaussian/", "real/" };
+    constexpr std::array<std::string_view, 3> folders = { "uniform", "gaussian", "real" };
     const std::string folder { folders[static_cast<size_t>(D)] };
-    return fs::path { MT::Constants::EXPERIMENT_SAMPLES_PATH } / fs::path{ folder + std::to_string(aState.range(0)) };
+    return fs::path { MT::Constants::PATH_TO_EXPERIMENTS } / fs::path{ folder } / fs::path { std::to_string(aState.range(0)) };
 }
 
 template<Algorithm A>
@@ -120,7 +120,7 @@ void BM_Template(benchmark::State& aState)
     AddExtraCounter("entries", allocatedEntriesCount, aState);
     AddExtraCounter("min_entries", requiredEntriesCount, aState);
 
-    const auto& filepath = fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ MT::Constants::BENCHMARK_OUT_CUSTOM_FILENAME };
+    const auto& filepath = fs::path { MT::Constants::PATH_TO_BENCHMARK_CUSTOM_REPORT };
     std::ifstream oldBenchmarkSolutionsFile {filepath};
     json data;
 
@@ -184,7 +184,7 @@ int main(int argc, char** argv)
     {
         return 1;
     }
-    fs::remove(fs::path { MT::Constants::BENCHMARK_OUT_DATA_PATH } / fs::path{ MT::Constants::BENCHMARK_OUT_CUSTOM_FILENAME });
+    fs::remove(fs::path { MT::Constants::PATH_TO_BENCHMARK_CUSTOM_REPORT });
     ::benchmark::RunSpecifiedBenchmarks();
     ::benchmark::Shutdown();
 

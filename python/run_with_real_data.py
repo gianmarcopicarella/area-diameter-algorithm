@@ -1,16 +1,13 @@
 import signal
 import subprocess
 import os
-
-PATH_TO_PROGRAM = os.path.join("..", "cmake-build-release", "src", "main")
-PATH_TO_DATA = os.path.join("..", "data")
-PATH_TO_EXPERIMENTS = os.path.join(PATH_TO_DATA, "samples", "experiments")
-PATH_TO_REAL = os.path.join(PATH_TO_EXPERIMENTS, "real")
+import constants
 
 
 def run_with_timeout(filepath, max_area, max_diameter, timeout):
+    path_to_program = os.path.join(constants.PATH_TO_REL_BUILD, "main")
     process = subprocess.Popen(
-        (PATH_TO_PROGRAM, '-g', '1',
+        (path_to_program, '-g', '1',
          "-f", filepath, "-a", str(max_area), "-d", str(max_diameter), "-r"),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -27,14 +24,21 @@ def run_with_timeout(filepath, max_area, max_diameter, timeout):
     return output
 
 
+solutions = dict()
+
 for max_diameter in [2]:
     print("Testing with maximum diameter ", max_diameter, "mm")
-    for i in range(1, 10):
-        filepath = os.path.join(PATH_TO_REAL, f"{i}", "points_0.json")
+    solutions[str(max_diameter)] = dict()
+    for i in range(10):
+        filepath = os.path.join(constants.PATH_TO_EXPERIMENTS, "real", str(i), "points_0.json")
         max_area = 4
         timeout = 60 * 60 * 2
         output = run_with_timeout(filepath, max_area, max_diameter, timeout)
         if output == "":
+            solutions[str(max_diameter)][filepath] = "{}"
             print("[TIMEOUT]", filepath)
         else:
+            solutions[str(max_diameter)][filepath] = output
             print(output)
+
+print(solutions)

@@ -11,10 +11,9 @@ namespace MT
 {
     namespace Constants
     {
-        constexpr std::string_view BENCHMARK_OUT_DATA_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/reports";
-        constexpr std::string_view UNIT_TESTS_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/tests";
-        constexpr std::string_view EXPERIMENT_SAMPLES_PATH = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/experiments";
-        constexpr std::string_view BENCHMARK_OUT_CUSTOM_FILENAME = "benchmark_data_results.json";
+        constexpr std::string_view PATH_TO_TESTS = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/tests";
+        constexpr std::string_view PATH_TO_EXPERIMENTS = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/experiments";
+        constexpr std::string_view PATH_TO_BENCHMARK_CUSTOM_REPORT = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_data_results.json";
     }
 }
 

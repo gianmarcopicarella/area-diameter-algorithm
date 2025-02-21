@@ -4,20 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import json
+import constants
+import utils
 
 from matplotlib.patches import Polygon
 
-PATH_TO_DATA = os.path.join("..", "data")
-PATH_TO_EXPERIMENTS = os.path.join(PATH_TO_DATA, "samples", "experiments")
-PATH_TO_REPORTS = os.path.join(PATH_TO_DATA, "reports")
-BENCHMARK_OUT_BASE_FILENAME = "benchmark_runs.json"
-BENCHMARK_OUT_CUSTOM_FILENAME = "benchmark_data_results.json"
-
-
-with open(os.path.join(PATH_TO_REPORTS, BENCHMARK_OUT_BASE_FILENAME), 'r') as file:
-    data_runs = json.load(file)
-with open(os.path.join(PATH_TO_REPORTS, BENCHMARK_OUT_CUSTOM_FILENAME), 'r') as file:
-    data_results = json.load(file)
+data_runs = utils.read_json(constants.PATH_TO_BENCHMARK_BASE_REPORT)
+data_results = utils.read_json(constants.PATH_TO_BENCHMARK_CUSTOM_REPORT)
 
 
 def scatter_points(P, poly):
@@ -80,8 +73,9 @@ def extract_solutions_data_for(data, distribution, x_values, diameters):
                 sol = e["convex_area"]
                 counts.append(sol["count"])
                 areas.append(sol["area"])
-                points_path = os.path.join(PATH_TO_EXPERIMENTS, distribution.lower(), x_step, f"points_{iteration}.json")
-                with open(points_path, 'r') as file:
+                path_to_sample = os.path.join(constants.PATH_TO_EXPERIMENTS, distribution.lower(), x_step,
+                                              f"points_{iteration}.json")
+                with open(path_to_sample, 'r') as file:
                     points = json.load(file)
 
                 fi = int(sol["diameter_indices"][0])
@@ -112,6 +106,7 @@ gaussian_run_data = extract_run_data_for(data_runs, "Gaussian", std_dev, diamete
 
 uniform_sol_data = extract_solutions_data_for(data_results, "Uniform", input_size, diameters)
 gaussian_sol_data = extract_solutions_data_for(data_results, "Gaussian", std_dev, diameters)
+
 
 # print(uniform_run_data)
 # print(gaussian_run_data)
@@ -182,35 +177,40 @@ print("4) Cardinality")
 
 for i, d in enumerate(diameters):
     print("\\addplot+[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Antipodal_" + str(d),
-                                              "count") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data,
+                                                                                     "Antipodal_" + str(d),
+                                                                                     "count") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
+        d) + "}$}")
 
 print("\\addplot+[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
     -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Eppstein",
-                                           "count") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+                                                                                  "count") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
 
 print("5) Area")
 
 for i, d in enumerate(diameters):
     print("\\addplot+[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Antipodal_" + str(d),
-                                              "area") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data,
+                                                                                     "Antipodal_" + str(d),
+                                                                                     "area") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
+        d) + "}$}")
 
 print("\\addplot+[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
     -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Eppstein",
-                                           "area") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+                                                                                  "area") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
 
 print("6) Diameter")
 
 for i, d in enumerate(diameters):
     print("\\addplot+[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Antipodal_" + str(d),
-                                              "diameter") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data,
+                                                                                     "Antipodal_" + str(d),
+                                                                                     "diameter") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
+        d) + "}$}")
 
 print("\\addplot+[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
     -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Eppstein",
-                                           "diameter") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
-
+                                                                                  "diameter") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
 
 print("[Gaussian data]")
 
@@ -257,29 +257,35 @@ print(
 print("4) Cardinality")
 for i, d in enumerate(diameters):
     print("\\addplot+[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Antipodal_" + str(d),
-                                              "count") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data,
+                                                                                     "Antipodal_" + str(d),
+                                                                                     "count") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
+        d) + "}$}")
 
 print("\\addplot+[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
     -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Eppstein",
-                                           "count") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+                                                                                  "count") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
 
 print("5) Area")
 for i, d in enumerate(diameters):
     print("\\addplot+[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Antipodal_" + str(d),
-                                              "area") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data,
+                                                                                     "Antipodal_" + str(d),
+                                                                                     "area") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
+        d) + "}$}")
 
 print("\\addplot+[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
     -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Eppstein",
-                                           "area") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+                                                                                  "area") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
 
 print("6) Diameter")
 
 for i, d in enumerate(diameters):
     print("\\addplot+[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Antipodal_" + str(d),
-                                              "diameter") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data,
+                                                                                     "Antipodal_" + str(d),
+                                                                                     "diameter") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
+        d) + "}$}")
 
 print("\\addplot+[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
     -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Eppstein",

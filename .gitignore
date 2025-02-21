@@ -9,3 +9,5 @@ cmake-build-debug/
 data/.DS_Store
 src/.DS_Store
 .DS_Store
+python/constants.py
+src/common/Constants.h
