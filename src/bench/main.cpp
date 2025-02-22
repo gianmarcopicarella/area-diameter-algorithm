@@ -171,11 +171,13 @@ BENCHMARK_TEMPLATE2(BM_Template, Data::REAL, Algorithm::ANTIPODAL)
 
 int main(int argc, char** argv)
 {
-    char arg0_default[] = "benchmark";
-    char* args_default = arg0_default;
+    const auto defaultArgs =
+            std::string { "--benchmark_out_format=json --benchmark_counters_tabular=true --benchmark_out=" } +
+            std::string{ MT::Constants::PATH_TO_BENCHMARK_BASE_REPORT };
+    char* args_default = const_cast<char*>(defaultArgs.c_str());
     if (!argv)
     {
-      argc = 1;
+      argc = 3;
       argv = &args_default;
     }
     ::benchmark::Initialize(&argc, argv);
