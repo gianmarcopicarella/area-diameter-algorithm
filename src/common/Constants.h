@@ -14,6 +14,7 @@ namespace MT
         constexpr std::string_view PATH_TO_TESTS = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/tests";
         constexpr std::string_view PATH_TO_EXPERIMENTS = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/experiments";
         constexpr std::string_view PATH_TO_BENCHMARK_CUSTOM_REPORT = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_data_results.json";
+        constexpr std::string_view PATH_TO_BENCHMARK_BASE_REPORT = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_runs.json";
     }
 }
 

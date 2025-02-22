@@ -21,7 +21,7 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
 ```
 
-Run the test suite and benchmark executables.
+Run the test suite and benchmark executables
 ```bash
 $ ./src/test
 $ ./src/bench
@@ -46,7 +46,7 @@ $ python run_with_real_data.py
 
 ## Generate the data yourself
 
-The data used for the experiments and real world runs are already available in data/samples. If you want to generate the data from scratch, then download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) to data/raw and run
+The data used for the experiments and real world runs are already available in data/samples. If you want to generate the data from scratch, then you can download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) to data/raw and run
 
 ```bash
   $ python generate_samples.py
