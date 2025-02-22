@@ -27,7 +27,7 @@ $ ./src/test
 $ ./src/bench
 ```
 
-Plot and save to data/plots the solutions found during the benchmarking phase (it takes ≈ 10 minutes on my machine)
+Plot and save the solutions found during the benchmarking phase to data/plots (it takes ≈ 10 minutes on my machine)
 ```bash
 $ cd ../python
 $ pip install -r requirements.txt
