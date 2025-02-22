@@ -9,7 +9,6 @@ $ git clone --recurse-submodules https://github.com/gianmarcopicarella/master-th
 ```
 
 Go to the project directory
-
 ```bash
 $ cd master-thesis
 ```
@@ -28,26 +27,26 @@ $ ./src/test
 $ ./src/bench
 ```
 
-Plot the solutions found during the benchmarks and save them to the data/plots folder (it takes ≈ 10 minutes on my machine)
+Plot and save to data/plots the solutions found during the benchmarking phase (it takes ≈ 10 minutes on my machine)
 ```bash
 $ cd ../python
 $ pip install -r requirements.txt
 $ python generate_plots.py
 ```
 
-Generate LateX plots about the data collected during the benchmarking phase
+Generate the LaTeX code presenting the results obtained during the benchmarking phase
 ```bash
   $ python latex.py
 ```
 
-Run the program with the 10 biggest real-world data points (2hrs maximum per file)
+Run the Antipodal algorithm with real-world data
 ```bash
 $ python run_with_real_data.py
 ```
 
 ## Generate the data yourself
 
-The data used for the experiments and real world runs are already available in data/samples. If you want to generate the data from scratch, then you should download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) to the folder data/raw and then run
+The data used for the experiments and real world runs are already available in data/samples. If you want to generate the data from scratch, then download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) to data/raw and run
 
 ```bash
   $ python generate_samples.py
