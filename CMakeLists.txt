@@ -13,6 +13,8 @@ set(ARGS_BUILD_EXAMPLE OFF)
 set(ARGS_BUILD_UNITTESTS OFF)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
 # dependencies
 add_subdirectory(external/googletest)
 add_subdirectory(external/benchmark)
