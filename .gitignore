@@ -1,6 +1,6 @@
 python/.idea
 data/plots/*
-data/raw/detections_subset.json
+data/raw/*
 build/
 cmake-build-release/
 cmake-build-debug/
