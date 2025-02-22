@@ -97,7 +97,7 @@ void BM_Template(benchmark::State& aState)
         allocatedBytesCount.emplace_back(totalAllocatedBytes);
         requiredEntriesCount.emplace_back(benchmarkInfo->myRequiredEntriesCount);
         allocatedEntriesCount.emplace_back(benchmarkInfo->myAllocatedEntriesCount);
-        std::cout << "[" << fileIndex << "] AB " << allocatedBytesCount[fileIndex] << ", RE " << requiredEntriesCount[fileIndex] << ", AE " << allocatedEntriesCount[fileIndex] << std::endl;
+        // std::cout << "[" << fileIndex << "] AB " << allocatedBytesCount[fileIndex] << ", RE " << requiredEntriesCount[fileIndex] << ", AE " << allocatedEntriesCount[fileIndex] << std::endl;
 
         aState.SetIterationTime(std::chrono::duration<double, std::milli> {endTime - startTime}.count());
 
@@ -148,7 +148,7 @@ void BM_Template(benchmark::State& aState)
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 5, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 6, 1) })->Iterations(100);
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
@@ -157,7 +157,7 @@ BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN)
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 5, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 6, 1) })->Iterations(100);
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
