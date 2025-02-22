@@ -145,7 +145,7 @@ void BM_Template(benchmark::State& aState)
 }
 
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
-/*
+
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 5, 1) })->Iterations(100);
@@ -161,9 +161,8 @@ BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
-*/
 
-// 3) Real world data [10 different samples]
+// 3) Real world data [10 different samples] NO TIMEOUT
 /*
 BENCHMARK_TEMPLATE2(BM_Template, Data::REAL, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)
