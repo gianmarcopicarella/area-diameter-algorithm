@@ -10,7 +10,7 @@
 
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
 
-#define EARLY_STOP_OPT
+// #define EARLY_STOP_OPT
 
 namespace MT
 {
