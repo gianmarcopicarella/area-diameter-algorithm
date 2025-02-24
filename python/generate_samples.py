@@ -35,9 +35,8 @@ def norm_points_in_square(count, std=1, s=20, c=10):
 
 def generate_synthetic_data():
     uniform_x_values = np.arange(100, 201, 10)
-    gaussian_x_values = np.arange(0.5, 5.51, 0.5)
+    gaussian_x_values = np.arange(0.5, 6.51, 0.5)
     iterations = 100
-    assert (len(uniform_x_values) == len(gaussian_x_values))
 
     path_to_uniform = os.path.join(constants.PATH_TO_EXPERIMENTS, "uniform")
     path_to_gaussian = os.path.join(constants.PATH_TO_EXPERIMENTS, "gaussian")
@@ -45,18 +44,21 @@ def generate_synthetic_data():
     utils.prepare_path(path_to_uniform)
     utils.prepare_path(path_to_gaussian)
 
-    for i in range(len(uniform_x_values)):
+    for i, count in enumerate(uniform_x_values):
         path_to_uniform_samples = os.path.join(path_to_uniform, str(i))
-        path_to_gaussian_samples = os.path.join(path_to_gaussian, str(i))
         utils.prepare_path(path_to_uniform_samples)
+        for j in range(iterations):
+            uniform_data = {"count": int(count),
+                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count)]}
+            utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
+
+    for i, std in enumerate(gaussian_x_values):
+        path_to_gaussian_samples = os.path.join(path_to_gaussian, str(i))
         utils.prepare_path(path_to_gaussian_samples)
         for j in range(iterations):
-            uniform_data = {"count": int(uniform_x_values[i]),
-                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(uniform_x_values[i])]}
             gaussian_data = {"count": int(uniform_x_values[0]),
                              "points": [{"x": x, "y": y} for x, y in
-                                        norm_points_in_square(uniform_x_values[0], gaussian_x_values[i])]}
-            utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
+                                        norm_points_in_square(uniform_x_values[0], std)]}
             utils.write_json(os.path.join(path_to_gaussian_samples, f"points_{j}.json"), gaussian_data)
 
 

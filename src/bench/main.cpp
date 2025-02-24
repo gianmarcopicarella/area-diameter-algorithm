@@ -157,10 +157,10 @@ BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN)
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 6, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, 12, 1), benchmark::CreateDenseRange(2, 6, 1) })->Iterations(100);
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN)
-->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
+->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 12, 1)->Iterations(100);
 
 // 3) Real world data [10 different samples] NO TIMEOUT
 /*
