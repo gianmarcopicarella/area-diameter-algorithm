@@ -153,7 +153,7 @@ BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL)
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN)
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
 
-// 2) Gaussian distribution, Increasing standard deviation [0.5, 5.5, step=0.5]
+// 2) Gaussian distribution, Increasing standard deviation [0.5, 6.5, step=0.5]
 
 BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
