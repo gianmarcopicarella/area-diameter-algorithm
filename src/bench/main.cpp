@@ -144,7 +144,7 @@ void BM_Template(benchmark::State& aState, const std::vector<long double>& someD
     newBenchmarkSolutionsFile.close();
 }
 
-/*
+
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
 const std::vector<long double> diameters = {2, 3, 4, 5, 6};
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL, Antipodal_Uniform, diameters)
@@ -162,11 +162,10 @@ BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::AN
 
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, Eppstein_Gaussian, {})
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 12, 1)->Iterations(100);
-*/
 
 
 // 3) Real world data [10 different samples] NO TIMEOUT
-const std::vector<long double> realDiameters = {4.25};
+const std::vector<long double> realDiameters = {4.243};
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::REAL, Algorithm::ANTIPODAL, Antipodal_Real, realDiameters)
 ->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, 9, 1), benchmark::CreateDenseRange(0, 0, 1) })->Iterations(1);

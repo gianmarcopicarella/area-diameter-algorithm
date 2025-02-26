@@ -24,10 +24,10 @@
                         555
                     ]
                 },
-                "id": "Antipodal/Real/0/2/iterations:0",
+                "id": "Antipodal/Real/0/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -54,10 +54,10 @@
                         446
                     ]
                 },
-                "id": "Antipodal/Real/1/2/iterations:0",
+                "id": "Antipodal/Real/1/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -82,10 +82,10 @@
                         444
                     ]
                 },
-                "id": "Antipodal/Real/2/2/iterations:0",
+                "id": "Antipodal/Real/2/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -115,10 +115,10 @@
                         400
                     ]
                 },
-                "id": "Antipodal/Real/3/2/iterations:0",
+                "id": "Antipodal/Real/3/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -144,10 +144,10 @@
                         14
                     ]
                 },
-                "id": "Antipodal/Real/4/2/iterations:0",
+                "id": "Antipodal/Real/4/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -173,10 +173,10 @@
                         409
                     ]
                 },
-                "id": "Antipodal/Real/5/2/iterations:0",
+                "id": "Antipodal/Real/5/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -201,10 +201,10 @@
                         279
                     ]
                 },
-                "id": "Antipodal/Real/6/2/iterations:0",
+                "id": "Antipodal/Real/6/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -227,10 +227,10 @@
                         127
                     ]
                 },
-                "id": "Antipodal/Real/7/2/iterations:0",
+                "id": "Antipodal/Real/7/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -257,10 +257,10 @@
                         28
                     ]
                 },
-                "id": "Antipodal/Real/8/2/iterations:0",
+                "id": "Antipodal/Real/8/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ],
         [
@@ -283,10 +283,10 @@
                         69
                     ]
                 },
-                "id": "Antipodal/Real/9/2/iterations:0",
+                "id": "Antipodal/Real/9/0/iterations:0",
                 "max_area": 4.0,
                 "max_count": 18446744073709551615,
-                "max_diameter": 2.0
+                "max_diameter": 4.243
             }
         ]
     ]
