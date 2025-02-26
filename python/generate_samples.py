@@ -1,8 +1,23 @@
 import os
 
 import numpy as np
+from matplotlib import pyplot as plt
+
 import constants
 import utils
+
+
+def scatter_points(P, side=30, numbers=False):
+    pts = np.array(P)
+    plt.scatter(pts[:, 0], pts[:, 1], c="black", s=1)
+    if numbers:
+        for i, p in enumerate(pts):
+            plt.text(p[0] - 0.02, p[1], f'{i}', fontsize=3, ha='right')
+    plt.gcf().set_dpi(400)
+    plt.gca().set_xlim([0, side])
+    plt.gca().set_ylim([0, side])
+    plt.gca().set_aspect("equal")
+    plt.show()
 
 
 def rand_points_in_square(count, s=20):
@@ -71,7 +86,7 @@ def generate_real_data():
     raw_dataset = utils.read_json(constants.PATH_TO_RAW_DATASET, "rb")
 
     algorithm = "midog21_1st_stage"
-    threshold = 0.64
+    threshold = 0.86
     samples_count = 10
     dataset = []
 
@@ -91,9 +106,13 @@ def generate_real_data():
     for i in range(samples_count):
         path_to_real_samples = os.path.join(path_to_real, str(i))
         utils.prepare_path(path_to_real_samples)
+        ann_info = utils.ann(dataset[i])
         real_data = {"count": len(dataset[i]),
-                     "points": [{"x": p[0], "y": p[1]} for p in dataset[i]]}
+                     "points": [{"x": p[0], "y": p[1]} for p in dataset[i]],
+                     "ann_avg": ann_info[0], "ann_std": ann_info[1]}
         utils.write_json(os.path.join(path_to_real_samples, "points_0.json"), real_data)
+        scatter_points(dataset[i])
+        print(real_data["count"], real_data["ann_avg"], real_data["ann_std"])
 
 
 np.random.seed(0)

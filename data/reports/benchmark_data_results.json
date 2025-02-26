@@ -1,0 +1,293 @@
+{
+    "count": 10,
+    "results": [
+        [
+            {
+                "convex_area": {
+                    "area": 3.992699787850001,
+                    "count": 76,
+                    "diameter_indices": [
+                        349,
+                        430
+                    ],
+                    "hull_indices": [
+                        430,
+                        258,
+                        58,
+                        428,
+                        581,
+                        349,
+                        250,
+                        9,
+                        551,
+                        425,
+                        555
+                    ]
+                },
+                "id": "Antipodal/Real/0/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.809087537949999,
+                    "count": 42,
+                    "diameter_indices": [
+                        329,
+                        373
+                    ],
+                    "hull_indices": [
+                        373,
+                        469,
+                        224,
+                        484,
+                        329,
+                        144,
+                        121,
+                        317,
+                        464,
+                        331,
+                        8,
+                        446
+                    ]
+                },
+                "id": "Antipodal/Real/1/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.9254985108999993,
+                    "count": 39,
+                    "diameter_indices": [
+                        6,
+                        201
+                    ],
+                    "hull_indices": [
+                        201,
+                        231,
+                        360,
+                        389,
+                        330,
+                        6,
+                        479,
+                        586,
+                        551,
+                        444
+                    ]
+                },
+                "id": "Antipodal/Real/2/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.938373074850001,
+                    "count": 42,
+                    "diameter_indices": [
+                        191,
+                        287
+                    ],
+                    "hull_indices": [
+                        287,
+                        415,
+                        390,
+                        518,
+                        141,
+                        321,
+                        103,
+                        462,
+                        197,
+                        191,
+                        286,
+                        455,
+                        96,
+                        384,
+                        400
+                    ]
+                },
+                "id": "Antipodal/Real/3/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.8752484835,
+                    "count": 42,
+                    "diameter_indices": [
+                        209,
+                        271
+                    ],
+                    "hull_indices": [
+                        271,
+                        175,
+                        411,
+                        209,
+                        247,
+                        24,
+                        185,
+                        259,
+                        101,
+                        108,
+                        14
+                    ]
+                },
+                "id": "Antipodal/Real/4/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.8778307176500046,
+                    "count": 44,
+                    "diameter_indices": [
+                        118,
+                        236
+                    ],
+                    "hull_indices": [
+                        236,
+                        164,
+                        239,
+                        395,
+                        118,
+                        365,
+                        145,
+                        360,
+                        375,
+                        318,
+                        409
+                    ]
+                },
+                "id": "Antipodal/Real/5/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.9392761307499966,
+                    "count": 31,
+                    "diameter_indices": [
+                        40,
+                        383
+                    ],
+                    "hull_indices": [
+                        383,
+                        55,
+                        241,
+                        115,
+                        40,
+                        320,
+                        403,
+                        348,
+                        154,
+                        279
+                    ]
+                },
+                "id": "Antipodal/Real/6/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.8920219097000026,
+                    "count": 34,
+                    "diameter_indices": [
+                        172,
+                        344
+                    ],
+                    "hull_indices": [
+                        344,
+                        147,
+                        181,
+                        25,
+                        321,
+                        172,
+                        145,
+                        127
+                    ]
+                },
+                "id": "Antipodal/Real/7/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.9638673834500024,
+                    "count": 62,
+                    "diameter_indices": [
+                        80,
+                        115
+                    ],
+                    "hull_indices": [
+                        115,
+                        67,
+                        20,
+                        202,
+                        129,
+                        306,
+                        80,
+                        163,
+                        168,
+                        338,
+                        372,
+                        28
+                    ]
+                },
+                "id": "Antipodal/Real/8/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ],
+        [
+            {
+                "convex_area": {
+                    "area": 3.8636182862500004,
+                    "count": 28,
+                    "diameter_indices": [
+                        76,
+                        159
+                    ],
+                    "hull_indices": [
+                        159,
+                        183,
+                        30,
+                        139,
+                        208,
+                        76,
+                        235,
+                        69
+                    ]
+                },
+                "id": "Antipodal/Real/9/2/iterations:0",
+                "max_area": 4.0,
+                "max_count": 18446744073709551615,
+                "max_diameter": 2.0
+            }
+        ]
+    ]
+}

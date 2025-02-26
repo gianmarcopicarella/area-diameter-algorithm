@@ -24,13 +24,9 @@ def scatter_points(P, poly):
     plt.show()
 
 
-def to_kb(bytes):
-    return bytes / 1000
-
-
 def extract_run_data_for(data, distribution, x_values, diameters):
     result = {"Eppstein": {"time": [], "memory": [], "entries": [], "required_entries": []}}
-    for d in diameters:
+    for i, _ in enumerate(diameters):
         result["Antipodal_" + str(d)] = {"time": [], "memory": [], "entries": []}
 
     for r in data["benchmarks"]:
@@ -38,7 +34,7 @@ def extract_run_data_for(data, distribution, x_values, diameters):
         if distribution == split_id[1]:
             x_step = int(split_id[2])
             tt = (float(x_values[x_step]), float(r["cpu_time"]), 0)
-            mt = (float(x_values[x_step]), to_kb(float(r["mem_avg"])), to_kb(float(r["mem_std"])))
+            mt = (float(x_values[x_step]), utils.to_kb(float(r["mem_avg"])), utils.to_kb(float(r["mem_std"])))
             et = (float(x_values[x_step]), float(r["entries_avg"]), float(r["entries_std"]))
             diameter = "_" + split_id[3] if len(split_id) == 5 else ""
             key = split_id[0] + diameter
@@ -58,8 +54,8 @@ def extract_run_data_for(data, distribution, x_values, diameters):
 
 def extract_solutions_data_for(data, distribution, x_values, diameters):
     result = {"Eppstein": {"count": [], "area": [], "diameter": []}}
-    for d in diameters:
-        result["Antipodal_" + str(d)] = {"count": [], "area": [], "diameter": []}
+    for i, _ in enumerate(diameters):
+        result["Antipodal_" + str(i)] = {"count": [], "area": [], "diameter": []}
 
     for r in data["results"]:
         split_id = r[0]["id"].split("/")
@@ -106,7 +102,6 @@ gaussian_run_data = extract_run_data_for(data_runs, "Gaussian", std_dev, diamete
 
 uniform_sol_data = extract_solutions_data_for(data_results, "Uniform", input_size, diameters)
 gaussian_sol_data = extract_solutions_data_for(data_results, "Gaussian", std_dev, diameters)
-
 
 # print(uniform_run_data)
 # print(gaussian_run_data)

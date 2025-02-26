@@ -47,7 +47,7 @@ std::string ResultId(const benchmark::State& aState, const size_t aFileIndex)
 }
 
 template<Data D, Algorithm A>
-void BM_Template(benchmark::State& aState)
+void BM_Template(benchmark::State& aState, const std::vector<long double>& someDiameters)
 {
     constexpr auto maxAllowedArea = 4.l; // 2 mm^2
     constexpr auto maxAllowedPoints = (size_t) - 1; // No limit
@@ -85,7 +85,7 @@ void BM_Template(benchmark::State& aState)
         }
         else
         {
-            const auto maxAllowedDiameter = aState.range(1);
+            const auto maxAllowedDiameter = someDiameters[aState.range(1)];
             resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull);
         }
         benchmark::DoNotOptimize(resultOpt);
@@ -108,7 +108,7 @@ void BM_Template(benchmark::State& aState)
 
         if constexpr (A == Algorithm::ANTIPODAL)
         {
-            currentSolution.myMaxDiameter = aState.range(1);
+            currentSolution.myMaxDiameter = someDiameters[aState.range(1)];
         }
 
         currentSolution.myConvexAreaOpt = resultOpt;
@@ -144,30 +144,33 @@ void BM_Template(benchmark::State& aState)
     newBenchmarkSolutionsFile.close();
 }
 
+/*
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
-
-BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL)
+const std::vector<long double> diameters = {2, 3, 4, 5, 6};
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL, Antipodal_Uniform, diameters)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(2, 6, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(0, 4, 1) })->Iterations(100);
 
-BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN, Eppstein_Uniform, {})
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
 
+
 // 2) Gaussian distribution, Increasing standard deviation [0.5, 6.5, step=0.5]
-
-BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL, Antipodal_Gaussian, diameters)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 12, 1), benchmark::CreateDenseRange(2, 6, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, 12, 1), benchmark::CreateDenseRange(0, 4, 1) })->Iterations(100);
 
-BENCHMARK_TEMPLATE2(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, Eppstein_Gaussian, {})
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 12, 1)->Iterations(100);
+*/
+
 
 // 3) Real world data [10 different samples] NO TIMEOUT
-/*
-BENCHMARK_TEMPLATE2(BM_Template, Data::REAL, Algorithm::ANTIPODAL)
+const std::vector<long double> realDiameters = {4.25};
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::REAL, Algorithm::ANTIPODAL, Antipodal_Real, realDiameters)
 ->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(1, 9, 1), benchmark::CreateDenseRange(2, 2, 1) })->Iterations(1);
-*/
+->ArgsProduct({ benchmark::CreateDenseRange(0, 9, 1), benchmark::CreateDenseRange(0, 0, 1) })->Iterations(1);
+
 
 int main(int argc, char** argv)
 {
