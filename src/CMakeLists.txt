@@ -57,8 +57,10 @@ set(PATH_TO_REPORTS ${PATH_TO_DATA}/reports)
 set(PATH_TO_PLOTS ${PATH_TO_DATA}/plots)
 set(PATH_TO_BENCHMARK_BASE_REPORT ${PATH_TO_REPORTS}/benchmark_runs.json)
 set(PATH_TO_BENCHMARK_CUSTOM_REPORT ${PATH_TO_REPORTS}/benchmark_data_results.json)
+set(PATH_TO_AREA_SELECTOR_REPORT ${PATH_TO_REPORTS}/area_selector_data_results.json)
 set(PATH_TO_REL_BUILD ${CMAKE_CURRENT_BINARY_DIR})
 
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/Constants.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../python/constants.py.in ${CMAKE_CURRENT_SOURCE_DIR}/../python/constants.py)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../python/constants.py.in ${CMAKE_CURRENT_SOURCE_DIR}/../external/Area-Selector/src/constants.py)
