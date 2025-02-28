@@ -49,9 +49,6 @@ def norm_points_in_square(count, std=1, s=20, c=10):
 
 
 def generate_synthetic_data():
-    print(constants.DENSITY_VALUES)
-    print(constants.STD_VALUES)
-
     path_to_uniform = os.path.join(constants.PATH_TO_EXPERIMENTS, "uniform")
     path_to_gaussian = os.path.join(constants.PATH_TO_EXPERIMENTS, "gaussian")
 
