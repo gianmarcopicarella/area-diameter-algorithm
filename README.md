@@ -2,12 +2,24 @@
 
 ## Introduction
 
-Given a point set $P$ in $d$-dimensional space, a discrete convex polygon (DCP) in $P$ is a convex polygon with vertices $V\subseteq P$. The convex hull of a point set is always a DCP. Interestingly, many real-world problems arising in different disciplines (e.g., medicine and the oil industry) can be easily modeled as optimization problems, where a DCP maximizing (or minimizing) a certain objective function must be found. These problems may require taking into consideration additional constraints, usually defined as scalar values limiting specific properties of the polygon (e.g. the maximum allowed DCP area is bounded by $a_{\text{max}}$). The geometric knapsack problem is a generalization of these problems, which has been extensively studied for a variety of different objective functions and constraints \cite{geo_knap}.
+Given a point set $P$ in $d$-dimensional space, a discrete convex polygon (DCP) in $P$ is a convex polygon with vertices $V\subseteq P$. The convex hull of a point set is always a DCP. Interestingly, many real-world problems arising in different disciplines (e.g., medicine and the oil industry) can be easily modeled as optimization problems, where a DCP maximizing (or minimizing) a certain objective function must be found. These problems may require taking into consideration additional constraints, usually defined as scalar values limiting specific properties of the polygon (e.g. the maximum allowed DCP area is bounded by $a_{\text{max}}$). The geometric knapsack problem is a generalization of these problems, which has been extensively studied for a variety of different objective functions and constraints.
 
 We now introduce the notion of diameter. Let $P$ be a set of $2$-dimensional points. The diameter $d$ of $P$ is the maximum Euclidean distance between two points $p, q \in P$. The diameter of any convex polygon is always equivalent to its major axis length. 
 
 In this master's thesis project, we focus on a variation of the geometric knapsack problem that, to the best of our knowledge, has not been studied in existing research. The problem is defined as follows.
 
+\begin{problem}
+   Given a set of $2$-dimensional points $P$ find a subset $S\subseteq P$ with $|S|>2$ such that the convex hull of $S$ satisfies the following properties:
+    \begin{enumerate}
+        \item The diameter of $S$ does not exceed $d_{\text{max}}$. %is the smallest value that does not exceed $d_{\text{max}}$. % the maximum value
+        \item The area defined by the convex hull of $S$ does not exceed $a_{\text{max}}$.
+        \item $S$ has maximum cardinality.
+    \end{enumerate}
+    \label{problem1}
+\end{problem}
+
+The formulation of problem \ref{problem1} comes from the generalization of a real-world need in the field of oncology, specifically in breast cancer prognosis.
+For more information, please refer to my [research proposal]().
 
 ## Getting Started
 
