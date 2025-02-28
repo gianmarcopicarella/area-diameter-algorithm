@@ -11,7 +11,7 @@ In this master's thesis project, we focus on a variation of the geometric knapsa
 ### Problem Formulation
 Given a set of $2$-dimensional points $P$ find a subset $S\subseteq P$ with $|S|>2$ such that the convex hull of $S$ satisfies the following properties:
 
-1. The diameter of $S$ does not exceed $d_{\text{max}}$. %is the smallest value that does not exceed $d_{\text{max}}$. % the maximum value
+1. The diameter of $S$ does not exceed $d_{\text{max}}$.
 2. The area defined by the convex hull of $S$ does not exceed $a_{\text{max}}$.
 3. $S$ has maximum cardinality.
 
