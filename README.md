@@ -38,7 +38,7 @@ $ pip install -r requirements.txt
 $ python generate_plots.py
 ```
 
-Run the [Area-Selector](https://github.com/sjoerd-de-vries/Area-Selector)'s algorithms on real world samples
+Run the [Area-Selector](https://github.com/gianmarcopicarella/Area-Selector)'s algorithms on real world samples
 ```bash
 $ cd ../external/Area-Selector
 $ pip install -r requirements.txt
@@ -46,7 +46,7 @@ $ cd run
 $ python run_area_selector.py
 ```
 
-Generate the LaTeX code presenting the results obtained (benchmarking + comparison with [Area-Selector](https://github.com/sjoerd-de-vries/Area-Selector)'s results for real-world samples)
+Generate the LaTeX code presenting the results obtained (benchmarking + comparison with [Area-Selector](https://github.com/gianmarcopicarella/Area-Selector)'s results for real-world samples)
 ```bash
   $ python latex.py
 ```
