@@ -8,18 +8,19 @@ We now introduce the notion of diameter. Let $P$ be a set of $2$-dimensional poi
 
 In this master's thesis project, we focus on a variation of the geometric knapsack problem that, to the best of our knowledge, has not been studied in existing research. The problem is defined as follows.
 
-\begin{problem}
-   Given a set of $2$-dimensional points $P$ find a subset $S\subseteq P$ with $|S|>2$ such that the convex hull of $S$ satisfies the following properties:
-    \begin{enumerate}
-        \item The diameter of $S$ does not exceed $d_{\text{max}}$. %is the smallest value that does not exceed $d_{\text{max}}$. % the maximum value
-        \item The area defined by the convex hull of $S$ does not exceed $a_{\text{max}}$.
-        \item $S$ has maximum cardinality.
-    \end{enumerate}
-    \label{problem1}
-\end{problem}
+### Problem Formulation
+Given a set of $2$-dimensional points $P$ find a subset $S\subseteq P$ with $|S|>2$ such that the convex hull of $S$ satisfies the following properties:
 
-The formulation of problem \ref{problem1} comes from the generalization of a real-world need in the field of oncology, specifically in breast cancer prognosis.
-For more information, please refer to my [research proposal]().
+1. The diameter of $S$ does not exceed $d_{\text{max}}$. %is the smallest value that does not exceed $d_{\text{max}}$. % the maximum value
+2. The area defined by the convex hull of $S$ does not exceed $a_{\text{max}}$.
+3. $S$ has maximum cardinality.
+
+The formulation of this problem comes from the generalization of a real-world need in the field of oncology, specifically in breast cancer prognosis.
+
+### Algorithms in this repository
+This repository provides an efficient implementation of [Eppstein's algorithm](https://link.springer.com/article/10.1007/BF02187823) and a novel algorithm designed to tackle the above-mentioned problem in polynomial time. Our new algorithm allows to specify the maximum allowed diameter a convex polygon must have to be considered valid. The algorithm exploits runs in O(kn^7) time and O(kn^5) space.
+
+For more information about my project, please refer to the code in this repository and my [research proposal]().
 
 ## Getting Started
 
