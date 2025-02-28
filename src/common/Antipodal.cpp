@@ -10,8 +10,6 @@
 
 #define KEY(a, b, c, d, n) ((a) * (n) * (n) * (n) + (b) * (n) * (n) + (c) * (n) + (d))
 
-#define EARLY_STOP_OPT
-
 namespace MT
 {
     namespace
@@ -359,10 +357,11 @@ namespace MT
             size_t aMaxPointsCount,
             long double aMaxArea,
             long double aMaxDiameter,
-            bool aShouldReconstructHull)
+            bool aShouldReconstructHull,
+            bool aShouldEnableOptimizations)
     {
         std::optional<BenchmarkInfo> benchmarkInfo = std::nullopt;
-        return AntipodalAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aMaxDiameter, aShouldReconstructHull);
+        return AntipodalAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aMaxDiameter, aShouldReconstructHull, aShouldEnableOptimizations);
     }
 
     std::optional<ConvexArea> AntipodalAlgorithmWithBenchmarkInfo(
@@ -371,7 +370,8 @@ namespace MT
             size_t aMaxPointsCount,
             long double aMaxArea,
             long double aMaxDiameter,
-            bool aShouldReconstructHull)
+            bool aShouldReconstructHull,
+            bool aShouldEnableOptimizations)
     {
         if(std::min(somePoints.size(), aMaxPointsCount) < 3)
         {
@@ -409,7 +409,7 @@ namespace MT
         // Process each distinct pair of points having squared diameter at most equal to maxDiameter2
         for (size_t i = 0; i < somePoints.size(); ++i)
         {
-            std::cout << "[" << i << "]" << std::endl;
+            // std::cout << "[" << i << "]" << std::endl;
             for (size_t j = i + 1; j < somePoints.size(); ++j)
             {
                 std::optional<ConvexArea> pairResultOpt;
@@ -417,12 +417,12 @@ namespace MT
                 {
                     std::vector<CM::Point2> leftPoints, rightPoints;
                     locPrepareLeftAndRightPoints(somePoints, i, j, leftPoints, rightPoints);
-#ifdef EARLY_STOP_OPT
-                    if(resultOpt && (leftPoints.size() + rightPoints.size() - 2) < resultOpt->myPointsCount)
+
+                    if(aShouldEnableOptimizations && resultOpt && (leftPoints.size() + rightPoints.size() - 2) < resultOpt->myPointsCount)
                     {
                         continue;
                     }
-#endif
+
                     //std::cout << "(" << j << ")" << std::endl;
                     // std::cout << "count: " << leftPoints.size() + rightPoints.size() - 2 << std::endl;
                     pairResultOpt = locProcessSegment(leftPoints, rightPoints, pointsInTriangleCache, aMaxPointsCount, aMaxArea, cache);

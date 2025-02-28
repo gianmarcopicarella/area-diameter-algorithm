@@ -1,287 +1,358 @@
 import os
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 import json
 import constants
 import utils
 
-from matplotlib.patches import Polygon
+style_settings = {
+    "Antipodal": {
+        "0": "color=Cyan,mark=diamond,error bars/.cd, y dir=both, y explicit",
+        "1": "color=Magenta,mark=o,error bars/.cd, y dir=both, y explicit",
+        "2": "color=Green,mark=asterisk,error bars/.cd, y dir=both, y explicit",
+        "3": "color=Peach,mark=triangle,mark options={rotate=180},error bars/.cd, y dir=both, y explicit",
+        "4": "color=Blue,mark=+,error bars/.cd, y dir=both, y explicit"
+    },
+    "Eppstein": {
+        "None": "color=Fuchsia,mark=triangle,error bars/.cd, y dir=both, y explicit",
+        "*": "color=Fuchsia,mark=triangle,dashed,error bars/.cd, y dir=both, y explicit"
+    }
+}
 
-data_runs = utils.read_json(constants.PATH_TO_BENCHMARK_BASE_REPORT)
-data_results = utils.read_json(constants.PATH_TO_BENCHMARK_CUSTOM_REPORT)
+data_runs = utils.read_json(constants.PATH_TO_BENCHMARK_RUNS)
+data_results = utils.read_json(constants.PATH_TO_BENCHMARK_RESULTS)
+area_selector_data_results = utils.read_json(constants.PATH_TO_AREA_SELECTOR_RESULTS)
 
+input_data = {
+    "run_data": {"ours": data_runs, "area_selector": None},
+    "solutions_data": {"ours": data_results, "area_selector": area_selector_data_results}
+}
 
-def scatter_points(P, poly):
-    plt.gca().add_patch(Polygon(poly, closed=False, edgecolor="red", facecolor='none', linewidth=1))
-    pts = np.array(P)
-    plt.scatter(pts[:, 0], pts[:, 1], c="black", s=8)
-    for i, p in enumerate(pts):
-        plt.text(p[0] - 0.2, p[1], f'{i}', fontsize=9, ha='right')
-    plt.gcf().set_dpi(200)
-    plt.gca().set_aspect("equal")
-    plt.show()
-
-
-def extract_run_data_for(data, distribution, x_values, diameters):
-    result = {"Eppstein": {"time": [], "memory": [], "entries": [], "required_entries": []}}
-    for i, _ in enumerate(diameters):
-        result["Antipodal_" + str(d)] = {"time": [], "memory": [], "entries": []}
-
-    for r in data["benchmarks"]:
-        split_id = r["name"].split("/")
-        if distribution == split_id[1]:
-            x_step = int(split_id[2])
-            tt = (float(x_values[x_step]), float(r["cpu_time"]), 0)
-            mt = (float(x_values[x_step]), utils.to_kb(float(r["mem_avg"])), utils.to_kb(float(r["mem_std"])))
-            et = (float(x_values[x_step]), float(r["entries_avg"]), float(r["entries_std"]))
-            diameter = "_" + split_id[3] if len(split_id) == 5 else ""
-            key = split_id[0] + diameter
-            result[key]["time"].append(tt)
-            result[key]["memory"].append(mt)
-            result[key]["entries"].append(et)
-            if "required_entries" in result[key]:
-                met = (float(x_values[x_step]), float(r["min_entries_avg"]), float(r["min_entries_std"]))
-                result[key]["required_entries"].append(met)
-
-    for k in result:
-        for ik in result[k]:
-            result[k][ik].sort()
-
-    return result
+data = {"run_data": {"area_selector": dict(), "ours": dict()},
+        "solutions_data": {"area_selector": dict(), "ours": dict()}}
 
 
-def extract_solutions_data_for(data, distribution, x_values, diameters):
-    result = {"Eppstein": {"count": [], "area": [], "diameter": []}}
-    for i, _ in enumerate(diameters):
-        result["Antipodal_" + str(i)] = {"count": [], "area": [], "diameter": []}
+def process_benchmark_data():
+    for key in input_data["run_data"]:
+        if input_data["run_data"][key] is None:
+            continue
+        for b in input_data["run_data"][key]["benchmarks"]:
+            run = b["name"].split("iterations")[0]
+            components = run.split("/")
 
-    for r in data["results"]:
-        split_id = r[0]["id"].split("/")
-        if distribution == split_id[1]:
-            max_diam = split_id[3]
-            algorithm = split_id[0] + "_" + max_diam if split_id[0] == "Antipodal" else split_id[0]
-            x_step = split_id[2]
-            counts, areas, diams = [], [], []
-            for iteration, e in enumerate(r):
-                assert ("convex_area" in e)
-                sol = e["convex_area"]
-                counts.append(sol["count"])
-                areas.append(sol["area"])
-                path_to_sample = os.path.join(constants.PATH_TO_EXPERIMENTS, distribution.lower(), x_step,
-                                              f"points_{iteration}.json")
+            distribution = components[1]
+            algorithm = components[0]
+            diameter = "None" if components[3] == "" else components[3]
+            index = int(components[2])
+
+            if distribution not in data["run_data"][key]:
+                data["run_data"][key][distribution] = dict()
+            if algorithm not in data["run_data"][key][distribution]:
+                data["run_data"][key][distribution][algorithm] = dict()
+            if diameter not in data["run_data"][key][distribution][algorithm]:
+                data["run_data"][key][distribution][algorithm][diameter] = \
+                    {"time": [], "memory": [], "entries": [], "required_entries": []}
+
+            entry = data["run_data"][key][distribution][algorithm][diameter]
+            entry["time"].append((index, float(b["cpu_time"]), 0))
+            entry["memory"].append((index, utils.to_kb(float(b["mem_avg"])), utils.to_kb(float(b["mem_std"]))))
+            entry["entries"].append((index, float(b["entries_avg"]), float(b["entries_std"])))
+            entry["required_entries"].append((index, float(b["min_entries_avg"]), float(b["min_entries_std"])))
+
+    for key in input_data["solutions_data"]:
+        if input_data["solutions_data"][key] is None:
+            continue
+        for results in input_data["solutions_data"][key]["results"]:
+            first_run = results[0]["name"].split("iterations")[0]
+            components = first_run.split("/")
+            distribution = components[1]
+            algorithm = components[0]
+            diameter = "None" if components[3] == "" else components[3]
+            index = int(components[2])
+
+            if distribution not in data["solutions_data"][key]:
+                data["solutions_data"][key][distribution] = dict()
+            if algorithm not in data["solutions_data"][key][distribution]:
+                data["solutions_data"][key][distribution][algorithm] = dict()
+            if diameter not in data["solutions_data"][key][distribution][algorithm]:
+                data["solutions_data"][key][distribution][algorithm][diameter] = \
+                    {"count": [], "area": [], "diameter": []}
+
+            entry = data["solutions_data"][key][distribution][algorithm][diameter]
+            counts, areas, diameters = [], [], []
+            for r in results:
+                iteration = int(r["name"].split(":")[1])
+
+                assert ("convex_area" in r)
+                convex_area = r["convex_area"]
+
+                counts.append(convex_area["count"])
+                areas.append(convex_area["area"])
+
+                path_to_sample = os.path.join(constants.PATH_TO_EXPERIMENTS, distribution.lower(),
+                                              str(index), f"points_{iteration}.json")
                 with open(path_to_sample, 'r') as file:
                     points = json.load(file)
 
-                fi = int(sol["diameter_indices"][0])
-                si = int(sol["diameter_indices"][1])
+                fi = int(convex_area["diameter_indices"][0])
+                si = int(convex_area["diameter_indices"][1])
                 fdp = np.array((points["points"][fi]["x"], points["points"][fi]["y"]), dtype=np.float32)
                 sdp = np.array((points["points"][si]["x"], points["points"][si]["y"]), dtype=np.float32)
 
-                diams.append(float(np.linalg.norm(fdp - sdp)))
+                diameters.append(float(np.linalg.norm(fdp - sdp)))
 
-            x_idx = int(x_step)
-            ct = (float(x_values[x_idx]), float(np.mean(counts)), float(np.std(counts)))
-            at = (float(x_values[x_idx]), float(np.mean(areas)), float(np.std(areas)))
-            dt = (float(x_values[x_idx]), float(np.mean(diams)), float(np.std(diams)))
-
-            result[algorithm]["count"].append(ct)
-            result[algorithm]["area"].append(at)
-            result[algorithm]["diameter"].append(dt)
-
-    return result
+            entry["count"].append((index, float(np.mean(counts)), float(np.std(counts))))
+            entry["area"].append((index, float(np.mean(areas)), float(np.std(areas))))
+            entry["diameter"].append((index, float(np.mean(diameters)), float(np.std(diameters))))
 
 
-input_size = np.arange(100, 201, 10)
-std_dev = np.arange(0.5, 6.51, 0.5)
-diameters = [2, 3, 4, 5, 6]
+def generate_latex_comparison_table():
+    table = \
+        r"""
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \multicolumn{3}{|c|}{\textbf{Dataset}} & \multicolumn{3}{c|}{\textbf{Antipodal approach}} & \multicolumn{3}{c|}{\textbf{Approach used in \cite{umcmodel}}} \\
+        \cline{1-9}
+        Index & C & ANN & C & A ($\text{mm}^2$) & D (mm) & C & A ($\text{mm}^2$) & D (mm) \\
+        \hline
 
-uniform_run_data = extract_run_data_for(data_runs, "Uniform", input_size, diameters)
-gaussian_run_data = extract_run_data_for(data_runs, "Gaussian", std_dev, diameters)
+<ADD_ROWS_HERE>
 
-uniform_sol_data = extract_solutions_data_for(data_results, "Uniform", input_size, diameters)
-gaussian_sol_data = extract_solutions_data_for(data_results, "Gaussian", std_dev, diameters)
+        \hline
+    \end{tabular}
+    \caption{Comparison of the results from our antipodal approach with those from the method presented in \cite{umcmodel}.}
+    \label{tab:comparison}
+\end{table}
+    """
 
-# print(uniform_run_data)
-# print(gaussian_run_data)
+    ours_solutions_data = data["solutions_data"]["ours"]["Real"]["Antipodal"]["0"]
+    area_sel_solutions_data = data["solutions_data"]["area_selector"]["Real"]["AreaSelector"]["0"]
+
+    assert (len(ours_solutions_data["count"]) == constants.REAL_BENCHMARKS_COUNT)
+    assert (len(area_sel_solutions_data["count"]) == constants.REAL_BENCHMARKS_COUNT)
+
+    rows = ""
+    for i in range(constants.REAL_BENCHMARKS_COUNT):
+        path_to_input_data = os.path.join(constants.PATH_TO_EXPERIMENTS, "real", str(i), "points_0.json")
+        points = [(p['x'], p['y']) for p in utils.read_json(path_to_input_data)['points']]
+        ann = utils.ann(points)
+        apr_count, asr_count = int(ours_solutions_data["count"][i][1]), int(area_sel_solutions_data["count"][i][1])
+        apr_area, asr_area = ours_solutions_data["area"][i][1], area_sel_solutions_data["area"][i][1]
+        apr_diam, asr_diam = ours_solutions_data["diameter"][i][1], area_sel_solutions_data["diameter"][i][1]
+
+        if apr_count > asr_count:
+            apr_count = r"\textbf{" + str(apr_count) + "}"
+        elif apr_count < asr_count:
+            asr_count = r"\textbf{" + str(asr_count) + "}"
+        else:
+            apr_count = r"\underline{" + str(apr_count) + "}"
+            asr_count = r"\underline{" + str(asr_count) + "}"
+
+        rows += f"{i} & {len(points)} & ${round(ann[0], 2)} \\pm {round(ann[1], 2)}$ & " \
+                f"{apr_count} & {round(apr_area, 2)} & {round(apr_diam, 2)} & " \
+                f"{asr_count} & {round(asr_area, 2)} & {round(asr_diam, 2)}" + r" \\" + "\n"
+
+    return table.replace("<ADD_ROWS_HERE>", rows)
 
 
-def base_unroll(data, algorithm, key):
-    s = ""
-    for e in data[algorithm][key]:
-        s += "(" + str(round(e[0], 2)) + ", " + str(round(e[1], 2)) + ") "
-    return s
+def generate_latex_plot(title, x_label, y_label, y_max, y_mode, x_values, rows, legend_style_key="north west"):
+    legend_styles = {"north west": r"legend style={font=\footnotesize,at={(-0.0006,1.0009)},anchor=north west}",
+                     "north east": r"legend style={font=\footnotesize,at={(1.0006,1.0009)},anchor=north east}"}
+    plot_template = r"""
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    <LEGEND_STYLE>,
+    <TITLE>,
+    width=12cm, height=9cm,
+    <X_LABEL>,
+    <Y_LABEL>,
+    grid=both,
+    mark options={solid},
+    <Y_MAX>,
+    <Y_MODE>,
+    xtick={<X_VALUES>},
+    xticklabels={<X_VALUES>},
+    xtick pos=bottom,
+    ytick pos=left,
+    xtick align=outside,
+    tick style={thick},
+    ytick align=outside
+]
+
+<ADD_ROWS_HERE>
+
+\end{axis}
+\end{tikzpicture}
+\end{center}"""
+    plot = plot_template.replace("<LEGEND_STYLE>", legend_styles[legend_style_key])
+    plot = plot.replace("<TITLE>", title)
+    plot = plot.replace("<X_LABEL>", x_label)
+    plot = plot.replace("<Y_LABEL>", y_label)
+    plot = plot.replace("<Y_MAX>", y_max)
+    plot = plot.replace("<Y_MODE>", y_mode)
+    plot = plot.replace("<X_VALUES>", x_values)
+    return plot.replace("<ADD_ROWS_HERE>", rows)
 
 
-def std_unroll(data, algorithm, key):
-    s = ""
-    for e in data[algorithm][key]:
-        s += "(" + str(round(e[0], 2)) + ", " + str(round(e[1], 2)) + ") +- (0, " + str(round(e[2], 2)) + ") "
-    return s
+def unroll(sequence, dist_key):
+    if dist_key == "Uniform":
+        return " ".join(
+            f"({round(constants.DENSITY_VALUES[t[0]], 2)}, {round(t[1], 2)}) +- (0, {round(t[2], 2)})" for t in
+            sequence)
+    elif dist_key == "Gaussian":
+        return " ".join(
+            f"({round(constants.STD_VALUES[t[0]], 2)}, {round(t[1], 2)}) +- (0, {round(t[2], 2)})" for t in sequence)
+    else:
+        assert False
 
 
-colours = ["Cyan", "Magenta", "Green", "Peach", "Blue", "Fuchsia"]
-rotate = ["0", "0", "0", "180", "0", "0"]
-marks = ["diamond", "o", "asterisk", "triangle", "+", "triangle", "triangle"]
+def legend(algo_key, diam_key):
+    if diam_key == "None" or diam_key == "*":
+        assert (algo_key == "Eppstein")
+        legend_txt = r"\addlegendentry{$\text{" + algo_key + r"}_{\infty}"
+        if diam_key == "*": legend_txt += r"^{\star}"
+        return legend_txt + "$};\n"
+    else:
+        return r"\addlegendentry{$\text{" + algo_key + "}_{" + str(
+            constants.SYNTHETIC_BENCHMARK_DIAMETERS[int(diam_key)]) + "}$};\n"
 
-print("[Uniform data]")
 
-print("1) Time")
+def generate_rows(data_type, dist_key, metric_key, method="ours"):
+    rows = ""
+    entry = data[data_type][method][dist_key]
+    for algo_key in entry:
+        for diam_key in entry[algo_key]:
+            assert (metric_key in entry[algo_key][diam_key])
+            rows += r"\addplot[" + style_settings[algo_key][diam_key] + "] coordinates {" + unroll(
+                entry[algo_key][diam_key][metric_key], dist_key) + "};\n"
+            rows += legend(algo_key, diam_key)
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}] coordinates {" + base_unroll(uniform_run_data, "Antipodal_" + str(d),
-                                              "time") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+    if metric_key == "entries" and "Eppstein" in entry:
+        rows += r"\addplot[" + style_settings["Eppstein"]["*"] + "] coordinates {" + unroll(
+            entry["Eppstein"]["None"]["required_entries"], dist_key) + "};\n"
+        rows += legend("Eppstein", "*")
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}] coordinates {" + base_unroll(uniform_run_data, "Eppstein",
-                                           "time") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+    return rows
 
-print("2) Memory")
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}] coordinates {" + base_unroll(uniform_run_data, "Antipodal_" + str(d),
-                                              "memory") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+process_benchmark_data()
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}] coordinates {" + base_unroll(uniform_run_data, "Eppstein",
-                                           "memory") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+latex = \
+    r"""
+\documentclass{article}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{pdflscape}
+\usepackage{tabularx}
+\usepackage{multirow}
 
-print("3) Entries")
+\usepackage[dvipsnames]{xcolor}
+\usepackage[a4paper, margin=1in]{geometry}
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_run_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "entries") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{statistics}
+\usepgflibrary{plotmarks}
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}] coordinates {" + std_unroll(uniform_run_data, "Eppstein",
-                                          "entries") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
-print(
-    "\\addplot[color=" + colours[-1] + ",dashed, mark=" + marks[-2] + "] coordinates {" + std_unroll(uniform_run_data,
-                                                                                                      "Eppstein",
-                                                                                                      "required_entries") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}^{\\star}$}")
+\begin{document}""" + "\n"
 
-# -------
+latex += r"\section{Uniform distribution}" + "\n" + r"\subsection{Time, memory and table entries}" + "\n"
 
-print("4) Cardinality")
+latex += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
+                             "xlabel={Input size (points)}",
+                             "ylabel={Time (ms)}", "ymax=10^6", "ymode=log",
+                             ",".join(str(x) for x in constants.DENSITY_VALUES),
+                             generate_rows("run_data", "Uniform", "time")) + "\n"
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "count") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
+latex += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
+                             "xlabel={Input size (points)}",
+                             "ylabel={Memory allocation (kb)}", "ymax=10^10", "ymode=log",
+                             ",".join(str(x) for x in constants.DENSITY_VALUES),
+                             generate_rows("run_data", "Uniform", "memory")) + "\n"
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Eppstein",
-                                                                                  "count") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+latex += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
+                             "xlabel={Input size (points)}",
+                             "ylabel={Table entries}", "ymax=10^10", "ymode=log",
+                             ",".join(str(x) for x in constants.DENSITY_VALUES),
+                             generate_rows("run_data", "Uniform", "entries")) + "\n"
 
-print("5) Area")
+latex += r"\subsection{Enclosed points, area and diameter}" + "\n"
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "area") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
+latex += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
+                             "xlabel={Input size (points)}",
+                             "ylabel={Cardinality (enclosed points)}", "", "ymode=linear",
+                             ",".join(str(x) for x in constants.DENSITY_VALUES),
+                             generate_rows("solutions_data", "Uniform", "count")) + "\n"
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Eppstein",
-                                                                                  "area") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+latex += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
+                             "xlabel={Input size (points)}",
+                             r"ylabel={Area ($\text{mm}^2$)}", "ymax=6", "ymode=linear",
+                             ",".join(str(x) for x in constants.DENSITY_VALUES),
+                             generate_rows("solutions_data", "Uniform", "area")) + "\n"
 
-print("6) Diameter")
+latex += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
+                             "xlabel={Input size (points)}",
+                             "ylabel={Diameter (mm)}", "ymax=30", "ymode=linear",
+                             ",".join(str(x) for x in constants.DENSITY_VALUES),
+                             generate_rows("solutions_data", "Uniform", "diameter")) + "\n"
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "diameter") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
+latex += r"\section{Gaussian distribution}" + "\n" + r"\subsection{Time, memory and table entries}" + "\n"
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(uniform_sol_data, "Eppstein",
-                                                                                  "diameter") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
+                             "xlabel={Standard deviation}",
+                             "ylabel={Time (ms)}", "ymax=10^6", "ymode=log",
+                             ",".join(str(x) for x in constants.STD_VALUES),
+                             generate_rows("run_data", "Gaussian", "time"), "north east") + "\n"
 
-print("[Gaussian data]")
+latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
+                             "xlabel={Standard deviation}",
+                             "ylabel={Memory allocation (kb)}", "ymax=10^9", "ymode=log",
+                             ",".join(str(x) for x in constants.STD_VALUES),
+                             generate_rows("run_data", "Gaussian", "memory"), "north east") + "\n"
 
-print("1) Time")
+latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
+                             "xlabel={Standard deviation}",
+                             "ylabel={Table entries}", "ymax=10^10", "ymode=log",
+                             ",".join(str(x) for x in constants.STD_VALUES),
+                             generate_rows("run_data", "Gaussian", "entries"), "north east") + "\n"
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}] coordinates {" + base_unroll(gaussian_run_data, "Antipodal_" + str(d),
-                                              "time") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+latex += r"\subsection{Enclosed points, area and diameter}" + "\n"
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}] coordinates {" + base_unroll(gaussian_run_data, "Eppstein",
-                                           "time") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
+                             "xlabel={Standard deviation}",
+                             "ylabel={Cardinality (enclosed points)}", "", "ymode=linear",
+                             ",".join(str(x) for x in constants.STD_VALUES),
+                             generate_rows("solutions_data", "Gaussian", "count"), "north east") + "\n"
 
-print("2) Memory")
+latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
+                             "xlabel={Standard deviation}",
+                             r"ylabel={Area ($\text{mm}^2$)}", "ymax=6", "ymode=linear",
+                             ",".join(str(x) for x in constants.STD_VALUES),
+                             generate_rows("solutions_data", "Gaussian", "area")) + "\n"
 
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}] coordinates {" + base_unroll(gaussian_run_data, "Antipodal_" + str(d),
-                                              "memory") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(d) + "}$}")
+latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
+                             "xlabel={Standard deviation}",
+                             "ylabel={Diameter (mm)}", "", "ymode=linear",
+                             ",".join(str(x) for x in constants.STD_VALUES),
+                             generate_rows("solutions_data", "Gaussian", "diameter")) + "\n"
 
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}] coordinates {" + base_unroll(gaussian_run_data, "Eppstein",
-                                           "memory") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+latex += r"\section{Comparison of the Antipodal Approach and \cite{umcmodel} Using Real Data}" + "\n"
+latex += generate_latex_comparison_table()
+latex += \
+r"""
+\clearpage
+\bibliography{sources}
+\bibliographystyle{IEEEtran}
+\end{document}
+"""
 
-print("3) Entries")
-
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_run_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "entries") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
-
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}] coordinates {" + std_unroll(gaussian_run_data, "Eppstein",
-                                          "entries") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
-print(
-    "\\addplot[color=" + colours[-1] + ",dashed, mark=" + marks[-2] + "] coordinates {" + std_unroll(
-        gaussian_run_data,
-        "Eppstein",
-        "required_entries") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}^{\\star}$}")
-
-print("4) Cardinality")
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "count") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
-
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Eppstein",
-                                                                                  "count") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
-
-print("5) Area")
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "area") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
-
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Eppstein",
-                                                                                  "area") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
-
-print("6) Diameter")
-
-for i, d in enumerate(diameters):
-    print("\\addplot[color=" + colours[i] + ", mark=" + marks[i] + ",mark options={rotate=" + rotate[
-        i] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data,
-                                                                                     "Antipodal_" + str(d),
-                                                                                     "diameter") + "}; \\addlegendentry{$\\text{Antipodal}_{" + str(
-        d) + "}$}")
-
-print("\\addplot[color=" + colours[-1] + ", mark=" + marks[-1] + ",mark options={rotate=" + rotate[
-    -1] + "}, error bars/.cd, y dir=both, y explicit] coordinates {" + std_unroll(gaussian_sol_data, "Eppstein",
-                                                                                  "diameter") + "}; \\addlegendentry{$\\text{Eppstein}_{\\infty}$}")
+with open(constants.PATH_TO_LATEX_REPORT, "w") as f:
+    f.write(latex)

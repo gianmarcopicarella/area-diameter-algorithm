@@ -1,6 +1,7 @@
 python/.idea
 data/plots/*
 data/raw/*
+data/latex/main.tex
 build/
 cmake-build-release/
 cmake-build-debug/

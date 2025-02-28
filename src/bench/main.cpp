@@ -11,8 +11,6 @@
 #include "../common/TestingUtils.h"
 #include "../common/Constants.h"
 
-#include <iostream>
-
 void AddExtraCounter(const std::string& aName,
                      const std::vector<benchmark::IterationCount>& someValues,
                      benchmark::State& anOutState,
@@ -34,7 +32,7 @@ fs::path PathToData(const benchmark::State& aState)
 }
 
 template<Algorithm A>
-std::string ResultId(const benchmark::State& aState, const size_t aFileIndex)
+std::string ResultName(const benchmark::State& aState, const size_t aFileIndex)
 {
     if constexpr(A == Algorithm::ANTIPODAL)
     {
@@ -46,8 +44,21 @@ std::string ResultId(const benchmark::State& aState, const size_t aFileIndex)
     }
 }
 
+template<Data D>
+long double GetMaxDiameter(const benchmark::State& aState)
+{
+    if constexpr(D == Data::REAL)
+    {
+        return MT::Constants::REAL_BENCHMARK_DIAMETERS[aState.range(1)];
+    }
+    else
+    {
+        return MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS[aState.range(1)];
+    }
+}
+
 template<Data D, Algorithm A>
-void BM_Template(benchmark::State& aState, const std::vector<long double>& someDiameters)
+void BM_Template(benchmark::State& aState, bool aShouldUseOptimizations)
 {
     constexpr auto maxAllowedArea = 4.l; // 2 mm^2
     constexpr auto maxAllowedPoints = (size_t) - 1; // No limit
@@ -81,12 +92,12 @@ void BM_Template(benchmark::State& aState, const std::vector<long double>& someD
         benchmark::DoNotOptimize(points);
         if constexpr (A == Algorithm::EPPSTEIN)
         {
-            resultOpt = MT::EppsteinAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, reconstructHull);
+            resultOpt = MT::EppsteinAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, reconstructHull, aShouldUseOptimizations);
         }
         else
         {
-            const auto maxAllowedDiameter = someDiameters[aState.range(1)];
-            resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull);
+            const auto maxAllowedDiameter = GetMaxDiameter<D>(aState);
+            resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull, aShouldUseOptimizations);
         }
         benchmark::DoNotOptimize(resultOpt);
         const auto endTime = std::chrono::high_resolution_clock::now();
@@ -97,18 +108,17 @@ void BM_Template(benchmark::State& aState, const std::vector<long double>& someD
         allocatedBytesCount.emplace_back(totalAllocatedBytes);
         requiredEntriesCount.emplace_back(benchmarkInfo->myRequiredEntriesCount);
         allocatedEntriesCount.emplace_back(benchmarkInfo->myAllocatedEntriesCount);
-        // std::cout << "[" << fileIndex << "] AB " << allocatedBytesCount[fileIndex] << ", RE " << requiredEntriesCount[fileIndex] << ", AE " << allocatedEntriesCount[fileIndex] << std::endl;
 
         aState.SetIterationTime(std::chrono::duration<double, std::milli> {endTime - startTime}.count());
 
         MT::Solution currentSolution;
-        currentSolution.myId = ResultId<A>(aState, fileIndex);
+        currentSolution.myName = ResultName<A>(aState, fileIndex);
         currentSolution.myMaxCount = maxAllowedPoints;
         currentSolution.myMaxArea = maxAllowedArea;
 
         if constexpr (A == Algorithm::ANTIPODAL)
         {
-            currentSolution.myMaxDiameter = someDiameters[aState.range(1)];
+            currentSolution.myMaxDiameter = GetMaxDiameter<D>(aState);
         }
 
         currentSolution.myConvexAreaOpt = resultOpt;
@@ -120,7 +130,7 @@ void BM_Template(benchmark::State& aState, const std::vector<long double>& someD
     AddExtraCounter("entries", allocatedEntriesCount, aState);
     AddExtraCounter("min_entries", requiredEntriesCount, aState);
 
-    const auto& filepath = fs::path { MT::Constants::PATH_TO_BENCHMARK_CUSTOM_REPORT };
+    const auto& filepath = fs::path { MT::Constants::PATH_TO_BENCHMARK_RESULTS };
     std::ifstream oldBenchmarkSolutionsFile {filepath};
     json data;
 
@@ -146,48 +156,59 @@ void BM_Template(benchmark::State& aState, const std::vector<long double>& someD
 
 
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
-const std::vector<long double> diameters = {2, 3, 4, 5, 6};
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL, Antipodal_Uniform, diameters)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL, Antipodal_Uniform, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 10, 1), benchmark::CreateDenseRange(0, 4, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::DENSITIES_COUNT - 1, 1),
+                benchmark::CreateDenseRange(0, MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS.size() - 1, 1) })
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
 
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN, Eppstein_Uniform, {})
-->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, 10, 1)->Iterations(100);
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN, Eppstein_Uniform, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
+->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, MT::Constants::DENSITIES_COUNT - 1, 1)
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
 
 
 // 2) Gaussian distribution, Increasing standard deviation [0.5, 6.5, step=0.5]
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL, Antipodal_Gaussian, diameters)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL, Antipodal_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 12, 1), benchmark::CreateDenseRange(0, 4, 1) })->Iterations(100);
+->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1),
+                benchmark::CreateDenseRange(0, MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS.size() - 1, 1) })
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
 
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, Eppstein_Gaussian, {})
-->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, 12, 1)->Iterations(100);
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, Eppstein_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
+->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1)
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
 
 
 // 3) Real world data [10 different samples] NO TIMEOUT
-const std::vector<long double> realDiameters = {4.243};
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::REAL, Algorithm::ANTIPODAL, Antipodal_Real, realDiameters)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::REAL, Algorithm::ANTIPODAL, Antipodal_Real, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_REAL_DATA)
 ->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, 9, 1), benchmark::CreateDenseRange(0, 0, 1) })->Iterations(1);
+->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::REAL_BENCHMARKS_COUNT - 1, 1),
+                benchmark::CreateDenseRange(0, MT::Constants::REAL_BENCHMARK_DIAMETERS.size() - 1, 1) })
+->Iterations(1);
 
 
 int main(int argc, char** argv)
 {
-    const auto defaultArgs =
-            std::string { "--benchmark_out_format=json --benchmark_counters_tabular=true --benchmark_out=" } +
-            std::string{ MT::Constants::PATH_TO_BENCHMARK_BASE_REPORT };
-    char* args_default = const_cast<char*>(defaultArgs.c_str());
-    if (!argv)
+    const std::vector<std::string> customArgs = {
+            "--benchmark_out_format=json",
+            "--benchmark_counters_tabular=true",
+            "--benchmark_out=" + std::string{ MT::Constants::PATH_TO_BENCHMARK_RUNS }
+    };
+    if (argc == 1)
     {
-      argc = 3;
-      argv = &args_default;
+        argc = customArgs.size();
+        argv = static_cast<char **>(malloc(argc * sizeof(char *)));
+        for(size_t i = 0; i < argc; ++i)
+        {
+            argv[i] = const_cast<char*>(customArgs[i].c_str());
+        }
     }
     ::benchmark::Initialize(&argc, argv);
     if (::benchmark::ReportUnrecognizedArguments(argc, argv))
     {
         return 1;
     }
-    fs::remove(fs::path { MT::Constants::PATH_TO_BENCHMARK_CUSTOM_REPORT });
+    fs::remove(fs::path { MT::Constants::PATH_TO_BENCHMARK_RESULTS });
     ::benchmark::RunSpecifiedBenchmarks();
     ::benchmark::Shutdown();
 

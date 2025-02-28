@@ -8,7 +8,7 @@ namespace MT
 {
     void to_json(json& aJson, const Solution& aSolution)
     {
-        aJson = json{ {"id", aSolution.myId}, {"max_count", aSolution.myMaxCount} };
+        aJson = json{ {"name", aSolution.myName}, {"max_count", aSolution.myMaxCount} };
         if(aSolution.myMaxArea != std::numeric_limits<long double>::infinity())
         {
             aJson.push_back({"max_area", aSolution.myMaxArea});
@@ -37,9 +37,9 @@ namespace MT
     }
     void from_json(const json& aJson, Solution& anOutSolution)
     {
-        if(aJson.contains("id"))
+        if(aJson.contains("name"))
         {
-            aJson.at("id").get_to(anOutSolution.myId);
+            aJson.at("name").get_to(anOutSolution.myName);
         }
         if(aJson.contains("max_area"))
         {

@@ -49,9 +49,8 @@ def norm_points_in_square(count, std=1, s=20, c=10):
 
 
 def generate_synthetic_data():
-    uniform_x_values = np.arange(100, 201, 10)
-    gaussian_x_values = np.arange(0.5, 6.51, 0.5)
-    iterations = 100
+    print(constants.DENSITY_VALUES)
+    print(constants.STD_VALUES)
 
     path_to_uniform = os.path.join(constants.PATH_TO_EXPERIMENTS, "uniform")
     path_to_gaussian = os.path.join(constants.PATH_TO_EXPERIMENTS, "gaussian")
@@ -59,21 +58,21 @@ def generate_synthetic_data():
     utils.prepare_path(path_to_uniform)
     utils.prepare_path(path_to_gaussian)
 
-    for i, count in enumerate(uniform_x_values):
+    for i, count in enumerate(constants.DENSITY_VALUES):
         path_to_uniform_samples = os.path.join(path_to_uniform, str(i))
         utils.prepare_path(path_to_uniform_samples)
-        for j in range(iterations):
+        for j in range(constants.SYNTHETIC_BENCHMARK_ITERATIONS):
             uniform_data = {"count": int(count),
                             "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count)]}
             utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
 
-    for i, std in enumerate(gaussian_x_values):
+    for i, std in enumerate(constants.STD_VALUES):
         path_to_gaussian_samples = os.path.join(path_to_gaussian, str(i))
         utils.prepare_path(path_to_gaussian_samples)
-        for j in range(iterations):
-            gaussian_data = {"count": int(uniform_x_values[0]),
+        for j in range(constants.SYNTHETIC_BENCHMARK_ITERATIONS):
+            gaussian_data = {"count": int(constants.DENSITY_VALUES[0]),
                              "points": [{"x": x, "y": y} for x, y in
-                                        norm_points_in_square(uniform_x_values[0], std)]}
+                                        norm_points_in_square(constants.DENSITY_VALUES[0], std)]}
             utils.write_json(os.path.join(path_to_gaussian_samples, f"points_{j}.json"), gaussian_data)
 
 
@@ -84,17 +83,13 @@ def generate_real_data():
         return v * factor
 
     raw_dataset = utils.read_json(constants.PATH_TO_RAW_DATASET, "rb")
-
-    algorithm = "midog21_1st_stage"
-    threshold = 0.86
-    samples_count = 10
     dataset = []
-
     for entry in raw_dataset:
-        if algorithm not in entry:
+        if constants.DETECTION_METHOD not in entry:
             continue
-        sample = entry[algorithm]
-        points = {(to_mm(float(s["x"])), to_mm(float(s["y"]))) for s in sample if s["prob"] >= threshold}
+        sample = entry[constants.DETECTION_METHOD]
+        points = {(to_mm(float(s["x"])), to_mm(float(s["y"]))) for s in sample
+                  if s["prob"] >= constants.DETECTION_CONFIDENCE_THRESHOLD}
         if len(points) == 0:
             continue
         dataset.append(list(points))
@@ -103,7 +98,9 @@ def generate_real_data():
     path_to_real = os.path.join(constants.PATH_TO_EXPERIMENTS, "real")
     utils.prepare_path(path_to_real)
 
-    for i in range(samples_count):
+    assert (constants.REAL_BENCHMARKS_COUNT < len(dataset))
+
+    for i in range(constants.REAL_BENCHMARKS_COUNT):
         path_to_real_samples = os.path.join(path_to_real, str(i))
         utils.prepare_path(path_to_real_samples)
         ann_info = utils.ann(dataset[i])
@@ -111,8 +108,8 @@ def generate_real_data():
                      "points": [{"x": p[0], "y": p[1]} for p in dataset[i]],
                      "ann_avg": ann_info[0], "ann_std": ann_info[1]}
         utils.write_json(os.path.join(path_to_real_samples, "points_0.json"), real_data)
-        scatter_points(dataset[i])
-        print(real_data["count"], real_data["ann_avg"], real_data["ann_std"])
+        # scatter_points(dataset[i])
+        # print(real_data["count"], real_data["ann_avg"], real_data["ann_std"])
 
 
 np.random.seed(0)

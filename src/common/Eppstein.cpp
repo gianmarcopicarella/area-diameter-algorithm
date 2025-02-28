@@ -11,8 +11,6 @@
 #define MOD(x, n) ((x) % (n))
 #define IDX(m, i, j, l, count) ((m) * (2 * (count) * (count)) + (i) * ((count) * (count)) + (j) * (count) + (l))
 
-// #define EARLY_STOP_OPT
-
 namespace MT
 {
     namespace
@@ -124,10 +122,11 @@ namespace MT
             const std::vector<CM::Point2>& somePoints,
             const size_t aMaxPointsCount,
             const long double aMaxArea,
-            const bool aShouldReconstructHull)
+            const bool aShouldReconstructHull,
+            bool aShouldEnableOptimizations)
     {
         std::optional<BenchmarkInfo> benchmarkInfo = std::nullopt;
-        return EppsteinAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aShouldReconstructHull);
+        return EppsteinAlgorithmWithBenchmarkInfo(somePoints, benchmarkInfo, aMaxPointsCount, aMaxArea, aShouldReconstructHull, aShouldEnableOptimizations);
     }
 
     std::optional<ConvexArea> EppsteinAlgorithmWithBenchmarkInfo(
@@ -135,7 +134,8 @@ namespace MT
             std::optional<BenchmarkInfo>& anOutBenchmarkInfoOpt,
             size_t aMaxPointsCount,
             long double aMaxArea,
-            bool aShouldReconstructHull)
+            bool aShouldReconstructHull,
+            bool aShouldEnableOptimizations)
     {
         const auto pointsCount = somePoints.size();
         if(pointsCount < 3 || aMaxPointsCount < 3)
@@ -186,12 +186,12 @@ namespace MT
                 minimumAreaIndex ^= 1;
                 hasFoundNewBestIndex = false;
             }
-#ifdef EARLY_STOP_OPT
-            if(resultOpt && resultOpt->myPointsCount > (sortedPoints.size() - i))
+
+            if(aShouldEnableOptimizations && resultOpt && resultOpt->myPointsCount > (sortedPoints.size() - i))
             {
                 break;
             }
-#endif
+
             std::fill_n(&minimumAreas[0] + IDX(2, minimumAreaIndex, 0, 0, pointsCount), pointsCount * pointsCount, 0);
             for (size_t m = 3; m < maxPointsCount + 1; ++m)
             {

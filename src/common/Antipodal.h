@@ -16,7 +16,8 @@ namespace MT
             size_t aMaxPointsCount = (size_t) - 1,
             long double aMaxArea = std::numeric_limits<long double>::max(),
             long double aMaxDiameter = std::numeric_limits<long double>::max(),
-            bool aShouldReconstructHull = false);
+            bool aShouldReconstructHull = false,
+            bool aShouldEnableOptimizations = false);
 
     std::optional<ConvexArea> AntipodalAlgorithmWithBenchmarkInfo(
             const std::vector<CM::Point2>& somePoints,
@@ -24,7 +25,8 @@ namespace MT
             size_t aMaxPointsCount = (size_t) - 1,
             long double aMaxArea = std::numeric_limits<long double>::max(),
             long double aMaxDiameter = std::numeric_limits<long double>::max(),
-            bool aShouldReconstructHull = false);
+            bool aShouldReconstructHull = false,
+            bool aShouldEnableOptimizations = false);
 }
 
 

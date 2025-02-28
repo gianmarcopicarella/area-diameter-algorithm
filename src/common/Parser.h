@@ -21,7 +21,7 @@ namespace MT
 {
     struct Solution
     {
-        std::string myId { "None" };
+        std::string myName { "None" };
         long double myMaxArea { std::numeric_limits<long double>::infinity() };
         long double myMaxDiameter { std::numeric_limits<long double>::infinity() };
         size_t myMaxCount { (size_t) - 1 };

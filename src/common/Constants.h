@@ -13,8 +13,20 @@ namespace MT
     {
         constexpr std::string_view PATH_TO_TESTS = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/tests";
         constexpr std::string_view PATH_TO_EXPERIMENTS = "/Users/gianmarcopicarella/master-thesis/src/../data/samples/experiments";
-        constexpr std::string_view PATH_TO_BENCHMARK_CUSTOM_REPORT = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_data_results.json";
-        constexpr std::string_view PATH_TO_BENCHMARK_BASE_REPORT = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_runs.json";
+        constexpr std::string_view PATH_TO_BENCHMARK_RUNS = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_runs.json";
+        constexpr std::string_view PATH_TO_BENCHMARK_RESULTS = "/Users/gianmarcopicarella/master-thesis/src/../data/reports/benchmark_results.json";
+
+        constexpr std::array<long double, 5> SYNTHETIC_BENCHMARK_DIAMETERS = {2,3,4,5,6};
+        constexpr std::array<long double, 1> REAL_BENCHMARK_DIAMETERS = {4.243};
+
+        constexpr size_t SYNTHETIC_BENCHMARK_ITERATIONS = 100;
+        constexpr size_t REAL_BENCHMARKS_COUNT = 10;
+
+        constexpr size_t DENSITIES_COUNT = 11;
+        constexpr size_t STDDEVS_COUNT = 13;
+
+        constexpr bool ENABLE_OPTIMIZATIONS_WITH_REAL_DATA = true;
+        constexpr bool ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA = false;
     }
 }
 
