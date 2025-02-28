@@ -40,7 +40,9 @@ $ python generate_plots.py
 
 Run the [Area-Selector](https://github.com/sjoerd-de-vries/Area-Selector)'s algorithms on real world samples
 ```bash
-$ cd ../external/Area-Selector/run
+$ cd ../external/Area-Selector
+$ pip install -r requirements.txt
+$ cd run
 $ python run_area_selector.py
 ```
 
