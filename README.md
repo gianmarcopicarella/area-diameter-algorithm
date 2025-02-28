@@ -18,7 +18,7 @@ Given a set of $2$-dimensional points $P$ find a subset $S\subseteq P$ with $|S|
 The formulation of this problem comes from the generalization of a real-world need in the field of oncology, specifically in breast cancer prognosis.
 
 ### Algorithms in this repository
-This repository provides an efficient implementation of [Eppstein's algorithm](https://link.springer.com/article/10.1007/BF02187823) and a novel algorithm designed to tackle the above-mentioned problem in polynomial time. Our new algorithm allows to specify the maximum allowed diameter a convex polygon must have to be considered valid. The algorithm exploits runs in O(kn^7) time and O(kn^5) space.
+This repository provides an efficient implementation of [Eppstein's algorithm](https://link.springer.com/article/10.1007/BF02187823) and a novel algorithm designed to tackle the above-mentioned problem in polynomial time. Our new algorithm allows to find a convex region having bounded area and diameter while maximizing the number of enclosed points in O(kn^7) time and O(kn^5) space.
 
 For more information about my project, please refer to the code in this repository and my [research proposal]().
 
