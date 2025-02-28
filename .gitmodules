@@ -16,4 +16,4 @@
 	url = https://github.com/Taywee/args.git
 [submodule "external/Area-Selector"]
 	path = external/Area-Selector
-	url = https://github.com/sjoerd-de-vries/Area-Selector.git
+	url = https://github.com/gianmarcopicarella/Area-Selector
