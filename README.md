@@ -21,28 +21,35 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
 ```
 
-Run the test suite and benchmark executables
+Run the test suite
 ```bash
 $ ./src/test
+```
+
+Run the benchmarks using synthetic and real data
+```bash
 $ ./src/bench
 ```
 
-Plot and save the solutions found during the benchmarking phase to data/plots (it takes ≈ 10 minutes on my machine)
+Plot and save the solutions found during the benchmarking phase
 ```bash
 $ cd ../python
 $ pip install -r requirements.txt
 $ python generate_plots.py
 ```
 
-Generate the LaTeX code presenting the results obtained during the benchmarking phase
+Run the [Area-Selector](https://github.com/sjoerd-de-vries/Area-Selector)'s algorithms on real world samples
+```bash
+$ cd ../external/Area-Selector/run
+$ python run_area_selector.py
+```
+
+Generate the LaTeX code presenting the results obtained (benchmarking + comparison with [Area-Selector](https://github.com/sjoerd-de-vries/Area-Selector)'s results for real-world samples)
 ```bash
   $ python latex.py
 ```
 
-Run the Antipodal algorithm with real-world data
-```bash
-$ python run_with_real_data.py
-```
+An extensive set of settings which can be adjusted to fit your needs can be found in src/CMakeLists.txt. The default settings are the ones used during our experiments.
 
 ## Generate the data yourself
 
