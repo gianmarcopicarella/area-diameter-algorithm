@@ -20,7 +20,7 @@ The formulation of this problem comes from the generalization of a real-world ne
 ### Algorithms in this repository
 This repository provides an efficient implementation of [Eppstein's algorithm](https://link.springer.com/article/10.1007/BF02187823) and a novel algorithm designed to tackle the above-mentioned problem in polynomial time. Our new algorithm allows to find a convex region having bounded area and diameter while maximizing the number of enclosed points in O(kn^7) time and O(kn^5) space.
 
-For more information about my project, please refer to the code in this repository and my [research proposal]().
+For more information about this project please refer to my [research proposal]() and the code in this repository.
 
 ## Getting Started
 
