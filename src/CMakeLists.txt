@@ -61,7 +61,7 @@ set(PATH_TO_RAW_DATASET ${PATH_TO_DATA}/raw/detections_subset.json) # Raw datase
 set(PATH_TO_BENCHMARK_RUNS ${PATH_TO_REPORTS}/benchmark_runs.json) # Contains the data related to the program execution during benchmarks (time, memory, etc..)
 set(PATH_TO_BENCHMARK_RESULTS ${PATH_TO_REPORTS}/benchmark_results.json) # Contains the data related to the solutions found during benchmarks with our solutions
 set(PATH_TO_AREA_SELECTOR_RESULTS ${PATH_TO_REPORTS}/area_selector_results.json) # Contains the data related to the solutions found by the Area-Selector method
-set(PATH_TO_LATEX_REPORT ${PATH_TO_DATA}/latex/main.tex) # Contains a LaTeX document presenting all the data collected during the experiments
+set(PATH_TO_LATEX ${PATH_TO_DATA}/latex) # Contains the LaTeX report presenting all the data collected during the experiments
 
 # [Settings]
 # Density and Standard deviation

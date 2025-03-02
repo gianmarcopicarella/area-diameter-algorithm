@@ -77,7 +77,7 @@ def process_benchmark_data():
                 data["solutions_data"][key][distribution][algorithm] = dict()
             if diameter not in data["solutions_data"][key][distribution][algorithm]:
                 data["solutions_data"][key][distribution][algorithm][diameter] = \
-                    {"count": [], "area": [], "diameter": []}
+                    {"count": [], "area": [], "diameter": [], "indices": []}
 
             entry = data["solutions_data"][key][distribution][algorithm][diameter]
             counts, areas, diameters = [], [], []
@@ -102,6 +102,8 @@ def process_benchmark_data():
 
                 diameters.append(float(np.linalg.norm(fdp - sdp)))
 
+                entry["indices"].append((index, convex_area["hull_indices"]))
+
             entry["count"].append((index, float(np.mean(counts)), float(np.std(counts))))
             entry["area"].append((index, float(np.mean(areas)), float(np.std(areas))))
             entry["diameter"].append((index, float(np.mean(diameters)), float(np.std(diameters))))
@@ -110,7 +112,7 @@ def process_benchmark_data():
 def generate_latex_comparison_table():
     table = \
         r"""
-\begin{table}[h]
+\begin{table}
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
@@ -198,6 +200,85 @@ def generate_latex_plot(title, x_label, y_label, y_max, y_mode, x_values, rows, 
     return plot.replace("<ADD_ROWS_HERE>", rows)
 
 
+def generate_real_data_latex_plots():
+    base_plot = \
+        r"""
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                grid=major,
+                width=8cm,
+                height=8cm,
+                axis equal
+            ]
+            \addplot[thick, <OUR_COLOR>, fill=<OUR_COLOR>!20, opacity=1]
+            coordinates {<OUR_POLYGON_VERTICES>};
+            \addplot[only marks, mark=*, color=<OUR_COLOR>, mark size=0.6pt]
+            coordinates {<OUR_POLYGON_VERTICES>};
+            \addplot[only marks, mark=*, color=black, mark size=0.6pt] table {<PATH_TO_DAT_FILE>};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                grid=major,
+                width=8cm,
+                height=8cm,
+                axis equal
+            ]
+            \addplot[thick, <AREA_SELECTOR_COLOR>, fill=<AREA_SELECTOR_COLOR>!20, opacity=1]
+            coordinates {<AREA_SELECTOR_POLYGON_VERTICES>};
+            \addplot[only marks, mark=*, color=<AREA_SELECTOR_COLOR>, mark size=0.6pt]
+            coordinates {<AREA_SELECTOR_POLYGON_VERTICES>};
+            \addplot[only marks, mark=*, color=black, mark size=0.6pt] table {<PATH_TO_DAT_FILE>};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+    \caption{Convex area found by the antipodal algorithm (a) and the area selector (b) for point set $<POINT_SET_INDEX>$.}
+\end{figure}
+    """
+
+    result = ""
+
+    our_data = data["solutions_data"]["ours"]["Real"]["Antipodal"]["0"]
+    area_selector_data = data["solutions_data"]["area_selector"]["Real"]["AreaSelector"]["0"]
+
+    for i in range(constants.REAL_BENCHMARKS_COUNT):
+        path_to_points = os.path.join(constants.PATH_TO_EXPERIMENTS, "real", str(i), "points_0.json")
+        points = utils.read_json(path_to_points)
+        dat_format_text = "\n".join(f"{p['x']} {p['y']}"
+                                    for j, p in enumerate(points["points"]))
+                                    # if j not in our_data["indices"][i][1] and j not in area_selector_data["indices"][i][1])
+        path_to_dat = os.path.join(constants.PATH_TO_LATEX, "dat", "real", str(i))
+        utils.prepare_path(path_to_dat)
+        with open(os.path.join(path_to_dat, "points_0.dat"), "w") as file:
+            file.write(dat_format_text)
+
+        plot = base_plot.replace("<PATH_TO_DAT_FILE>", "dat/real/" + str(i) + "/points_0.dat")
+
+        our_polygon_string = " ".join(f"({points['points'][j]['x']}, {points['points'][j]['y']})"
+                                      for j in our_data["indices"][i][1] + [our_data["indices"][i][1][0]])
+        plot = plot.replace("<OUR_POLYGON_VERTICES>", our_polygon_string)
+        area_selector_polygon_string = " ".join(f"({points['points'][j]['x']}, {points['points'][j]['y']})"
+                                                for j in area_selector_data["indices"][i][1] + [area_selector_data["indices"][i][1][0]])
+        plot = plot.replace("<AREA_SELECTOR_POLYGON_VERTICES>", area_selector_polygon_string)
+        plot = plot.replace("<OUR_COLOR>", "red")
+        plot = plot.replace("<AREA_SELECTOR_COLOR>", "cyan")
+        plot = plot.replace("<POINT_SET_INDEX>", str(i))
+
+        result += plot + "\n"
+
+    return result
+
+
 def unroll(sequence, dist_key):
     if dist_key == "Uniform":
         return " ".join(
@@ -245,6 +326,7 @@ latex = \
     r"""
 \documentclass{article}
 \usepackage{pgfplots}
+\usepackage{subcaption}
 \usepackage{pgfplotstable}
 \usepackage{amsmath}
 \usepackage{comment}
@@ -261,6 +343,9 @@ latex = \
 \pgfplotsset{compat=1.18}
 \usepgfplotslibrary{statistics}
 \usepgflibrary{plotmarks}
+
+\usepgfplotslibrary{external} 
+\tikzexternalize
 
 \begin{document}""" + "\n"
 
@@ -344,15 +429,16 @@ latex += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
                              ",".join(str(x) for x in constants.STD_VALUES),
                              generate_rows("solutions_data", "Gaussian", "diameter")) + "\n"
 
-latex += r"\section{Comparison of the Antipodal Approach and \cite{umcmodel} Using Real Data}" + "\n"
+latex += r"\section{Comparison of the antipodal algorithm and the area selector in \cite{umcmodel} when applied to real data}" + "\n"
 latex += generate_latex_comparison_table()
+latex += generate_real_data_latex_plots()
 latex += \
-r"""
+    r"""
 \clearpage
 \bibliography{sources}
 \bibliographystyle{IEEEtran}
 \end{document}
 """
 
-with open(constants.PATH_TO_LATEX_REPORT, "w") as f:
+with open(os.path.join(constants.PATH_TO_LATEX, "main.tex"), "w") as f:
     f.write(latex)
