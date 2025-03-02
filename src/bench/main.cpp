@@ -60,7 +60,7 @@ long double GetMaxDiameter(const benchmark::State& aState)
 template<Data D, Algorithm A>
 void BM_Template(benchmark::State& aState, bool aShouldUseOptimizations)
 {
-    constexpr auto maxAllowedArea = 4.l; // 2 mm^2
+    constexpr auto maxAllowedArea = 4.l; // 4 mm^2
     constexpr auto maxAllowedPoints = (size_t) - 1; // No limit
     constexpr auto reconstructHull = true;
 
