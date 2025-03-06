@@ -1,13 +1,6 @@
 # Master Thesis: Finding dense and well-shaped convex clusters in 2d point sets
 
-<div style="display: flex; justify-content: space-between;">
-
-  <img src="https://github.com/gianmarcopicarella/master-thesis/blob/e62b43d1df0f0b7de4b1550c9c84873b0940b9a3/data/ap_0.pdf" alt="Image 1" width="23%" />
-  <img src="https://github.com/gianmarcopicarella/master-thesis/blob/e62b43d1df0f0b7de4b1550c9c84873b0940b9a3/data/ap_1.pdf" alt="Image 2" width="23%" />
-  <img src="https://github.com/gianmarcopicarella/master-thesis/blob/e62b43d1df0f0b7de4b1550c9c84873b0940b9a3/data/ap_1.pdf" alt="Image 3" width="23%" />
-  <img src="https://github.com/gianmarcopicarella/master-thesis/blob/e62b43d1df0f0b7de4b1550c9c84873b0940b9a3/data/ap_1.pdf" alt="Image 4" width="23%" />
-
-</div>
+![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/59369825b71c7e77b649cc473bb48df3fcedce0f/data/example_areas.png)
 
 ## Introduction
 
