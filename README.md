@@ -34,11 +34,44 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
 ```
 
-## Example Output
+Run the test suite
 
+```sh
+$ ./src/test
+```
 
+Run the benchmarks using synthetic data
+```bash
+$ ./src/bench
+```
 
+Plot the solutions found during the benchmarking phase
 
+```
+$ cd ../python
+$ pip install -r requirements.txt
+$ python generate_solution_plots.py
+```
+
+Run the benchmark using real-world data
+```bash
+$ cd ../external/Area-Selector
+$ pip install -r requirements.txt
+$ python run/quality_of_results_comparison.py
+```
+
+## Generating Data
+
+The dataset used for experiments and real-world runs is available in `data/samples`. However, if you wish to generate the dataset from scratch, follow these steps:
+
+1. Download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) and place it in the `data/raw` directory.
+2. Run the following command to generate the samples:
+
+   ```bash
+   $ python generate_input_samples.py
+   ```
+
+If any settings affecting data generation are modified, the script should be rerun to update the dataset accordingly.
 
 ## License
 
