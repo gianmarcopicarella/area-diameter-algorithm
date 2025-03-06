@@ -47,14 +47,7 @@ std::string ResultName(const benchmark::State& aState, const size_t aFileIndex)
 template<Data D>
 long double GetMaxDiameter(const benchmark::State& aState)
 {
-    if constexpr(D == Data::REAL)
-    {
-        return MT::Constants::REAL_BENCHMARK_DIAMETERS[aState.range(1)];
-    }
-    else
-    {
-        return MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS[aState.range(1)];
-    }
+    return MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS[aState.range(1)];
 }
 
 template<Data D, Algorithm A>
@@ -177,14 +170,6 @@ BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::AN
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, Eppstein_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1)
 ->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
-
-
-// 3) Real world data [10 different samples] NO TIMEOUT
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::REAL, Algorithm::ANTIPODAL, Antipodal_Real, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_REAL_DATA)
-->Name("Antipodal/Real")->Unit(benchmark::kMillisecond)
-->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::REAL_BENCHMARKS_COUNT - 1, 1),
-                benchmark::CreateDenseRange(0, MT::Constants::REAL_BENCHMARK_DIAMETERS.size() - 1, 1) })
-->Iterations(1);
 
 
 int main(int argc, char** argv)

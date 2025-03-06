@@ -395,7 +395,7 @@ namespace MT
             CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsInTriangleCache);
         }
 
-        std::vector<std::unordered_map<size_t, Entry>> cache {somePoints.size(),
+        std::vector<std::unordered_map<size_t, Entry>> cache {std::min(somePoints.size(), aMaxPointsCount),
                                                               std::unordered_map<size_t, Entry>{}};
         std::optional<ConvexArea> resultOpt;
         const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;

@@ -11,6 +11,7 @@ set(BENCHMARK_ENABLE_TESTING OFF CACHE INTERNAL "")
 set(ARGS_BUILD_EXAMPLE OFF CACHE INTERNAL "")
 set(ARGS_BUILD_UNITTESTS OFF CACHE INTERNAL "")
 set(JSON_BuildTests OFF CACHE INTERNAL "")
+set(PYTHON_EXECUTABLE /usr/bin/python3)
 
 # dependencies
 add_subdirectory(external/googletest)

@@ -9,7 +9,7 @@ enum class Data
 {
     SYNTHETIC_UNIFORM = 0,
     SYNTHETIC_GAUSSIAN,
-    REAL
+    COUNT
 };
 
 enum class Algorithm

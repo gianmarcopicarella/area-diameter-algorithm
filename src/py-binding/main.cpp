@@ -20,11 +20,12 @@ py::object EppsteinAlgorithmWithCopy(
         const py::list& points,
         const size_t maxPointsCount,
         const long double maxAllowedArea = std::numeric_limits<long double>::infinity(),
-        const bool shouldReconstructHull = false)
+        const bool shouldReconstructHull = false,
+        const bool shouldEnableOptimizations = false)
 {
     std::vector<MT::CM::Point2> wrappedPoints;
     PointsListToVector(points, wrappedPoints);
-    const auto& result = MT::EppsteinAlgorithm(wrappedPoints, maxPointsCount, maxAllowedArea, shouldReconstructHull);
+    const auto& result = MT::EppsteinAlgorithm(wrappedPoints, maxPointsCount, maxAllowedArea, shouldReconstructHull, shouldEnableOptimizations);
     if(result)
     {
         py::tuple pyResult {3};
@@ -44,12 +45,13 @@ py::object AntipodalAlgorithmWithCopy(
         const size_t maxPointsCount,
         const long double maxAllowedArea = std::numeric_limits<long double>::infinity(),
         const long double maxAllowedDiameter = std::numeric_limits<long double>::infinity(),
-        const bool shouldReconstructHull = false)
+        const bool shouldReconstructHull = false,
+        const bool shouldEnableOptimizations = false)
 {
     std::vector<MT::CM::Point2> wrappedPoints;
     PointsListToVector(points, wrappedPoints);
     const auto& result = MT::AntipodalAlgorithm(
-            wrappedPoints, maxPointsCount, maxAllowedArea, maxAllowedDiameter, shouldReconstructHull);
+            wrappedPoints, maxPointsCount, maxAllowedArea, maxAllowedDiameter, shouldReconstructHull, shouldEnableOptimizations);
     if(result)
     {
         py::tuple pyResult {4};
@@ -74,14 +76,16 @@ PYBIND11_MODULE(thesis, module)
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
-          py::arg("shouldReconstructHull") = false);
+          py::arg("shouldReconstructHull") = false,
+          py::arg("shouldEnableOptimizations") = false);
 
     module.def("Antipodal", &AntipodalAlgorithmWithCopy, "Antipodal algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
           py::arg("maxAllowedDiameter") = std::numeric_limits<long double>::infinity(),
-          py::arg("shouldReconstructHull") = false);
+          py::arg("shouldReconstructHull") = false,
+          py::arg("shouldEnableOptimizations") = false);
 
     module.attr("__version__") = "dev";
 }
