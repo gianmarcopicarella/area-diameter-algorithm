@@ -19,8 +19,7 @@ The optimal convex areas found by our algorithm run with constraints $a_{\text{m
 ├── data/               # Input samples, reports and LaTeX data
 ├── external/           # Submodules used in the project
 ├── python/             # Python scripts used for data generation and reporting
-├── src/                # C++ codebase 
-└── README.md           # This file
+└── src/                # C++ codebase
 ```
 
 ## Requirements
