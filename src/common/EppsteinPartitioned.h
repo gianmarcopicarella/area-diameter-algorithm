@@ -1,8 +1,0 @@
-//
-// Created by Gianmarco Picarella on 10/02/25.
-//
-
-#ifndef MASTER_THESIS_GRIDPARTITION_H
-#define MASTER_THESIS_GRIDPARTITION_H
-
-#endif //MASTER_THESIS_GRIDPARTITION_H
