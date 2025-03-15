@@ -12,9 +12,8 @@
 #define MOD(x, n) ((x) % (n))
 #define NEXT(x, n) ((x + 1) % (n))
 #define NEXT_CW_IDX(idx, seq) (((idx) + 1) % (seq.size()))
-#define PREV_CW_IDX(idx, seq) (((idx) - 1) % (seq.size()))
 
-//#define CHECK_POINTS_COUNT_CORRECTNESS
+// #define CHECK_POINTS_COUNT_CORRECTNESS
 
 namespace MT
 {
@@ -116,46 +115,44 @@ namespace MT
 
                 if(CM::AreCollinear(pi, pjPrev, pj))
                 {
-                    anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex] = 1 + anOutCache.myCollinearPointsCount[pjPrev.myIndex][pi.myIndex];
-                    anOutCache.myCollinearPointsCount[pj.myIndex][pi.myIndex] = anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex];
+                    anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex] = 1 + anOutCache.myCollinearPointsCount[pi.myIndex][pjPrev.myIndex];
+                    if(pj.myX == pi.myX) continue;
 
-                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] =
-                            anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex] +
-                            anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
-
-                    if(pj.myX != pjPrev.myX)
-                    {
-                        anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] -= anOutCache.myPointsRightBelowCount[pjPrev.myIndex];
-                    }
+                    const auto a = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pjPrev.myIndex];
+                    const auto b = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pj.myIndex];
+                    const auto c = anOutCache.myPointsRightBelowCount[pjPrev.myIndex];
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = a + b + c;
                 }
                 else if(pj.myX > pjPrev.myX)
                 {
-                    if(pj.myX == pi.myX) continue;
-                    const auto a = anOutCache.myCollinearPointsCount[pjPrev.myIndex][pi.myIndex];
-                    const auto b = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
-                    const auto c = anOutCache.myCollinearPointsCount[pj.myIndex][pjPrev.myIndex];
-                    const auto d = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex];
-                    const auto f = anOutCache.myPointsRightBelowCount[pj.myIndex];
+                    if(pj.myX == pi.myX || pjPrev.myX == pi.myX) continue;
+                    const auto a = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pjPrev.myIndex];
+                    const auto b = anOutCache.myCollinearPointsCount[pi.myIndex][pjPrev.myIndex];
+                    const auto c = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex];
+                    const auto d = anOutCache.myPointsRightBelowCount[pj.myIndex];
 
-                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = (a + b) - (c + d) + f;
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = (a + b) - c - d;
                 }
                 else if(pj.myX < pjPrev.myX)
                 {
                     if(pj.myX == pi.myX) continue;
-                    const auto a = anOutCache.myCollinearPointsCount[pjPrev.myIndex][pi.myIndex];
-                    const auto b = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
-                    const auto c = anOutCache.myCollinearPointsCount[pj.myIndex][pjPrev.myIndex];
-                    const auto d = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex];
+                    const auto a = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pjPrev.myIndex];
+                    const auto b = anOutCache.myCollinearPointsCount[pi.myIndex][pjPrev.myIndex];
+                    const auto c = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pj.myIndex];
+                    const auto d = anOutCache.myCollinearPointsCount[pjPrev.myIndex][pj.myIndex];
                     const auto e = anOutCache.myPointsRightBelowCount[pjPrev.myIndex];
 
-                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = (a + b) + (c + d) + 1 - e;
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = a + b + c + d + e;
+                    if(pjPrev.myX != pi.myX) anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] += 1;
                 }
                 else
                 {
-                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex] + 1;
+                    anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex] = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pi.myIndex];
                 }
 
+                anOutCache.myCollinearPointsCount[pj.myIndex][pi.myIndex] = anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex];
                 anOutCache.myPointsBelowSegmentCount[pi.myIndex][pj.myIndex] = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pi.myIndex];
+
 #ifdef CHECK_POINTS_COUNT_CORRECTNESS
                 // Check that collinear counts are correct
                 {
@@ -178,9 +175,9 @@ namespace MT
                     const auto myCollinearCount = anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex];
                     if(myCollinearCount != collinearCount)
                     {
-                        // throw std::runtime_error("WTF coll!!!");
                         std::cout << "wtf: " << collinearCount << ", " << myCollinearCount <<std::endl;
                         std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << std::endl;
+                        throw std::runtime_error("WTF coll!!!");
                     }
                     assert(collinearCount == myCollinearCount);
                 }
@@ -192,21 +189,45 @@ namespace MT
                     {
                         if( p.myIndex != pi.myIndex &&
                             p.myIndex != pj.myIndex &&
-                            p.myX >= pj.myX && p.myX <= pi.myX &&
+                            p.myX > pj.myX && p.myX < pi.myX &&
                             CM::Orientation(pi, pj, p) == CM::ORIENTATION::LEFT_TURN)
                         {
-                            // std::cout << pi.myIndex << ", " << pj.myIndex << ", " << p.myIndex << std::endl;
+                            // std::cout << "(counter)" << pi.myIndex << ", " << pj.myIndex << ", " << p.myIndex << std::endl;
                             ++belowCount;
                         }
                     }
 
                     //std::cout << "----" << std::endl;
 
-                    const auto myBelowCount = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pj.myIndex];
+                    auto myBelowCount { 0 };
+                    std::string branch;
+                    if(pi.myX == pj.myX)
+                    {
+                        if(pi.myY < pj.myY)
+                        {
+                            myBelowCount =
+                                    anOutCache.myPointsRightBelowCount[pj.myIndex] -
+                                    (anOutCache.myPointsRightBelowCount[pi.myIndex] + 1);
+                            branch = "1";
+                        }
+                        else
+                        {
+                            myBelowCount =
+                                    anOutCache.myPointsRightBelowCount[pi.myIndex] -
+                                    (anOutCache.myPointsRightBelowCount[pj.myIndex] + 1);
+                            branch = "2";
+                        }
+                    }
+                    else
+                    {
+                        myBelowCount = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pj.myIndex];
+                        branch = "3";
+                    }
+
                     if(myBelowCount != belowCount)
                     {
-                        std::cout << "wtf: " << belowCount << ", " << myBelowCount <<std::endl;
-                        std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << std::endl;
+                        std::cout << "wtf: " << belowCount << ", " << myBelowCount << " branch=" << branch << std::endl;
+                        std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << ", " << (pi.myX == pjPrev.myX) << std::endl;
                         throw std::runtime_error("WTF below!!!");
                     }
                     assert(belowCount == myBelowCount);
@@ -256,27 +277,29 @@ namespace MT
         const auto mi = points[1].myIndex;
         const auto ri = points[2].myIndex;
 
-        const auto orientation = CM::Orientation(points[2], points[0], points[1]) == CM::ORIENTATION::LEFT_TURN;
-        const auto overlap = points[0].myX == points[1].myX || points[1].myX == points[2].myX;
-
-        switch (overlap << 1 | orientation)
+        if(points[0].myX == points[1].myX)
         {
-            case 0: return  aCache.myPointsBelowSegmentCount[ri][mi] + aCache.myPointsBelowSegmentCount[mi][li] -
-                            aCache.myPointsBelowSegmentCount[ri][li] - aCache.myCollinearPointsCount[ri][li] -
-                            aCache.myPointsRightBelowCount[mi];
-
-            case 1: return  aCache.myPointsBelowSegmentCount[ri][li] - aCache.myPointsBelowSegmentCount[ri][mi] -
-                            aCache.myPointsBelowSegmentCount[mi][li] - aCache.myCollinearPointsCount[ri][mi] -
-                            aCache.myCollinearPointsCount[mi][li] + aCache.myPointsRightBelowCount[mi] - 1;
-
-            case 2: return  aCache.myPointsBelowSegmentCount[ri][mi] - aCache.myPointsBelowSegmentCount[ri][li] -
-                            aCache.myCollinearPointsCount[ri][li] - aCache.myPointsRightBelowCount[mi] +
-                            aCache.myPointsRightBelowCount[li];
-
-            default:
-                return  aCache.myPointsBelowSegmentCount[ri][li] - aCache.myPointsBelowSegmentCount[ri][mi] -
-                        aCache.myPointsBelowSegmentCount[mi][li] - aCache.myCollinearPointsCount[ri][mi] -
-                        aCache.myCollinearPointsCount[mi][li] - 1;
+            return  aCache.myPointsBelowSegmentCount[mi][ri] -
+                    aCache.myPointsBelowSegmentCount[li][ri] -
+                    aCache.myCollinearPointsCount[li][ri];
+        }
+        else if(points[1].myX == points[2].myX)
+        {
+            return  aCache.myPointsBelowSegmentCount[li][ri] -
+                    aCache.myPointsBelowSegmentCount[li][mi] -
+                    aCache.myCollinearPointsCount[li][mi];
+        }
+        else if(CM::Orientation(points[2], points[0], points[1]) == CM::ORIENTATION::LEFT_TURN)
+        {
+            return  aCache.myPointsBelowSegmentCount[li][ri] - aCache.myPointsBelowSegmentCount[li][mi] -
+                    aCache.myPointsBelowSegmentCount[mi][ri] - aCache.myCollinearPointsCount[li][mi] -
+                    aCache.myCollinearPointsCount[mi][ri] - aCache.myPointsRightBelowCount[mi] - 1;
+        }
+        else
+        {
+            return  aCache.myPointsBelowSegmentCount[li][mi] + aCache.myPointsBelowSegmentCount[mi][ri] +
+                    aCache.myPointsRightBelowCount[mi] - aCache.myPointsBelowSegmentCount[li][ri] -
+                    aCache.myCollinearPointsCount[li][ri];
         }
     }
 
