@@ -13,7 +13,7 @@
 #define NEXT(x, n) ((x + 1) % (n))
 #define NEXT_CW_IDX(idx, seq) (((idx) + 1) % (seq.size()))
 
-// #define CHECK_POINTS_COUNT_CORRECTNESS
+//#define CHECK_POINTS_COUNT_CORRECTNESS
 
 namespace MT
 {
@@ -87,22 +87,16 @@ namespace MT
         std::vector<CM::Point2> sortedPoints(somePoints);
         std::sort(sortedPoints.begin(), sortedPoints.end(), CM::SortPointsHorizontally);
 
-        for(size_t i = 1; i < sortedPoints.size() - 1; ++i)
-        {
-            const auto& current = sortedPoints[i];
-            const auto& previous = sortedPoints[i - 1];
-            assert(!(current.myX == previous.myX && current.myY == previous.myY && current.myIndex != previous.myIndex));
-            if(current.myX == previous.myX)
-            {
-                anOutCache.myPointsRightBelowCount[current.myIndex] = 1 + anOutCache.myPointsRightBelowCount[previous.myIndex];
-            }
-        }
-
         for (int i = 1; i < sortedPoints.size(); ++i)
         {
             const auto& pi = sortedPoints[i];
             const auto& clockwisePoints = someClockWiseSortedPoints[pi.myIndex];
             const auto startIdx = locGetFirstClockWiseLeftIndex(clockwisePoints, pi);
+
+            if(pi.myX == sortedPoints[i - 1].myX)
+            {
+                anOutCache.myPointsRightBelowCount[pi.myIndex] = 1 + anOutCache.myPointsRightBelowCount[sortedPoints[i - 1].myIndex];
+            }
 
             for(int j = NEXT_CW_IDX(startIdx, clockwisePoints), jp = startIdx;
                 j != MOD(startIdx + i, clockwisePoints.size());
@@ -125,7 +119,7 @@ namespace MT
                 }
                 else if(pj.myX > pjPrev.myX)
                 {
-                    if(pj.myX == pi.myX || pjPrev.myX == pi.myX) continue;
+                    if(pj.myX == pi.myX) continue;
                     const auto a = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pjPrev.myIndex];
                     const auto b = anOutCache.myCollinearPointsCount[pi.myIndex][pjPrev.myIndex];
                     const auto c = anOutCache.myPointsBelowSegmentCount[pj.myIndex][pjPrev.myIndex];
@@ -135,7 +129,6 @@ namespace MT
                 }
                 else if(pj.myX < pjPrev.myX)
                 {
-                    if(pj.myX == pi.myX) continue;
                     const auto a = anOutCache.myPointsBelowSegmentCount[pi.myIndex][pjPrev.myIndex];
                     const auto b = anOutCache.myCollinearPointsCount[pi.myIndex][pjPrev.myIndex];
                     const auto c = anOutCache.myPointsBelowSegmentCount[pjPrev.myIndex][pj.myIndex];
