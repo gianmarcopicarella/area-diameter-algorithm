@@ -149,6 +149,12 @@ namespace MT
         {
             const auto triangleArea = std::fabsl(CM::SignedArea(aFirstPoint, aSecondPoint, aThirdPoint));
             const auto triangleCount = 1 + PointsInTriangle(aFirstPoint, aSecondPoint, aThirdPoint, aPointsCountCache);
+
+            if(aCurrentCount + triangleCount >= someOutCaches.size())
+            {
+                return;
+            }
+
             size_t i;
             if constexpr (isLeftSide)
             {
@@ -163,6 +169,7 @@ namespace MT
                 if( CM::Orientation(somePoints[i], aThirdPoint, aSecondPoint) >= CM::ORIENTATION::COLLINEAR &&
                     CM::Orientation(somePoints[i], aThirdPoint, aFirstPoint) >= CM::ORIENTATION::COLLINEAR)
                 {
+                    assert(vv < someOutCaches.size());
                     // std::cout << aCurrentCount << ", " << triangleCount << ", " << (aCurrentCount + triangleCount) << std::endl;
                     auto& cache = someOutCaches[aCurrentCount + triangleCount];
                     if constexpr (isLeftSide)
@@ -395,7 +402,7 @@ namespace MT
             CountPointsBelowAllSegments(somePoints, clockwiseSortedPoints, pointsInTriangleCache);
         }
 
-        std::vector<std::unordered_map<size_t, Entry>> cache {std::min(somePoints.size(), aMaxPointsCount),
+        std::vector<std::unordered_map<size_t, Entry>> cache {std::min(somePoints.size() + 1, aMaxPointsCount + 1),
                                                               std::unordered_map<size_t, Entry>{}};
         std::optional<ConvexArea> resultOpt;
         const auto maxAllowedDiameter2 = aMaxDiameter * aMaxDiameter;
