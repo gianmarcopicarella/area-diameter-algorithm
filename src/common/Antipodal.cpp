@@ -169,7 +169,6 @@ namespace MT
                 if( CM::Orientation(somePoints[i], aThirdPoint, aSecondPoint) >= CM::ORIENTATION::COLLINEAR &&
                     CM::Orientation(somePoints[i], aThirdPoint, aFirstPoint) >= CM::ORIENTATION::COLLINEAR)
                 {
-                    assert(vv < someOutCaches.size());
                     // std::cout << aCurrentCount << ", " << triangleCount << ", " << (aCurrentCount + triangleCount) << std::endl;
                     auto& cache = someOutCaches[aCurrentCount + triangleCount];
                     if constexpr (isLeftSide)
