@@ -59,6 +59,8 @@ namespace MT
         long double Angle(const CM::Point2& aReferencePoint, const CM::Point2& aPoint);
 
         long double ProjectedDistance2(const CM::Point2& aStartPoint, const CM::Point2& anEndPoint, const CM::Point2& aPoint);
+
+        long double PointLinePseudoDistance(const CM::Point2& aStartPoint, const CM::Point2& anEndPoint, const CM::Point2& aPoint);
     }
 }
 

@@ -89,6 +89,12 @@ namespace MT
                 return std::clamp(result, 0.l, dist2);
             }
         }
+
+        long double PointLinePseudoDistance(const CM::Point2& aStartPoint, const CM::Point2& anEndPoint, const CM::Point2& aPoint)
+        {
+            return  std::fabsl( (aPoint.myX - aStartPoint.myX) * (-anEndPoint.myY + aStartPoint.myY) +
+                                (aPoint.myY - aStartPoint.myY) * (anEndPoint.myX - aStartPoint.myX));
+        }
     }
 }
 

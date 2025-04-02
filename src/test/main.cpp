@@ -2,6 +2,7 @@
 
 #include "../common/Eppstein.h"
 #include "../common/Antipodal.h"
+#include "../common/AntipodalOptimized.h"
 #include "../common/Parser.h"
 #include "../common/Constants.h"
 
@@ -107,12 +108,23 @@ TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
                 EXPECT_EQ(result->myDiameterOpt, antipodalResult->myDiameterOpt);
                 EXPECT_FLOAT_EQ(result->myHullArea, antipodalResult->myHullArea);
                 CheckHullIndices(result->myHullIndices, antipodalResult->myHullIndices);
+
+                // Optimized antipodal algorithm
+                const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter + epsilon, reconstructHull);
+                EXPECT_EQ(result->myPointsCount, optAntipodalResult->myPointsCount);
+                EXPECT_EQ(result->myDiameterOpt, optAntipodalResult->myDiameterOpt);
+                EXPECT_FLOAT_EQ(result->myHullArea, optAntipodalResult->myHullArea);
+                // Missing hull indices test
             }
             else
             {
                 constexpr auto maxDiameter = std::numeric_limits<long double>::infinity();
                 const auto antipodalResult = MT::AntipodalAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
                 EXPECT_EQ(result.has_value(), antipodalResult.has_value());
+
+                // Optimized antipodal algorithm
+                const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
+                EXPECT_EQ(result.has_value(), optAntipodalResult.has_value());
             }
 
 #ifdef VERBOSE
