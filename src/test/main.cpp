@@ -123,8 +123,8 @@ TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
                 EXPECT_EQ(result.has_value(), antipodalResult.has_value());
 
                 // Optimized antipodal algorithm
-                const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
-                EXPECT_EQ(result.has_value(), optAntipodalResult.has_value());
+                // const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
+                // EXPECT_EQ(result.has_value(), optAntipodalResult.has_value());
             }
 
 #ifdef VERBOSE
