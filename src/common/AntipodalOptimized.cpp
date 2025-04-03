@@ -14,10 +14,10 @@ namespace MT
     {
         enum SIDE
         {
-            LEFT_FROM_LEFT = 0,
-            LEFT_FROM_RIGHT,
-            RIGHT_FROM_RIGHT,
-            RIGHT_FROM_LEFT
+            LL = 0,
+            LR,
+            RR,
+            RL
         };
 
         constexpr auto INVALID_INDEX = (size_t) - 1;
@@ -135,13 +135,13 @@ namespace MT
             {
                 const auto& pl = someLeftPoints[i];
                 const auto key = KEY(startPoint.myIndex, endPoint.myIndex, pl.myIndex, aTotalPointsCount);
-                someOutCaches[0].emplace(key, Entry {0, 0, i, INVALID_INDEX, 0, SIDE::LEFT_FROM_LEFT});
+                someOutCaches[0].emplace(key, Entry {0, 0, i, INVALID_INDEX, 0, SIDE::LL});
             }
             for(size_t i = 1; i < someRightPoints.size(); ++i)
             {
                 const auto& pr = someRightPoints[i];
                 const auto key = KEY(endPoint.myIndex, startPoint.myIndex, pr.myIndex, aTotalPointsCount);
-                someOutCaches[0].emplace(key, Entry {0, 0, i, INVALID_INDEX, 0, SIDE::RIGHT_FROM_RIGHT});
+                someOutCaches[0].emplace(key, Entry {0, 0, i, INVALID_INDEX, 0, SIDE::RR});
             }
 
             for (size_t k = 0; k < maxAllowedPoints + 1; ++k)
@@ -149,8 +149,8 @@ namespace MT
                 for (const auto& pair : someOutCaches[k])
                 {
                     const auto& entry = pair.second;
-                    if( (entry.side >= SIDE::RIGHT_FROM_RIGHT && someRightPoints[entry.ss].myIndex == startPoint.myIndex) ||
-                        (entry.side <= SIDE::LEFT_FROM_RIGHT && someLeftPoints[entry.ss].myIndex == endPoint.myIndex))
+                    if( (entry.side >= SIDE::RR && someRightPoints[entry.ss].myIndex == startPoint.myIndex) ||
+                        (entry.side <= SIDE::LR && someLeftPoints[entry.ss].myIndex == endPoint.myIndex))
                     {
                         if(k > 0 && (!resultOpt || k > resultOpt->myPointsCount || (resultOpt->myPointsCount == k && entry.area < resultOpt->myHullArea)))
                         {
@@ -159,7 +159,7 @@ namespace MT
                         continue;
                     }
 
-                    if(entry.side >= SIDE::RIGHT_FROM_RIGHT) // right
+                    if(entry.side >= SIDE::RR) // right
                     {
                         const auto& l = someLeftPoints[entry.o];
                         const auto& r = someRightPoints[entry.s];
@@ -192,13 +192,13 @@ namespace MT
                                     auto nextAreaIter = cache.find(key);
                                     if(nextAreaIter == cache.end())
                                     {
-                                        cache.emplace(key, Entry{entry.o, entry.ss, i, entry.s, currentArea, SIDE::RIGHT_FROM_RIGHT});
+                                        cache.emplace(key, Entry{entry.o, entry.ss, i, entry.s, currentArea, SIDE::RR});
                                     }
                                     else if(currentArea < nextAreaIter->second.area)
                                     {
                                         nextAreaIter->second.area = currentArea;
                                         nextAreaIter->second.prev = entry.s;
-                                        nextAreaIter->second.side = SIDE::RIGHT_FROM_RIGHT;
+                                        nextAreaIter->second.side = SIDE::RR;
                                     }
                                 }
                             }
@@ -220,13 +220,13 @@ namespace MT
                                     auto nextAreaIter = cache.find(key);
                                     if (nextAreaIter == cache.end())
                                     {
-                                        cache.emplace(key, Entry{entry.ss, entry.o, i, entry.s, currentArea, SIDE::LEFT_FROM_RIGHT});
+                                        cache.emplace(key, Entry{entry.ss, entry.o, i, entry.s, currentArea, SIDE::LR});
                                     }
                                     else if (currentArea < nextAreaIter->second.area)
                                     {
                                         nextAreaIter->second.area = currentArea;
                                         nextAreaIter->second.prev = entry.s;
-                                        nextAreaIter->second.side = SIDE::LEFT_FROM_RIGHT;
+                                        nextAreaIter->second.side = SIDE::LR;
                                     }
                                 }
                             }
@@ -265,13 +265,13 @@ namespace MT
                                     auto nextAreaIter = cache.find(key);
                                     if(nextAreaIter == cache.end())
                                     {
-                                        cache.emplace(key, Entry{entry.o, entry.ss, i, entry.s, currentArea, SIDE::LEFT_FROM_LEFT});
+                                        cache.emplace(key, Entry{entry.o, entry.ss, i, entry.s, currentArea, SIDE::LL});
                                     }
                                     else if(currentArea < nextAreaIter->second.area)
                                     {
                                         nextAreaIter->second.area = currentArea;
                                         nextAreaIter->second.prev = entry.s;
-                                        nextAreaIter->second.side = SIDE::LEFT_FROM_LEFT;
+                                        nextAreaIter->second.side = SIDE::LL;
                                     }
                                 }
                             }
@@ -296,13 +296,13 @@ namespace MT
                                     auto nextAreaIter = cache.find(key);
                                     if (nextAreaIter == cache.end())
                                     {
-                                        cache.emplace(key, Entry{entry.ss, entry.o, i, entry.s, currentArea, SIDE::RIGHT_FROM_LEFT});
+                                        cache.emplace(key, Entry{entry.ss, entry.o, i, entry.s, currentArea, SIDE::RL});
                                     }
                                     else if (currentArea < nextAreaIter->second.area)
                                     {
                                         nextAreaIter->second.area = currentArea;
                                         nextAreaIter->second.prev = entry.s;
-                                        nextAreaIter->second.side = SIDE::RIGHT_FROM_LEFT;
+                                        nextAreaIter->second.side = SIDE::RL;
                                     }
                                 }
                             }
@@ -332,20 +332,20 @@ namespace MT
 
             for(const auto& [key, value] : someCaches[k])
             {
-                if( (value.side >= SIDE::RIGHT_FROM_RIGHT && someRightPoints[value.ss].myIndex == startPoint.myIndex) ||
-                    (value.side <= SIDE::LEFT_FROM_RIGHT && someLeftPoints[value.ss].myIndex == endPoint.myIndex))
+                if( (value.side >= SIDE::RR && someRightPoints[value.ss].myIndex == startPoint.myIndex) ||
+                    (value.side <= SIDE::LR && someLeftPoints[value.ss].myIndex == endPoint.myIndex))
                 {
                     if(value.area < entry.area) entry = value;
                 }
             }
 
-            std::vector<size_t> left = {}, right = {};
+            std::vector<size_t> left, right;
 
-            if(entry.side >= SIDE::RIGHT_FROM_RIGHT)
+            if(entry.side >= SIDE::RR)
             {
                 left.emplace_back(endPoint.myIndex);
             }
-            else if(entry.side <= SIDE::LEFT_FROM_RIGHT)
+            else
             {
                 right.emplace_back(startPoint.myIndex);
             }
@@ -354,7 +354,7 @@ namespace MT
             {
                 switch (entry.side)
                 {
-                    case SIDE::LEFT_FROM_LEFT:
+                    case SIDE::LL:
                     {
                         left.emplace_back(someLeftPoints[entry.ss].myIndex);
                         k -= 1 + PointsInTriangle(endPoint, someLeftPoints[entry.prev], someLeftPoints[entry.s], aPointsCountCache);
@@ -368,7 +368,7 @@ namespace MT
                         break;
                     }
 
-                    case SIDE::LEFT_FROM_RIGHT:
+                    case SIDE::LR:
                     {
                         left.emplace_back(someLeftPoints[entry.ss].myIndex);
 
@@ -383,7 +383,7 @@ namespace MT
                         break;
                     }
 
-                    case SIDE::RIGHT_FROM_RIGHT:
+                    case SIDE::RR:
                     {
                         right.emplace_back(someRightPoints[entry.ss].myIndex);
                         k -= 1 + PointsInTriangle(startPoint, someRightPoints[entry.prev], someRightPoints[entry.s], aPointsCountCache);
@@ -397,7 +397,7 @@ namespace MT
                         break;
                     }
 
-                    case SIDE::RIGHT_FROM_LEFT:
+                    case SIDE::RL:
                     {
                         right.emplace_back(someRightPoints[entry.ss].myIndex);
 

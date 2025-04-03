@@ -109,10 +109,6 @@ TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
                 EXPECT_FLOAT_EQ(result->myHullArea, antipodalResult->myHullArea);
                 CheckHullIndices(result->myHullIndices, antipodalResult->myHullIndices);
 
-                //std::cout << result->myPointsCount << ", " << result->myHullArea << ", [" << result->myDiameterOpt->myFirstIndex << ", " << result->myDiameterOpt->mySecondIndex << "]" << std::endl;
-                //for(auto idx : antipodalResult->myHullIndices) std::cout << idx << ", ";
-                //std::cout << CM::Distance2(points[result->myDiameterOpt->myFirstIndex], points[result->myDiameterOpt->mySecondIndex]) << std::endl;
-
                 // Optimized antipodal algorithm
                 const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea + epsilon, maxDiameter + epsilon, reconstructHull);
                 EXPECT_EQ(result->myPointsCount, optAntipodalResult->myPointsCount);
