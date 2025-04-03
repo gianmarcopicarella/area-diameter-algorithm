@@ -109,12 +109,16 @@ TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
                 EXPECT_FLOAT_EQ(result->myHullArea, antipodalResult->myHullArea);
                 CheckHullIndices(result->myHullIndices, antipodalResult->myHullIndices);
 
+                //std::cout << result->myPointsCount << ", " << result->myHullArea << ", [" << result->myDiameterOpt->myFirstIndex << ", " << result->myDiameterOpt->mySecondIndex << "]" << std::endl;
+                //for(auto idx : antipodalResult->myHullIndices) std::cout << idx << ", ";
+                //std::cout << CM::Distance2(points[result->myDiameterOpt->myFirstIndex], points[result->myDiameterOpt->mySecondIndex]) << std::endl;
+
                 // Optimized antipodal algorithm
-                const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter + epsilon, reconstructHull);
+                const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea + epsilon, maxDiameter + epsilon, reconstructHull);
                 EXPECT_EQ(result->myPointsCount, optAntipodalResult->myPointsCount);
                 EXPECT_EQ(result->myDiameterOpt, optAntipodalResult->myDiameterOpt);
                 EXPECT_FLOAT_EQ(result->myHullArea, optAntipodalResult->myHullArea);
-                // Missing hull indices test
+                CheckHullIndices(result->myHullIndices, optAntipodalResult->myHullIndices);
             }
             else
             {
@@ -123,8 +127,8 @@ TEST(CrossTestEppsteinAndAntipodal, BasicAssertions)
                 EXPECT_EQ(result.has_value(), antipodalResult.has_value());
 
                 // Optimized antipodal algorithm
-                // const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
-                // EXPECT_EQ(result.has_value(), optAntipodalResult.has_value());
+                const auto optAntipodalResult = MT::AntipodalOptimizedAlgorithm(points, solutions[i].myMaxCount, solutions[i].myMaxArea, maxDiameter, reconstructHull);
+                EXPECT_EQ(result.has_value(), optAntipodalResult.has_value());
             }
 
 #ifdef VERBOSE
