@@ -10,6 +10,7 @@
 
 #include "../common/Eppstein.h"
 #include "../common/Antipodal.h"
+#include "../common/AntipodalOptimized.h"
 #include "../common/Parser.h"
 #include "../common/Constants.h"
 #include "../common/TestingUtils.h"
@@ -33,7 +34,7 @@ int main(int argc, char** argv)
 
     args::ValueFlag<size_t> algorithm(parser,
                                          "Algorithm",
-                                         "Algorithm to be used: 0 = Eppstein, 1 = Antipodal",
+                                         "Algorithm to be used: 0 = Eppstein, 1 = Antipodal, 2 = Antipodal Optimized",
                                          {'g', "Algorithm"}, defaultAlgorithm);
 
     args::ValueFlag<size_t> maxAllowedPoints(parser,
@@ -80,21 +81,21 @@ int main(int argc, char** argv)
         std::cerr << "Error: invalid value for --Algorithm.\n";
         return 1;
     }
-    else if(!maxAllowedDiameter && algorithm.Get() == static_cast<size_t>(Algorithm::ANTIPODAL))
+    else if(!maxAllowedDiameter && algorithm.Get() >= static_cast<size_t>(Algorithm::ANTIPODAL))
     {
         std::cerr << "Error: missing value for --MaxDiameter.\n";
         return 1;
     }
-    else if(maxAllowedDiameter && algorithm.Get() != static_cast<size_t>(Algorithm::ANTIPODAL))
+    else if(maxAllowedDiameter && algorithm.Get() < static_cast<size_t>(Algorithm::ANTIPODAL))
     {
-        std::cerr << "Error: --MaxDiameter can only be specified when --Algorithm is set to 1 (Antipodal).\n";
+        std::cerr << "Error: --MaxDiameter can only be specified when --Algorithm is set to 1 (Antipodal) or 2 (Antipodal Optimized).\n";
         return 1;
     }
 
     std::vector<MT::CM::Point2> points;
     MT::SZ::ReadPointsFromFile(filepath.Get(), points);
     std::optional<MT::ConvexArea> resultOpt;
-    std::optional<MT::BenchmarkInfo> benchmarkInfo = {};
+    std::optional benchmarkInfo =  MT::BenchmarkInfo {};
 
     benchmark::ClobberMemory();
     StartHeapProfiling();
@@ -102,13 +103,25 @@ int main(int argc, char** argv)
     const auto startTime = std::chrono::high_resolution_clock::now();
     benchmark::DoNotOptimize(points);
 
-    if(algorithm.Get() == static_cast<size_t>(Algorithm::EPPSTEIN))
+    switch (static_cast<Algorithm>(algorithm.Get()))
     {
-        resultOpt = MT::EppsteinAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints.Get(), maxAllowedArea.Get(), shouldReconstructHull.Get());
-    }
-    else
-    {
-        resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints.Get(), maxAllowedArea.Get(), maxAllowedDiameter.Get(), shouldReconstructHull.Get());
+        case Algorithm::EPPSTEIN:
+        {
+            resultOpt = MT::EppsteinAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints.Get(), maxAllowedArea.Get(), shouldReconstructHull.Get());
+            break;
+        }
+        case Algorithm::ANTIPODAL:
+        {
+            resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints.Get(), maxAllowedArea.Get(), maxAllowedDiameter.Get(), shouldReconstructHull.Get());
+            break;
+        }
+        case Algorithm::ANTIPODAL_OPTIMIZED:
+        {
+            resultOpt = MT::AntipodalOptimizedAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints.Get(), maxAllowedArea.Get(), maxAllowedDiameter.Get(), shouldReconstructHull.Get());
+            break;
+        }
+        default:
+            break;
     }
 
     benchmark::DoNotOptimize(resultOpt);
@@ -124,7 +137,7 @@ int main(int argc, char** argv)
         MT::Solution solution;
         solution.myMaxCount = maxAllowedPoints.Get();
         solution.myMaxArea = maxAllowedArea.Get();
-        if(algorithm.Get() == static_cast<size_t>(Algorithm::ANTIPODAL))
+        if(algorithm.Get() >= static_cast<size_t>(Algorithm::ANTIPODAL))
         {
             solution.myMaxDiameter = maxAllowedDiameter.Get();
         }

@@ -16,6 +16,7 @@ enum class Algorithm
 {
     EPPSTEIN = 0,
     ANTIPODAL,
+    ANTIPODAL_OPTIMIZED,
     COUNT
 };
 

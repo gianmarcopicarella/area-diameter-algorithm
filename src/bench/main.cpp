@@ -6,6 +6,7 @@
 
 #include "../common/Eppstein.h"
 #include "../common/Antipodal.h"
+#include "../common/AntipodalOptimized.h"
 #include "../common/Parser.h"
 #include "../common/Constants.h"
 #include "../common/TestingUtils.h"
@@ -76,7 +77,7 @@ void BM_Template(benchmark::State& aState, bool aShouldUseOptimizations)
         const fs::path filename { "points_" + std::to_string(fileIndex) + ".json" };
         MT::SZ::ReadPointsFromFile(PathToData<D>(aState) / filename, points);
         std::optional<MT::ConvexArea> resultOpt;
-        std::optional<MT::BenchmarkInfo> benchmarkInfo = MT::BenchmarkInfo {};
+        std::optional benchmarkInfo = MT::BenchmarkInfo {};
 
         benchmark::ClobberMemory();
         StartHeapProfiling();
@@ -90,7 +91,14 @@ void BM_Template(benchmark::State& aState, bool aShouldUseOptimizations)
         else
         {
             const auto maxAllowedDiameter = GetMaxDiameter<D>(aState);
-            resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull, aShouldUseOptimizations);
+            if constexpr(A == Algorithm::ANTIPODAL)
+            {
+                resultOpt = MT::AntipodalAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull, aShouldUseOptimizations);
+            }
+            else if constexpr(A == Algorithm::ANTIPODAL_OPTIMIZED)
+            {
+                resultOpt = MT::AntipodalOptimizedAlgorithmWithBenchmarkInfo(points, benchmarkInfo, maxAllowedPoints, maxAllowedArea, maxAllowedDiameter, reconstructHull, aShouldUseOptimizations);
+            }
         }
         benchmark::DoNotOptimize(resultOpt);
         const auto endTime = std::chrono::high_resolution_clock::now();
@@ -109,7 +117,7 @@ void BM_Template(benchmark::State& aState, bool aShouldUseOptimizations)
         currentSolution.myMaxCount = maxAllowedPoints;
         currentSolution.myMaxArea = maxAllowedArea;
 
-        if constexpr (A == Algorithm::ANTIPODAL)
+        if constexpr (A >= Algorithm::ANTIPODAL)
         {
             currentSolution.myMaxDiameter = GetMaxDiameter<D>(aState);
         }
@@ -149,7 +157,7 @@ void BM_Template(benchmark::State& aState, bool aShouldUseOptimizations)
 
 
 // 1) Uniform distribution, Increasing density [100, 200, step=10]
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL, Antipodal_Uniform, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANTIPODAL_OPTIMIZED, Antipodal_Uniform, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::DENSITIES_COUNT - 1, 1),
                 benchmark::CreateDenseRange(0, MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS.size() - 1, 1) })
@@ -161,7 +169,7 @@ BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPP
 
 
 // 2) Gaussian distribution, Increasing standard deviation [0.5, 6.5, step=0.5]
-BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL, Antipodal_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
+BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL_OPTIMIZED, Antipodal_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1),
                 benchmark::CreateDenseRange(0, MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS.size() - 1, 1) })
