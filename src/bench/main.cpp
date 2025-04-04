@@ -35,7 +35,7 @@ fs::path PathToData(const benchmark::State& aState)
 template<Algorithm A>
 std::string ResultName(const benchmark::State& aState, const size_t aFileIndex)
 {
-    if constexpr(A == Algorithm::ANTIPODAL)
+    if constexpr(A >= Algorithm::ANTIPODAL)
     {
         return aState.name() + "/" + std::to_string(aState.range(0)) + "/" + std::to_string(aState.range(1)) + "/iterations:" + std::to_string(aFileIndex);
     }
