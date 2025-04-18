@@ -152,11 +152,11 @@ def unroll(sequence, dist_key):
 def legend(algo_key, diam_key):
     if diam_key == "None" or diam_key == "*":
         assert (algo_key == "Eppstein")
-        legend_txt = r"\addlegendentry{$\text{" + algo_key + r"}_{\infty}"
+        legend_txt = r"\addlegendentry{$\text{A" + r"}_{\infty}"
         if diam_key == "*": legend_txt += r"^{\star}"
         return legend_txt + "$};\n"
     else:
-        return r"\addlegendentry{$\text{" + algo_key + "}_{" + str(
+        return r"\addlegendentry{$\text{AD" + "}_{" + str(
             constants.SYNTHETIC_BENCHMARK_DIAMETERS[int(diam_key)]) + "}$};\n"
 
 
@@ -208,19 +208,19 @@ plots += \
 
 plots += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
                              "xlabel={Input size (points)}",
-                             "ylabel={Time (ms)}", "ymax=10^6", "ymode=log",
+                             "ylabel={Time (ms)}", "", "ymode=log",
                              ",".join(str(x) for x in constants.DENSITY_VALUES),
                              generate_rows("run_data", "Uniform", "time")) + "\n"
 
 plots += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
                              "xlabel={Input size (points)}",
-                             "ylabel={Memory allocation (kb)}", "ymax=10^10", "ymode=log",
+                             "ylabel={Memory allocation (kb)}", "", "ymode=log",
                              ",".join(str(x) for x in constants.DENSITY_VALUES),
                              generate_rows("run_data", "Uniform", "memory")) + "\n"
 
 plots += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
                              "xlabel={Input size (points)}",
-                             "ylabel={Table entries}", "ymax=10^10", "ymode=log",
+                             "ylabel={Table entries}", "", "ymode=log",
                              ",".join(str(x) for x in constants.DENSITY_VALUES),
                              generate_rows("run_data", "Uniform", "entries")) + "\n"
 
@@ -234,13 +234,13 @@ plots += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
 
 plots += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
                              "xlabel={Input size (points)}",
-                             r"ylabel={Area ($\text{mm}^2$)}", "ymax=6", "ymode=linear",
+                             r"ylabel={Area ($\text{mm}^2$)}", "", "ymode=linear",
                              ",".join(str(x) for x in constants.DENSITY_VALUES),
                              generate_rows("solutions_data", "Uniform", "area")) + "\n"
 
 plots += generate_latex_plot("title={Uniform distribution, $100$ repetitions}",
                              "xlabel={Input size (points)}",
-                             "ylabel={Diameter (mm)}", "ymax=30", "ymode=linear",
+                             "ylabel={Diameter (mm)}", "", "ymode=linear",
                              ",".join(str(x) for x in constants.DENSITY_VALUES),
                              generate_rows("solutions_data", "Uniform", "diameter")) + "\n"
 
@@ -248,19 +248,19 @@ plots += r"\subsection{Gaussian distribution}" + "\n" + r"\subsubsection{Time, m
 
 plots += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
                              "xlabel={Standard deviation}",
-                             "ylabel={Time (ms)}", "ymax=10^6", "ymode=log",
+                             "ylabel={Time (ms)}", "", "ymode=log",
                              ",".join(str(x) for x in constants.STD_VALUES),
                              generate_rows("run_data", "Gaussian", "time"), "north east") + "\n"
 
 plots += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
                              "xlabel={Standard deviation}",
-                             "ylabel={Memory allocation (kb)}", "ymax=10^9", "ymode=log",
+                             "ylabel={Memory allocation (kb)}", "", "ymode=log",
                              ",".join(str(x) for x in constants.STD_VALUES),
                              generate_rows("run_data", "Gaussian", "memory"), "north east") + "\n"
 
 plots += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
                              "xlabel={Standard deviation}",
-                             "ylabel={Table entries}", "ymax=10^10", "ymode=log",
+                             "ylabel={Table entries}", "", "ymode=log",
                              ",".join(str(x) for x in constants.STD_VALUES),
                              generate_rows("run_data", "Gaussian", "entries"), "north east") + "\n"
 
@@ -274,7 +274,7 @@ plots += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
 
 plots += generate_latex_plot("title={Gaussian distribution, $100$ repetitions}",
                              "xlabel={Standard deviation}",
-                             r"ylabel={Area ($\text{mm}^2$)}", "ymax=6", "ymode=linear",
+                             r"ylabel={Area ($\text{mm}^2$)}", "", "ymode=linear",
                              ",".join(str(x) for x in constants.STD_VALUES),
                              generate_rows("solutions_data", "Gaussian", "area")) + "\n"
 

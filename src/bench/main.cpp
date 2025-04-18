@@ -179,7 +179,6 @@ BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EP
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1)
 ->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
 
-
 int main(int argc, char** argv)
 {
     const std::vector<std::string> customArgs = {

@@ -60,7 +60,7 @@ def generate_synthetic_data():
         utils.prepare_path(path_to_uniform_samples)
         for j in range(constants.SYNTHETIC_BENCHMARK_ITERATIONS):
             uniform_data = {"count": int(count),
-                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count)]}
+                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count, 10)]}
             utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
 
     for i, std in enumerate(constants.STD_VALUES):
