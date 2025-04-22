@@ -182,6 +182,7 @@ process_benchmark_data()
 
 plots = \
     r"""
+\documentclass[a4, 12pt]{article}
 \usepackage{pgfplots}
 \usepackage{subcaption}
 \usepackage{pgfplotstable}

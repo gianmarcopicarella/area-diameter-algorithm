@@ -58,15 +58,15 @@ def generate_synthetic_data():
     for i, count in enumerate(constants.DENSITY_VALUES):
         path_to_uniform_samples = os.path.join(path_to_uniform, str(i))
         utils.prepare_path(path_to_uniform_samples)
-        for j in range(constants.SYNTHETIC_BENCHMARK_ITERATIONS):
+        for j in range(constants.SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS):
             uniform_data = {"count": int(count),
-                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count, 10)]}
+                            "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count)]}
             utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
 
     for i, std in enumerate(constants.STD_VALUES):
         path_to_gaussian_samples = os.path.join(path_to_gaussian, str(i))
         utils.prepare_path(path_to_gaussian_samples)
-        for j in range(constants.SYNTHETIC_BENCHMARK_ITERATIONS):
+        for j in range(constants.SYNTHETIC_BENCHMARK_GAUSSIAN_ITERATIONS):
             gaussian_data = {"count": int(constants.DENSITY_VALUES[0]),
                              "points": [{"x": x, "y": y} for x, y in
                                         norm_points_in_square(constants.DENSITY_VALUES[0], std)]}

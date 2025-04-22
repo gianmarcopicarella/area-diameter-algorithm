@@ -161,23 +161,25 @@ BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::ANT
 ->Name("Antipodal/Uniform")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::DENSITIES_COUNT - 1, 1),
                 benchmark::CreateDenseRange(0, MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS.size() - 1, 1) })
-->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS);
 
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_UNIFORM, Algorithm::EPPSTEIN, Eppstein_Uniform, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Eppstein/Uniform")->Unit(benchmark::kMillisecond)->DenseRange(0, MT::Constants::DENSITIES_COUNT - 1, 1)
-->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS);
 
 
 // 2) Gaussian distribution, Increasing standard deviation [0.5, 6.5, step=0.5]
+
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::ANTIPODAL_OPTIMIZED, Antipodal_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Antipodal/Gaussian")->Unit(benchmark::kMillisecond)
 ->ArgsProduct({ benchmark::CreateDenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1),
                 benchmark::CreateDenseRange(0, MT::Constants::SYNTHETIC_BENCHMARK_DIAMETERS.size() - 1, 1) })
-->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_GAUSSIAN_ITERATIONS);
 
 BENCHMARK_TEMPLATE2_CAPTURE(BM_Template, Data::SYNTHETIC_GAUSSIAN, Algorithm::EPPSTEIN, Eppstein_Gaussian, MT::Constants::ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA)
 ->Name("Eppstein/Gaussian")->Unit(benchmark::kMillisecond)->DenseRange(0, MT::Constants::STDDEVS_COUNT - 1, 1)
-->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_ITERATIONS);
+->Iterations(MT::Constants::SYNTHETIC_BENCHMARK_GAUSSIAN_ITERATIONS);
+
 
 int main(int argc, char** argv)
 {
