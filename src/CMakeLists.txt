@@ -64,15 +64,15 @@ set(PATH_TO_LATEX ${PATH_TO_DATA}/latex) # Contains the LaTeX report presenting 
 # [Settings]
 # Density and Standard deviation
 set(DENSITY_MIN 100) # Starting number of points
-set(DENSITY_STEP 100) # Increase amount at every step
-set(DENSITIES_COUNT 5) # Number of experiments
+set(DENSITY_STEP 10) # Increase amount at every step
+set(DENSITIES_COUNT 11) # Number of experiments
 
 set(STDDEV_MIN 0.5) # Starting standard deviation
 set(STDDEV_STEP 0.5) # Increase amount at every step
 set(STDDEVS_COUNT 13) # Number of experiments
 
 # Experiments generation
-set(SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS 5)
+set(SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS 100)
 set(SYNTHETIC_BENCHMARK_GAUSSIAN_ITERATIONS 100) # Number of times the same experiments should be repeated
 set(DETECTION_CONFIDENCE_THRESHOLD 0.86) # Detection probability threshold used to filter the raw dataset's detections
 set(DETECTION_METHOD midog21_1st_stage) # Detection algorithm considered during the raw dataset processing

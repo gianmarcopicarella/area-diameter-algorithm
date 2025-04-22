@@ -14,10 +14,10 @@ namespace MT
 
         constexpr std::array<long double, 5> SYNTHETIC_BENCHMARK_DIAMETERS = {2,3,4,5,6};
 
-        constexpr size_t SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS = 5;
+        constexpr size_t SYNTHETIC_BENCHMARK_UNIFORM_ITERATIONS = 100;
         constexpr size_t SYNTHETIC_BENCHMARK_GAUSSIAN_ITERATIONS = 100;
 
-        constexpr size_t DENSITIES_COUNT = 5;
+        constexpr size_t DENSITIES_COUNT = 11;
         constexpr size_t STDDEVS_COUNT = 13;
 
         constexpr bool ENABLE_OPTIMIZATIONS_WITH_SYNTHETIC_DATA = false;
