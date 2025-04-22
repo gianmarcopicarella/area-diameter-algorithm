@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 06/01/25.
-//
-
 #include <iostream>
 #include <queue>
 

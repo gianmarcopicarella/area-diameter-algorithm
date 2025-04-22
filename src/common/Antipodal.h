@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 06/01/25.
-//
-
 #ifndef MASTER_THESIS_ANTIPODAL_H
 #define MASTER_THESIS_ANTIPODAL_H
 

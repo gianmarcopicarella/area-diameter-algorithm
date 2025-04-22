@@ -85,14 +85,14 @@ PYBIND11_MODULE(thesis, module)
 {
     module.doc() = "Eppstein's and Antipodal algorithms plugin";
 
-    module.def("Eppstein", &EppsteinAlgorithmWithCopy, "Eppstein algorithm (Performs an initial copy of the input points)",
+    module.def("Eppstein", &EppsteinAlgorithmWithCopy, "The Area-only (A) algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
           py::arg("shouldReconstructHull") = false,
           py::arg("shouldEnableOptimizations") = false);
 
-    module.def("Antipodal", &AntipodalAlgorithmWithCopy<false>, "Antipodal algorithm (Performs an initial copy of the input points)",
+    module.def("Antipodal", &AntipodalAlgorithmWithCopy<false>, "The Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
@@ -100,7 +100,7 @@ PYBIND11_MODULE(thesis, module)
           py::arg("shouldReconstructHull") = false,
           py::arg("shouldEnableOptimizations") = false);
 
-    module.def("AntipodalOptimized", &AntipodalAlgorithmWithCopy<true>, "Optimized antipodal algorithm (Performs an initial copy of the input points)",
+    module.def("AntipodalOptimized", &AntipodalAlgorithmWithCopy<true>, "The optimized Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
                py::arg("points"),
                py::arg("maxPointsCount"),
                py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),

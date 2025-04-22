@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 27/12/24.
-//
-
 #include "Eppstein.h"
 #include "CustomMath.h"
 #include "Utils.h"

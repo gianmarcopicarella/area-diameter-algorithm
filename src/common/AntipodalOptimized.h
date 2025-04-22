@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 30/03/25.
-//
-
 #ifndef MASTER_THESIS_ANTIPODALOPTIMIZED_H
 #define MASTER_THESIS_ANTIPODALOPTIMIZED_H
 

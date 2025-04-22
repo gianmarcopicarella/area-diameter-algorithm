@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 19/02/25.
-//
-
 #include <benchmark/benchmark.h>
 #include <args.hxx>
 
