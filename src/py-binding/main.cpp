@@ -17,7 +17,7 @@ void PointsListToVector(const py::list& somePoints, std::vector<MT::CM::Point2>&
     }
 }
 
-py::object EppsteinAlgorithmWithCopy(
+py::object AreaOnlyAlgorithmWithCopy(
         const py::list& points,
         const size_t maxPointsCount,
         const long double maxAllowedArea = std::numeric_limits<long double>::infinity(),
@@ -42,7 +42,7 @@ py::object EppsteinAlgorithmWithCopy(
 }
 
 template <bool Optimized=false>
-py::object AntipodalAlgorithmWithCopy(
+py::object AreaDiameterAlgorithmWithCopy(
         const py::list& points,
         const size_t maxPointsCount,
         const long double maxAllowedArea = std::numeric_limits<long double>::infinity(),
@@ -83,16 +83,14 @@ py::object AntipodalAlgorithmWithCopy(
 
 PYBIND11_MODULE(thesis, module)
 {
-    module.doc() = "Eppstein's and Antipodal algorithms plugin";
-
-    module.def("Eppstein", &EppsteinAlgorithmWithCopy, "The Area-only (A) algorithm (Performs an initial copy of the input points)",
+    module.def("AreaOnly", &AreaOnlyAlgorithmWithCopy, "The Area-only (A) algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
           py::arg("shouldReconstructHull") = false,
           py::arg("shouldEnableOptimizations") = false);
 
-    module.def("Antipodal", &AntipodalAlgorithmWithCopy<false>, "The Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
+    module.def("AreaDiameter", &AreaDiameterAlgorithmWithCopy<false>, "The Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
@@ -100,7 +98,7 @@ PYBIND11_MODULE(thesis, module)
           py::arg("shouldReconstructHull") = false,
           py::arg("shouldEnableOptimizations") = false);
 
-    module.def("AntipodalOptimized", &AntipodalAlgorithmWithCopy<true>, "The optimized Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
+    module.def("AreaDiameterOptimized", &AreaDiameterAlgorithmWithCopy<true>, "The optimized Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
                py::arg("points"),
                py::arg("maxPointsCount"),
                py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
