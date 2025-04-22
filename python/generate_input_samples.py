@@ -63,13 +63,14 @@ def generate_synthetic_data():
                             "points": [{"x": x, "y": y} for x, y in rand_points_in_square(count)]}
             utils.write_json(os.path.join(path_to_uniform_samples, f"points_{j}.json"), uniform_data)
 
+    gaussian_point_set_size = 200
     for i, std in enumerate(constants.STD_VALUES):
         path_to_gaussian_samples = os.path.join(path_to_gaussian, str(i))
         utils.prepare_path(path_to_gaussian_samples)
         for j in range(constants.SYNTHETIC_BENCHMARK_GAUSSIAN_ITERATIONS):
-            gaussian_data = {"count": int(constants.DENSITY_VALUES[0]),
+            gaussian_data = {"count": int(gaussian_point_set_size),
                              "points": [{"x": x, "y": y} for x, y in
-                                        norm_points_in_square(constants.DENSITY_VALUES[0], std)]}
+                                        norm_points_in_square(gaussian_point_set_size, std)]}
             utils.write_json(os.path.join(path_to_gaussian_samples, f"points_{j}.json"), gaussian_data)
 
 
