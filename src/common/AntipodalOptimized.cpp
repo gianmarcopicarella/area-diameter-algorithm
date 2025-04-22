@@ -21,6 +21,25 @@ namespace MT
         };
 
         constexpr auto INVALID_INDEX = (size_t) - 1;
+
+        constexpr int locPointsWithinTriangleCount(
+                const PointsInTriangleCache& aPointsCountCache,
+                const size_t k,
+                const CM::Point2& p,
+                const CM::Point2& pp,
+                const CM::Point2& q)
+        {
+            const auto baseCount =
+                    aPointsCountCache.myCollinearPointsCount[p.myIndex][pp.myIndex] +
+                    aPointsCountCache.myCollinearPointsCount[pp.myIndex][q.myIndex] +
+                    PointsInTriangle(p, pp, q, aPointsCountCache);
+            if(k == 0)
+            {
+                return baseCount + aPointsCountCache.myCollinearPointsCount[p.myIndex][q.myIndex];
+            }
+            return baseCount;
+        }
+
         void locPartitionLeftAndRightPoints(const std::vector<CM::Point2>& somePoints,
                                             const CM::Point2& aStartPoint,
                                             const CM::Point2& anEndPoint,
@@ -171,7 +190,7 @@ namespace MT
                         }
 
                         const auto triangleArea = std::fabsl(CM::SignedArea(startPoint, r, pr));
-                        const auto triangleCount = 1 + PointsInTriangle(startPoint, r, pr, aPointsCountCache);
+                        const auto triangleCount = 1 + locPointsWithinTriangleCount(aPointsCountCache, k, r, pr, startPoint);
                         const auto currentArea = entry.area + triangleArea;
 
                         if(triangleCount + k >= someOutCaches.size())
@@ -244,7 +263,7 @@ namespace MT
                         }
 
                         const auto triangleArea = std::fabsl(CM::SignedArea(endPoint, l, pl));
-                        const auto triangleCount = 1 + PointsInTriangle(endPoint, l, pl, aPointsCountCache);
+                        const auto triangleCount = 1 + locPointsWithinTriangleCount(aPointsCountCache, k, l, pl, endPoint);
                         const auto currentArea = entry.area + triangleArea;
 
                         if(triangleCount + k >= someOutCaches.size())
