@@ -17,7 +17,7 @@ Our results show that despite the higher worst-case complexity of the AD algorit
 For more information, please refer to my thesis [here](https://github.com/gianmarcopicarella/master-thesis/blob/main/data/picarella-master_thesis_v4.pdf).
 
 ### Example output
-![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/698773005f8eaebb7eebb185bd69de976f7f0d7f/data/example-areas.png)
+![Alt Text](https://raw.githubusercontent.com/gianmarcopicarella/master-thesis/refs/heads/main/data/example-areas.png)
 
 (a) Mitotic hotspots found by the $\text{AD}_4$ algorithm. (b) Mitotic hotspots found by the AS algorithm using $s=1.98$. (c) Mitotic hotspots found by the AS algorithm using $s=0.5$. (d) Mitotic hotspots found by the A algorithm using $s=0.5$. We report the results for the real-world point set with index $\text{I}=0$. The patch size is $3$ $\times$ $3$ mm. The line spacing is set to $5$ $\text{mm}$.
 
