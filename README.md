@@ -14,10 +14,10 @@ We implemented the AD algorithm and an existing Area-only (A) algorithm that per
 
 Our results show that despite the higher worst-case complexity of the AD algorithm, the bound on the diameter enables significant pruning that often makes our algorithm practically faster than the A algorithm for moderately dense point sets. The performance of the A algorithm does not change with different point set distributions, but the solutions tend to be too elongated and beyond acceptable limits for medical applications. Finally, we show that our algorithm can process real-world medical datasets in a reasonable time, delivering exact solutions that are better---in terms of the number of enclosed points---than those found by existing methods.
 
-For more information, please refer to my thesis [here]().
+For more information, please refer to my thesis [here](https://github.com/gianmarcopicarella/master-thesis/blob/main/data/picarella-master_thesis_v4.pdf).
 
 ### Example output
-![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/59369825b71c7e77b649cc473bb48df3fcedce0f/data/example_areas.png)
+![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/59369825b71c7e77b649cc473bb48df3fcedce0f/data/example-areas.png)
 
 The optimal convex regions found by our algorithm run with constraints $a_{\text{max}}=4\text{mm}, d_{\text{max}}=4.243\text{mm}$ and the $4$ most populated real-world point sets filtered with probability threshold $t=0.86$. The line spacing is set to $5$ $\text{mm}$.
 
