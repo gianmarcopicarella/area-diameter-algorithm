@@ -1,17 +1,25 @@
 # Master Thesis: Finding dense and well-shaped convex clusters in 2d point sets
-Supervisors: Marc van Kreveld, Frank Staals and Sjoerd de Vries.
+Supervisors: Marc J. van Kreveld, Frank Staals and Sjoerd de Vries.
 Department of Information and Computing Sciences, Utrecht University, The Netherlands.
 
-## Introduction
+## Abstract
 
-This repository contains the C++ and Python code developed for my Master's thesis at Utrecht University. The research conducted in this thesis explores the design, implementation and practical usage of several geometric algorithms for the identification of convex regions in Whole-Slide Images (WSI) containing the highest number of mitotic cells while being constrained on area and diameter. We implemented Eppstein et al.'s algorithm which can find such convex regions if the constraint on the diameter is relaxed and a novel antipodal algorithm which is able to find such regions in polynomial time. Our algorithm runs in \$O(kn^6)\$ time and uses \$O(kn^3)\$ space, where \$n\$ is the size of the input set and \$k\$ is the number of points enclosed by the optimal region. Our experiments show that our algorithm's performance is indeed affected by the point set distribution and the maximum allowed diameter but still is able to process in practice real-world point sets of more than 900 points in less than 30 minutes. There is a lot of room for improvements, including code parallelization (for which our algorithm is a very good candidate) and heuristic search.
+We address the problem of computing a convex region with bounded area and diameter, enclosing the maximum number of points from a planar point set $P$.
 
-For detailed insights into the goals of this project, you can refer to my [research proposal](https://github.com/gianmarcopicarella/master-thesis/blob/cd705a7bf150f72d711a044cddcb1203e70f860c/data/research_proposal_gianmarcopicarella.pdf). A link to the final Master's thesis will be added here upon completion.
+This problem originated from previous work on an automatic pipeline for computing the mitotic count (MC) from histological images. The MC counts mitotic cells within a specific region and serves as a key indicator for determining cancer patient risk levels and treatment regimes. In this context, mitotic cells appear as points in a plane, and we need to identify the optimal mitotic hotspot region---a convex region that is not too elongated (bounded diameter), has a bounded area and contains the maximum number of points. 
+
+We developed a novel dynamic programming algorithm, the Area-Diameter (AD) algorithm, which solves this problem in $O(n^6k)$ time and $O(n^3k)$ space, where $n$ is the size of $P$ and $k$ is the maximum number of enclosed points. To the best of our knowledge, this is the first polynomial time and exact algorithm to solve this problem.
+
+We implemented the AD algorithm and an existing Area-only (A) algorithm that performs the same task without the diameter constraint in $O(n^3k)$ time and $O(n^2k)$ space. We experimentally compared their performance and solutions for three types of point sets: uniformly distributed sets with increasing size, normally distributed sets with increasing standard deviation and real-world medical data. For the AD algorithm, we test different diameters. 
+
+Our results show that despite the higher worst-case complexity of the AD algorithm, the bound on the diameter enables significant pruning that often makes our algorithm practically faster than the A algorithm for moderately dense point sets. The performance of the A algorithm does not change with different point set distributions, but the solutions tend to be too elongated and beyond acceptable limits for medical applications. Finally, we show that our algorithm can process real-world medical datasets in a reasonable time, delivering exact solutions that are better---in terms of the number of enclosed points---than those found by existing methods.
+
+For more information, please refer to my thesis [here]().
 
 ### Example output
 ![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/59369825b71c7e77b649cc473bb48df3fcedce0f/data/example_areas.png)
 
-The optimal convex areas found by our algorithm run with constraints $a_{\text{max}}=4\text{mm}, d_{\text{max}}=4.243\text{mm}$ and the $4$ most populated real-world point sets filtered with probability threshold $t=0.86$. The line spacing is set to $5$ $\text{mm}$.
+The optimal convex regions found by our algorithm run with constraints $a_{\text{max}}=4\text{mm}, d_{\text{max}}=4.243\text{mm}$ and the $4$ most populated real-world point sets filtered with probability threshold $t=0.86$. The line spacing is set to $5$ $\text{mm}$.
 
 ## Repository Structure
 
