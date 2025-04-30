@@ -1,4 +1,4 @@
-# Master Thesis: Finding dense and well-shaped convex clusters in planar point sets
+# Master Thesis: Finding dense and well-shaped convex clusters in 2d point sets
 Supervisors: Marc J. van Kreveld, Frank Staals and Sjoerd de Vries.
 
 Department of Information and Computing Sciences, Utrecht University, The Netherlands.
