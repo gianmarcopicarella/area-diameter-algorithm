@@ -17,9 +17,9 @@ Our results show that despite the higher worst-case complexity of the AD algorit
 For more information, please refer to my thesis [here](https://github.com/gianmarcopicarella/master-thesis/blob/main/data/picarella-master_thesis_v4.pdf).
 
 ### Example output
-![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/59369825b71c7e77b649cc473bb48df3fcedce0f/data/example-areas.png)
+![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/698773005f8eaebb7eebb185bd69de976f7f0d7f/data/example-areas.png)
 
-The optimal convex regions found by our algorithm run with constraints $a_{\text{max}}=4\text{mm}, d_{\text{max}}=4.243\text{mm}$ and the $4$ most populated real-world point sets filtered with probability threshold $t=0.86$. The line spacing is set to $5$ $\text{mm}$.
+(a) Mitotic hotspots found by the $\text{AD}_4$ algorithm. (b) Mitotic hotspots found by the AS algorithm using $s=1.98$. (c) Mitotic hotspots found by the AS algorithm using $s=0.5$. (d) Mitotic hotspots found by the A algorithm using $s=0.5$. We report the results for the real-world point set with index $\text{I}=0$. The patch size is $3$ $\times$ $3$ mm. The line spacing is set to $5$ $\text{mm}$.
 
 ## Repository Structure
 
