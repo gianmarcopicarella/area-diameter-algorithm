@@ -80,20 +80,18 @@ $ pip install -r requirements.txt
 $ python run/quality_of_results_comparison.py
 ```
 
-Most of the provided Python scripts generate LaTeX code to facilitate the visualization of experimental results. The experiments include multiple variants of the antipodal algorithm (tested with maximum diameter values 2mm, 3mm, 4mm, 5mm and 6mm), Eppstein et al.'s algorithm (applied to the entire input set and individual image patches), and the area selector method (tested with patch step sizes of 1.98mm and 0.5mm).
+Most of these Python scripts generate LaTeX code to facilitate the visualization the experimental results.
 
 ## Generating Data
 
-The dataset used for experiments and real-world runs is available in `data/samples`. However, if you wish to generate the dataset from scratch, follow these steps:
+The datasets used in our experiments are available in `data/samples`. However, you can generate the datasets from scratch by following these steps:
 
 1. Download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) and place it in the `data/raw` directory.
-2. Run the following command to generate the samples:
+2. Run the data generation and postprocessing script:
 
    ```bash
    $ python generate_input_samples.py
    ```
-
-If any settings affecting data generation are modified, the script should be rerun to update the dataset accordingly.
 
 ## License
 
