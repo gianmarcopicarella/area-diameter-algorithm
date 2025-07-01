@@ -1,4 +1,16 @@
 # Computing Largest Subsets of Points Whose Convex Hulls have Bounded Area and Diameter
+
+### Gianmarco Picarella
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+### Marc J. van Kreveld
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+### Frank Staals
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+### Sjoerd de Vries (UMC Utrecht)
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+Department of Digital Health, University Medical Center Utrecht, The Netherlands
+
+
 ## Abstract
 
 We study the problem of computing a convex region with bounded area and diameter that contains the maximum number of points from a given point set $P$. We show that this problem can be solved in $O(n^6k)$ time and $O(n^3k)$ space, where $n$ is the size of $P$ and $k$ is the maximum number of points in the found region. 
