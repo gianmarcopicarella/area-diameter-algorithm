@@ -82,4 +82,10 @@ $ python run/quality_of_results_comparison.py
 
 ## Data Generation
 
-The dataset used for experiments and real-world runs is available in `data/samples`. We will provide the raw version of the real-world data after receiving official approval from UMC Utrecht.
+The dataset used for experiments and real-world runs is available in `data/samples`. The raw version of the real-world data is available [here](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link). Move the file "detections_subset.json" in the `data/raw` directory. Finally, run the data generation and postprocessing script:
+
+   ```bash
+   $ python generate_input_samples.py
+   ```
+
+We will provide the raw version of the real-world data after receiving official approval from UMC Utrecht.
