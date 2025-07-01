@@ -87,5 +87,3 @@ The dataset used for experiments and real-world runs is available in `data/sampl
    ```bash
    $ python generate_input_samples.py
    ```
-
-We will provide the raw version of the real-world data after receiving official approval from UMC Utrecht.
