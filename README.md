@@ -1,4 +1,12 @@
 # Computing Largest Subsets of Points Whose Convex Hulls have Bounded Area and Diameter
+## Abstract
+
+We study the problem of computing a convex region with bounded area and diameter that contains the maximum number of points from a given point set $P$. We show that this problem can be solved in $O(n^6k)$ time and $O(n^3k)$ space, where $n$ is the size of $P$ and $k$ is the maximum number of points in the found region. 
+
+We experimentally compare this new algorithm with an existing algorithm that does the same but without the diameter constraint, which runs in $O(n^3k)$ time. For the new algorithm, we use different diameters. 
+
+We use both synthetic data and data from an application in cancer detection, which motivated our research.
+
 ## Repository Structure
 
 ```
