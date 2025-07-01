@@ -1,12 +1,14 @@
 # Computing Largest Subsets of Points Whose Convex Hulls have Bounded Area and Diameter
 
+## Authors
+
 ### Gianmarco Picarella
 Department of Information and Computing Sciences, Utrecht University, The Netherlands
 ### Marc J. van Kreveld
 Department of Information and Computing Sciences, Utrecht University, The Netherlands
 ### Frank Staals
 Department of Information and Computing Sciences, Utrecht University, The Netherlands
-### Sjoerd de Vries (UMC Utrecht)
+### Sjoerd de Vries
 Department of Information and Computing Sciences, Utrecht University, The Netherlands
 
 Department of Digital Health, University Medical Center Utrecht, The Netherlands
