@@ -8,6 +8,7 @@ Department of Information and Computing Sciences, Utrecht University, The Nether
 Department of Information and Computing Sciences, Utrecht University, The Netherlands
 ### Sjoerd de Vries (UMC Utrecht)
 Department of Information and Computing Sciences, Utrecht University, The Netherlands
+
 Department of Digital Health, University Medical Center Utrecht, The Netherlands
 
 
