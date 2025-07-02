@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 30/03/25.
-//
-
 #include "AntipodalOptimized.h"
 
 #define KEY(a, b, c, n) ((a) * (n) * (n) + (b) * (n) + (c))

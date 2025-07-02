@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 28/12/24.
-//
-
 #include "Parser.h"
 
 namespace MT

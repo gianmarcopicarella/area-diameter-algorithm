@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 03/02/25.
-//
-
 #ifndef MASTER_THESIS_CONSTANTS_H_IN_H
 #define MASTER_THESIS_CONSTANTS_H_IN_H
 

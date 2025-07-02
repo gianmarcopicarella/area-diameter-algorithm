@@ -64,7 +64,7 @@ set(PATH_TO_LATEX ${PATH_TO_DATA}/latex) # Contains the LaTeX report presenting 
 # [Settings]
 # Density and Standard deviation
 set(DENSITY_MIN 100) # Starting number of points
-set(DENSITY_STEP 100) # Increase amount at every step
+set(DENSITY_STEP 10) # Increase amount at every step
 set(DENSITIES_COUNT 11) # Number of experiments
 
 set(STDDEV_MIN 0.5) # Starting standard deviation

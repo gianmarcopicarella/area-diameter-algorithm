@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 20/02/25.
-//
-
 #ifndef MASTER_THESIS_TESTINGUTILS_H
 #define MASTER_THESIS_TESTINGUTILS_H
 

@@ -83,14 +83,14 @@ py::object AreaDiameterAlgorithmWithCopy(
 
 PYBIND11_MODULE(thesis, module)
 {
-    module.def("AreaOnlyAlgorithm", &AreaOnlyAlgorithmWithCopy, "Area-only (A) algorithm (Performs an initial copy of the input points)",
+    module.def("AreaOnly", &AreaOnlyAlgorithmWithCopy, "The Area-only (A) algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
           py::arg("shouldReconstructHull") = false,
           py::arg("shouldEnableOptimizations") = false);
 
-    module.def("AreaDiameterAlgorithm", &AreaDiameterAlgorithmWithCopy<false>, "Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
+    module.def("AreaDiameter", &AreaDiameterAlgorithmWithCopy<false>, "The Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
           py::arg("points"),
           py::arg("maxPointsCount"),
           py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
@@ -98,7 +98,7 @@ PYBIND11_MODULE(thesis, module)
           py::arg("shouldReconstructHull") = false,
           py::arg("shouldEnableOptimizations") = false);
 
-    module.def("AreaDiameterAlgorithmOptimized", &AreaDiameterAlgorithmWithCopy<true>, "Optimized Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
+    module.def("AreaDiameterOptimized", &AreaDiameterAlgorithmWithCopy<true>, "The optimized Area-Diameter (AD) algorithm (Performs an initial copy of the input points)",
                py::arg("points"),
                py::arg("maxPointsCount"),
                py::arg("maxAllowedArea") = std::numeric_limits<long double>::infinity(),
@@ -108,4 +108,3 @@ PYBIND11_MODULE(thesis, module)
 
     module.attr("__version__") = "dev";
 }
-

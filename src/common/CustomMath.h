@@ -1,7 +1,3 @@
-//
-// Created by Gianmarco Picarella on 27/12/24.
-//
-
 #ifndef MASTER_THESIS_CUSTOMMATH_H
 #define MASTER_THESIS_CUSTOMMATH_H
 

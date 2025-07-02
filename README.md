@@ -1,26 +1,26 @@
-# Master Thesis: Finding dense and well-shaped convex clusters in 2d point sets
-Supervisors: Marc J. van Kreveld, Frank Staals and Sjoerd de Vries.
+# Computing Largest Subsets of Points Whose Convex Hulls have Bounded Area and Diameter
 
-Department of Information and Computing Science, Utrecht University, The Netherlands.
+## Authors
+
+### Gianmarco Picarella
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+### Marc J. van Kreveld
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+### Frank Staals
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+### Sjoerd de Vries
+Department of Information and Computing Sciences, Utrecht University, The Netherlands
+
+Department of Digital Health, University Medical Center Utrecht, The Netherlands
+
 
 ## Abstract
 
-We address the problem of computing a convex region with bounded area and diameter, enclosing the maximum number of points from a planar point set $P$.
+We study the problem of computing a convex region with bounded area and diameter that contains the maximum number of points from a given point set $P$. We show that this problem can be solved in $O(n^6k)$ time and $O(n^3k)$ space, where $n$ is the size of $P$ and $k$ is the maximum number of points in the found region. 
 
-This problem originated from previous work on an automatic pipeline for computing the mitotic count (MC) from histological images. The MC counts mitotic cells within a specific region and serves as a key indicator for determining cancer patient risk levels and treatment regimes. In this context, mitotic cells appear as points in a plane, and we need to identify the optimal mitotic hotspot region---a convex region that is not too elongated (bounded diameter), has a bounded area and contains the maximum number of points. 
+We experimentally compare this new algorithm with an existing algorithm that does the same but without the diameter constraint, which runs in $O(n^3k)$ time. For the new algorithm, we use different diameters. 
 
-We developed a novel dynamic programming algorithm, the Area-Diameter (AD) algorithm, which solves this problem in $O(n^6k)$ time and $O(n^3k)$ space, where $n$ is the size of $P$ and $k$ is the maximum number of enclosed points. To the best of our knowledge, this is the first polynomial time and exact algorithm to solve this problem.
-
-We implemented the AD algorithm and an existing Area-only (A) algorithm that performs the same task without the diameter constraint in $O(n^3k)$ time and $O(n^2k)$ space. We experimentally compared their performance and solutions for three types of point sets: uniformly distributed sets with increasing size, normally distributed sets with increasing standard deviation and real-world medical data. For the AD algorithm, we test different diameters. 
-
-Our results show that despite the higher worst-case complexity of the AD algorithm, the bound on the diameter enables significant pruning that often makes our algorithm practically faster than the A algorithm for moderately dense point sets. The performance of the A algorithm does not change with different point set distributions, but the solutions tend to be too elongated and beyond acceptable limits for medical applications. Finally, we show that our algorithm can process real-world medical datasets in a reasonable time, delivering exact solutions that are better---in terms of the number of enclosed points---than those found by existing methods.
-
-For more information, please refer to my thesis [here](https://github.com/gianmarcopicarella/master-thesis/blob/main/data/picarella-master_thesis_v4.pdf).
-
-### Example output
-![Alt Text](https://github.com/gianmarcopicarella/master-thesis/blob/f3332a024c38767f42cb01aae80b2cbe93c10f60/data/example-areas.png)
-
-(a) Mitotic hotspots found by the $\text{AD}_4$ algorithm. (b) Mitotic hotspots found by the AS algorithm using $s=1.98$. (c) Mitotic hotspots found by the AS algorithm using $s=0.5$. (d) Mitotic hotspots found by the A algorithm using $s=0.5$. We report the results for the real-world point set with index $\text{I}=0$. The patch size is $3$ $\times$ $3$ mm. The line spacing is set to $5$ $\text{mm}$.
+We use both synthetic data and data from an application in cancer detection, which motivated our research.
 
 ## Repository Structure
 
@@ -40,13 +40,13 @@ Clang == 19.1.6, CMake >= 3.18 and Python >= 3.10.
 Clone the repository with all its submodules
 
 ```sh
-$ git clone --recurse-submodules https://github.com/gianmarcopicarella/master-thesis.git
+$ git clone --recurse-submodules [REPO_URL]
 ```
 
 Build the project in release mode using CMake
 
 ```sh
-$ cd master-thesis
+$ cd [REPO_NAME]
 $ mkdir cmake-build-release
 $ cd cmake-build-release
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -80,23 +80,10 @@ $ pip install -r requirements.txt
 $ python run/quality_of_results_comparison.py
 ```
 
-Most of these Python scripts generate LaTeX code to facilitate the visualization the experimental results.
+## Data Generation
 
-## Generating Data
-
-The datasets used in our experiments are available in `data/samples`. However, you can generate the datasets from scratch by following these steps:
-
-1. Download [detections_subset.json](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link) and place it in the `data/raw` directory.
-2. Run the data generation and postprocessing script:
+The dataset used for experiments and real-world runs is available in `data/samples`. The raw version of the real-world data is available [here](https://drive.google.com/file/d/1aHM7tw1oLBKeqv6VaCwpLoY8x4KPVu5i/view?usp=drive_link). Move the file "detections_subset.json" in the `data/raw` directory. Finally, run the data generation and postprocessing script:
 
    ```bash
    $ python generate_input_samples.py
    ```
-
-## License
-
-This repository is licensed under the [MIT License](LICENSE).
-
-## Contact
-
-For any questions, feel free to reach out to me at [[g.picarella@students.uu.nl](mailto\:g.picarella@students.uu.nl)] or via GitHub Issues.
