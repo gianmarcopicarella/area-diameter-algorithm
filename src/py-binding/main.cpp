@@ -108,4 +108,3 @@ PYBIND11_MODULE(thesis, module)
 
     module.attr("__version__") = "dev";
 }
-
