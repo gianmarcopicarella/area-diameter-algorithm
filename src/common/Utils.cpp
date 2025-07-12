@@ -164,9 +164,9 @@ namespace MT
                     const auto myCollinearCount = anOutCache.myCollinearPointsCount[pi.myIndex][pj.myIndex];
                     if(myCollinearCount != collinearCount)
                     {
-                        std::cout << "wtf: " << collinearCount << ", " << myCollinearCount <<std::endl;
+                        std::cout << "?: " << collinearCount << ", " << myCollinearCount <<std::endl;
                         std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << std::endl;
-                        throw std::runtime_error("WTF coll!!!");
+                        throw std::runtime_error("Coll!");
                     }
                     assert(collinearCount == myCollinearCount);
                 }
@@ -215,9 +215,9 @@ namespace MT
 
                     if(myBelowCount != belowCount)
                     {
-                        std::cout << "wtf: " << belowCount << ", " << myBelowCount << " branch=" << branch << std::endl;
+                        std::cout << "?: " << belowCount << ", " << myBelowCount << " branch=" << branch << std::endl;
                         std::cout << pi.myIndex << ", " << pj.myIndex << ", " << pjPrev.myIndex << ", " << (pi.myX == pjPrev.myX) << std::endl;
-                        throw std::runtime_error("WTF below!!!");
+                        throw std::runtime_error("Below!!!");
                     }
                     assert(belowCount == myBelowCount);
                 }
